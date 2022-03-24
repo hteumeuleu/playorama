@@ -1,4 +1,5 @@
 import "CoreLibs/object"
+import "Videorama"
 
 function isVideo(fileName)
 	local videoExtensionIndex = string.find(fileName, '.pdv')
@@ -8,21 +9,12 @@ function isVideo(fileName)
 	return false
 end
 
-local kDataPath = ''
-local contextImage = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-contextImage:drawScaled(10, 10, 0.5)
-
 local files = playdate.file.listFiles()
 for i, file in pairs(files) do
 	if isVideo(file) == true then
-		print(file)
-		local filePath = kDataPath .. file
-		local video = playdate.graphics.video.new(filePath)
-		video:setContext(contextImage)
-		local halfFrame = math.floor(video:getFrameCount() / 4)
-		video:renderFrame(halfFrame)
-		contextImage = contextImage:vcrPauseFilterImage()
-		contextImage:drawScaled(10, 10, 0.5)
+		local video = Videorama(file)
+		local thumb = video:getThumbnail()
+		thumb:draw(0, 0)
 		break
 	end
 end
