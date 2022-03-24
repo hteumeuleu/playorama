@@ -9,6 +9,8 @@ function isVideo(fileName)
 end
 
 local kDataPath = './Data/'
+local contextImage = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+contextImage:drawScaled(10, 10, 0.5)
 
 local files = playdate.file.listFiles(kDataPath)
 for i, file in pairs(files) do
@@ -16,9 +18,11 @@ for i, file in pairs(files) do
 		print(file)
 		local filePath = kDataPath .. file
 		local video = playdate.graphics.video.new(filePath)
-		video:useScreenContext()
+		video:setContext(contextImage)
 		local halfFrame = math.floor(video:getFrameCount() / 4)
 		video:renderFrame(halfFrame)
+		contextImage = contextImage:vcrPauseFilterImage()
+		contextImage:drawScaled(10, 10, 0.5)
 		break
 	end
 end
