@@ -40,5 +40,4 @@ luac.out
 *.hex
 
 # Local data
-Data/*
-!Data/.gitkeep
+*.pdx

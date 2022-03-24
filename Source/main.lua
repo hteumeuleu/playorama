@@ -8,11 +8,11 @@ function isVideo(fileName)
 	return false
 end
 
-local kDataPath = './Data/'
+local kDataPath = ''
 local contextImage = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
 contextImage:drawScaled(10, 10, 0.5)
 
-local files = playdate.file.listFiles(kDataPath)
+local files = playdate.file.listFiles()
 for i, file in pairs(files) do
 	if isVideo(file) == true then
 		print(file)
