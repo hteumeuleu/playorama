@@ -80,34 +80,73 @@ end
 function initMenuState()
 	if(gameState:get() == kMenuState) then
 
-		-- Draw items on menu
-		local contextImage = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-		contextImage:draw(0, 0)
+		-- Black background
+		playdate.graphics.clear(playdate.graphics.kColorBlack)
 
-		local videoMenuItem = Videorama()
-		local videoContextImage = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-		videoMenuItem:setContext(videoContextImage)
-		local thumb = videoMenuItem:getThumbnail()
-		thumb:draw(0, 0)
+		-- Grid view
+		gridview = playdate.ui.gridview.new(360, 160)
+		gridview:setNumberOfColumns(8)
+		gridview:setNumberOfRows(1)
+		gridview:setCellPadding(5, 5, 0, 0)
 
-		local menuItemMaskImage = playdate.graphics.image.new(400, 240, playdate.graphics.kColorWhite)
-		playdate.graphics.pushContext(menuItemMaskImage)
-		playdate.graphics.setColor(playdate.graphics.kColorBlack)
-		playdate.graphics.fillRoundRect(20, 50, 360, 160, 4)
-		playdate.graphics.popContext()
-		videoContextImage:setMaskImage(menuItemMaskImage)
-		videoContextImage:draw(0, 0)
+		function gridview:drawCell(section, row, column, selected, x, y, width, height)
 
-		-- Placeholder elements
-		playdate.graphics.setColor(playdate.graphics.kColorWhite)
-		playdate.graphics.fillRoundRect(390, 50, 360, 160, 4)
-		playdate.graphics.fillRoundRect(-350, 50, 360, 160, 4)
+			-- Draw background
+			playdate.graphics.setColor(playdate.graphics.kColorWhite)
+			playdate.graphics.fillRoundRect(x, y, width, height, 4)
 
-		-- Placeholder video outline
-		playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-		playdate.graphics.setLineWidth(2)
-		playdate.graphics.setColor(playdate.graphics.kColorWhite)
-		playdate.graphics.drawRoundRect(20, 50, 360, 160, 4)
+			-- First item video (temporary placeholder)
+			if row == 1 and column == 1 then
+				local aVideoContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
+				playdate.graphics.pushContext(aVideoContext)
+				local firstVideo = Videorama()
+				local firstThumb = firstVideo:getThumbnail()
+				firstThumb:draw(0, 0)
+				playdate.graphics.popContext()
+				aVideoContext:draw(x, y)
+			end
+
+			-- Draw outline if selected
+			if selected then
+				playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+				playdate.graphics.setLineWidth(2)
+				playdate.graphics.setColor(playdate.graphics.kColorBlack)
+				playdate.graphics.drawRoundRect(x+2, y+2, width-4, height-4, 4)
+			end
+
+			-- Draw text inside
+			local kControlsFont <const> = playdate.graphics.getFont()
+			local textY = math.floor((height - kControlsFont:getHeight()) / 2)
+			local cellText = "*PLAYORAMA "..row.."-"..column.."*"
+			playdate.graphics.drawTextInRect(cellText, x, y + textY, width, height, nil, nil, kTextAlignment.center)
+		end
+		-- -- Thumbnails list
+		-- local thumbsList = playdate.graphics.image.new(400, 160)
+		-- playdate.graphics.pushContext(thumbsList)
+
+		-- -- A video
+		-- local aVideoContext = playdate.graphics.image.new(360, 160, playdate.graphics.kColorBlack)
+		-- playdate.graphics.pushContext(aVideoContext)
+		-- local firstVideo = Videorama()
+		-- local firstThumb = firstVideo:getThumbnail()
+		-- firstThumb:draw(0, 0)
+
+		-- -- Placeholder video outline
+		-- playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+		-- playdate.graphics.setLineWidth(2)
+		-- playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		-- playdate.graphics.drawRoundRect(0, 0, 360, 160, 4)
+
+		-- playdate.graphics.popContext() -- aVideoContext
+		-- aVideoContext:draw(20, 0)
+
+		-- -- Placeholder elements
+		-- playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		-- playdate.graphics.fillRoundRect(390, 0, 360, 160, 4)
+		-- playdate.graphics.fillRoundRect(-350, 0, 360, 160, 4)
+
+		-- playdate.graphics.popContext() -- thumbsList
+		-- thumbsList:draw(0, 50)
 
 		-- Text title
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
@@ -117,10 +156,23 @@ function initMenuState()
 		-- Setup control handlers
 		playdate.inputHandlers.pop()
 		local myInputHandlers = {
-			AButtonDown = function()
+			AButtonUp = function()
 				gameState:set(kPlayState)
 				initPlayState()
-			end
+			end,
+			leftButtonUp = function()
+				gridview:selectPreviousColumn(true)
+			end,
+			rightButtonUp = function()
+				gridview:selectNextColumn(true)
+			end,
+			cranked = function(change, acceleratedChange)
+				if acceleratedChange > 50 then
+					gridview:selectNextColumn(true)
+				elseif acceleratedChange < -50 then
+					gridview:selectPreviousColumn(true)
+				end
+			end,
 		}
 		playdate.inputHandlers.push(myInputHandlers)
 
@@ -139,6 +191,15 @@ function playdate.update()
 
 	-- Menu state
 	if(gameState:get() == kMenuState) then
+		playdate.graphics.setClipRect(0, 50, 400, 160)
+		playdate.graphics.clear(playdate.graphics.kColorBlack)
+		gridview:drawInRect(0, 50, 400, 160)
+		playdate.graphics.clearClipRect()
+
+		-- Text title
+		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+		playdate.graphics.drawText("*PLAYORAMA*", 20, 20)
+		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
 	end
 
 	-- Play state
