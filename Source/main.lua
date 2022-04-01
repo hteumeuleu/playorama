@@ -110,7 +110,7 @@ function initMenuState()
 			if selected then
 				playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
 				playdate.graphics.setLineWidth(2)
-				playdate.graphics.setColor(playdate.graphics.kColorBlack)
+				playdate.graphics.setColor(playdate.graphics.kColorXOR)
 				playdate.graphics.drawRoundRect(x+2, y+2, width-4, height-4, 4)
 			end
 
