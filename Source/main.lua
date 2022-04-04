@@ -84,6 +84,25 @@ function initMenuState()
 		-- Black background
 		playdate.graphics.clear(playdate.graphics.kColorBlack)
 
+		-- Files
+		-- local files = playdate.file.listFiles()
+		-- for key, property in ipairs(files) do
+		-- 	if property ~= "pdxinfo" then
+		-- 		local filetype = playdate.file.getType(property) or "???"
+		-- 		local filesize = playdate.file.getSize(property) or -1
+		-- 		print('key:'..key)
+		-- 		print('property:'.. property)
+		-- 		print('type:'.. filetype)
+		-- 		print('size:'.. filesize)
+		-- 		local i = string.find(property .. '', '.pdv')
+		-- 		local k = string.sub(property .. '', 1, i)
+		-- 		print('prefix:'.. k)
+		-- 	end
+		-- end
+		-- playdate.file.getType(path)
+		-- playdate.file.isdir(path)
+		-- playdate.file.exists(path)
+
 		-- Grid view
 		gridview = playdate.ui.gridview.new(360, 160)
 		gridview:setNumberOfColumns(8)
@@ -179,11 +198,6 @@ function playdate.update()
 		playdate.graphics.clear(playdate.graphics.kColorBlack)
 		gridview:drawInRect(0, 50, 400, 160)
 		playdate.graphics.clearClipRect()
-
-		-- Text title
-		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-		playdate.graphics.drawText("*PLAYORAMA*", 20, 20)
-		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
 	end
 
 	-- Play state
