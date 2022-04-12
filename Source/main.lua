@@ -4,10 +4,12 @@ import "CoreLibs/crank"
 import "GameState"
 import "Videorama"
 import "Controls"
+import "Menu"
 
 local kMenuState <const> = "Menu"
 local kPlayState <const> = "Play"
 local kInfosState <const> = "Infos"
+local menu = Menu()
 
 local gameState = GameState({kMenuState, kPlayState, kInfosState})
 -- gameState:set(kPlayState)
@@ -81,101 +83,13 @@ end
 function initMenuState()
 	if(gameState:get() == kMenuState) then
 
-		-- Black background
-		playdate.graphics.clear(playdate.graphics.kColorBlack)
+		menu:reinit()
 
-		-- Files
-		-- local files = playdate.file.listFiles()
-		-- for key, property in ipairs(files) do
-		-- 	if property ~= "pdxinfo" then
-		-- 		local filetype = playdate.file.getType(property) or "???"
-		-- 		local filesize = playdate.file.getSize(property) or -1
-		-- 		print('key:'..key)
-		-- 		print('property:'.. property)
-		-- 		print('type:'.. filetype)
-		-- 		print('size:'.. filesize)
-		-- 		local i = string.find(property .. '', '.pdv')
-		-- 		local k = string.sub(property .. '', 1, i)
-		-- 		print('prefix:'.. k)
-		-- 	end
-		-- end
-		-- playdate.file.getType(path)
-		-- playdate.file.isdir(path)
-		-- playdate.file.exists(path)
-
-		-- Grid view
-		gridview = playdate.ui.gridview.new(360, 160)
-		gridview:setNumberOfColumns(8)
-		gridview:setNumberOfRows(1)
-		gridview:setCellPadding(5, 5, 0, 0)
-
-		function gridview:drawCell(section, row, column, selected, x, y, width, height)
-
-			-- Draw background
-			playdate.graphics.setColor(playdate.graphics.kColorWhite)
-			playdate.graphics.fillRoundRect(x, y, width, height, 4)
-
-			-- First item video (temporary placeholder)
-			if row == 1 and column == 1 then
-				local aVideoContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
-				playdate.graphics.pushContext(aVideoContext)
-				local firstVideo = Videorama()
-				local firstThumb = firstVideo:getThumbnail()
-				firstThumb:draw(0, 0)
-				playdate.graphics.popContext()
-				aVideoContext:draw(x, y)
-			end
-
-
-			-- Draw outline if selected
-			if selected then
-				local outerBorderColor = playdate.graphics.kColorWhite
-				local innerBorderColor = playdate.graphics.kColorBlack
-				-- Outer border
-				playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-				playdate.graphics.setLineWidth(2)
-				playdate.graphics.setColor(outerBorderColor)
-				playdate.graphics.drawRoundRect(x, y, width, height, 4)
-				-- Inner border
-				playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-				playdate.graphics.setLineWidth(3)
-				playdate.graphics.setColor(innerBorderColor)
-				playdate.graphics.drawRoundRect(x+2, y+2, width-4, height-4, 4)
-			end
-
-			-- Draw text inside
-			local kControlsFont <const> = playdate.graphics.getFont()
-			local textY = math.floor((height - kControlsFont:getHeight()) / 2)
-			local cellText = "*PLAYORAMA "..row.."-"..column.."*"
-			playdate.graphics.drawTextInRect(cellText, x, y + textY, width, height, nil, nil, kTextAlignment.center)
-		end
-
-		-- Text title
-		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-		playdate.graphics.drawText("*PLAYORAMA*", 20, 20)
-		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
-
-		-- Setup control handlers
-		playdate.inputHandlers.pop()
 		local myInputHandlers = {
 			AButtonUp = function()
 				gameState:set(kPlayState)
 				initPlayState()
-			end,
-			leftButtonUp = function()
-				gridview:selectPreviousColumn(true)
-			end,
-			rightButtonUp = function()
-				gridview:selectNextColumn(true)
-			end,
-			cranked = function(change, acceleratedChange)
-				local ticks = playdate.getCrankTicks(2)
-				if ticks == 1 then
-					gridview:selectNextColumn(true)
-				elseif ticks == -1 then
-					gridview:selectPreviousColumn(true)
-				end
-			end,
+			end
 		}
 		playdate.inputHandlers.push(myInputHandlers)
 
@@ -194,10 +108,7 @@ function playdate.update()
 
 	-- Menu state
 	if(gameState:get() == kMenuState) then
-		playdate.graphics.setClipRect(0, 50, 400, 160)
-		playdate.graphics.clear(playdate.graphics.kColorBlack)
-		gridview:drawInRect(0, 50, 400, 160)
-		playdate.graphics.clearClipRect()
+		menu:update()
 	end
 
 	-- Play state
