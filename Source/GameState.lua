@@ -8,7 +8,7 @@ function GameState:init(states)
 
 	GameState.super.init(self)
 
-	self.states = statess
+	self.states = states
 	self:set(states[1])
 
 	return self
