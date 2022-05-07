@@ -2,20 +2,21 @@ import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/timer"
 
-local kControlsWidth <const> = 380
 local kControlsHeight <const> = 40
+local kControlsMargin <const> = 0
 local kControlsPadding <const> = 10
-local kControlsBorderWidth <const> = 2
+local kControlsWidth <const> = 400 - (kControlsMargin * 2)
+local kControlsBorderWidth <const> = 0
 local kControlsBorderRadius <const> = 4
-local kControlsTop <const> = 240 - kControlsHeight - kControlsPadding
+local kControlsTop <const> = 240 - kControlsHeight - kControlsMargin
 
 class('Controls').extends()
 
 function Controls:init()
 
 	Controls.super.init(self)
-	self.currentTime = 5368
-	self.timerotalTime = 5368
+	self.currentTime = 0
+	self.totalTime = 0
 	self.isVisible = false
 	self.y = 240
 
@@ -37,68 +38,61 @@ end
 --
 function Controls:draw()
 
-	-- if self.y > kControlsTop then
-	-- 	self.y = self.y - 4
-	-- end
-
-	local controlsImage = playdate.graphics.image.new(kControlsWidth, kControlsHeight)
+	local kExtraHeightForBounce <const> = 20
+	local controlsImage = playdate.graphics.image.new(kControlsWidth, kControlsHeight + kExtraHeightForBounce)
 	playdate.graphics.pushContext(controlsImage)
 
 	-- Controls bar black background
 	playdate.graphics.setColor(playdate.graphics.kColorBlack)
-	playdate.graphics.fillRoundRect(0, 0, kControlsWidth, kControlsHeight, kControlsBorderRadius)
-
-	-- Controls bar white outline
-	playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-	playdate.graphics.setLineWidth(kControlsBorderWidth)
-	playdate.graphics.setColor(playdate.graphics.kColorWhite)
-	playdate.graphics.drawRoundRect(0, 0, kControlsWidth, kControlsHeight, kControlsBorderRadius)
+	playdate.graphics.fillRoundRect(0, 0, kControlsWidth, kControlsHeight + kExtraHeightForBounce, kControlsBorderRadius)
 
 	-- Current time text
 	local kControlsFont <const> = playdate.graphics.getFont()
 	local kTextForMeasurement <const> = "*00:00*"
 	local kControlsTextY <const> = math.floor((kControlsHeight - kControlsFont:getHeight()) / 2) + kControlsBorderWidth
-	local currentTime = ("*" .. getTimeAsAString(self.currentTime) .. "*")
+	local currentTimeString = ("*" .. getTimeAsAString(self.currentTime) .. "*")
 	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-	playdate.graphics.drawText(currentTime, kControlsPadding, kControlsTextY)
+	playdate.graphics.drawText(currentTimeString, kControlsPadding, kControlsTextY)
 
 	-- Total time text
-	local totalTime = ("*" .. getTimeAsAString(self.timerotalTime) .. "*")
+	local totalTimeString = ("*" .. getTimeAsAString(self.totalTime) .. "*")
 	local totalTimeX = kControlsWidth - kControlsPadding
 	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-	playdate.graphics.drawTextAligned(totalTime, totalTimeX, kControlsTextY, kTextAlignment.right)
+	playdate.graphics.drawTextAligned(totalTimeString, totalTimeX, kControlsTextY, kTextAlignment.right)
 
 	-- Resets DrawMode (used for texts only)
 	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
 
 	-- Scrobble bar
-	local scrobbleBarLeft = kControlsFont:getTextWidth(kTextForMeasurement) + kControlsPadding
-	local kScrobbleBarWidth <const> = kControlsWidth - kControlsFont:getTextWidth(kTextForMeasurement) - kControlsPadding - scrobbleBarLeft
+	local scrobbleBarLeft = kControlsFont:getTextWidth(kTextForMeasurement)
+	local kScrobbleBarWidth <const> = kControlsWidth - (scrobbleBarLeft * 2)
 	local kScrobbleBarHeight <const> = 20
+	local kBarHeight <const> = 4
 	local barImage = playdate.graphics.image.new(kScrobbleBarWidth, kScrobbleBarHeight)
 	local scrobbleBarTop = (kControlsHeight - kScrobbleBarHeight) / 2 - kControlsBorderWidth
 	playdate.graphics.pushContext(barImage)
-	playdate.graphics.fillRoundRect(0, scrobbleBarTop, kScrobbleBarWidth, 4, kControlsBorderRadius)
+		playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		playdate.graphics.fillRoundRect(0, ((kScrobbleBarHeight - kBarHeight) / 2), kScrobbleBarWidth, kBarHeight, kControlsBorderRadius)
 
-	-- Scrobble dot
-	local dotImage = playdate.graphics.image.new(20, 20)
-	playdate.graphics.pushContext(dotImage)
-	playdate.graphics.setColor(playdate.graphics.kColorBlack)
-	playdate.graphics.fillCircleInRect(0, 0, 20, 20)
-	playdate.graphics.setColor(playdate.graphics.kColorWhite)
-	playdate.graphics.setLineWidth(2)
-	playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-	playdate.graphics.drawCircleInRect(0, 0, 20, 20)
-	playdate.graphics.popContext() -- dotImage
-	local dotX = self:getScrobbleX(kScrobbleBarWidth)
-	dotImage:draw(dotX, 0)
+		-- Scrobble dot
+		local dotImage = playdate.graphics.image.new(20, 20)
+		playdate.graphics.pushContext(dotImage)
+		playdate.graphics.setColor(playdate.graphics.kColorBlack)
+		playdate.graphics.fillCircleInRect(0, 0, 20, 20)
+		playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		playdate.graphics.setLineWidth(2)
+		playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+		playdate.graphics.drawCircleInRect(0, 0, 20, 20)
+		playdate.graphics.popContext() -- dotImage
+		local dotX = self:getScrobbleX(kScrobbleBarWidth)
+		dotImage:draw(dotX, 0)
 
 	playdate.graphics.popContext() -- barImage
-	barImage:draw(scrobbleBarLeft, kControlsPadding)
+	barImage:draw(scrobbleBarLeft, scrobbleBarTop)
 
 	-- Draw controls
 	playdate.graphics.popContext() -- controlsImage
-	controlsImage:draw(kControlsPadding, self.y)
+	controlsImage:draw(kControlsMargin, self.y)
 
 end
 
@@ -160,7 +154,7 @@ function Controls:getScrobbleX(barWidth)
 
 	local xMin = 0
 	local xMax = barWidth - 20
-	local x = math.floor((self.currentTime * xMax) / self.timerotalTime)
+	local x = math.floor((self.currentTime * xMax) / self.totalTime)
 	if x > xMax then
 		x = xMax
 	end
@@ -175,7 +169,7 @@ end
 --
 function Controls:setTotalTime(time)
 
-	self.timerotalTime = time
+	self.totalTime = time
 
 end
 
@@ -198,8 +192,8 @@ function getTimeAsAString(time)
 	if minutes > 99 then
 		minutes = 99
 	end
-	if seconds > 99 then
-		seconds = 99
+	if seconds > 59 then
+		seconds = 59
 	end
 	if minutes < 10 then
 		minutes = '0' .. minutes

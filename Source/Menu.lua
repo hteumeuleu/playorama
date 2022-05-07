@@ -5,7 +5,7 @@ class('Menu').extends()
 function Menu:init()
 
 	Menu.super.init(self)
-	self.items = self:getFiles() or {"foo.bar", "baz.xyz"}
+	self.items = self:getFiles()
 	self.gridview = nil
 	return self
 
@@ -15,10 +15,12 @@ end
 --
 function Menu:update()
 
-	playdate.graphics.setClipRect(0, 50, 400, 160)
-	playdate.graphics.clear(playdate.graphics.kColorBlack)
-	self.gridview:drawInRect(0, 50, 400, 160)
-	playdate.graphics.clearClipRect()
+	if self.gridview.needsDisplay == true then
+		playdate.graphics.setClipRect(0, 50, 400, 160)
+		playdate.graphics.clear(playdate.graphics.kColorBlack)
+		self.gridview:drawInRect(0, 50, 400, 160)
+		playdate.graphics.clearClipRect()
+	end
 
 end
 
@@ -33,11 +35,8 @@ function Menu:reinit()
 	self.gridview:setCellPadding(5, 5, 0, 0)
 
 	local that = self
-	printTable(that.items)
 
 	function self.gridview:drawCell(section, row, column, selected, x, y, width, height)
-
-		print("Column:" .. column)
 
 		-- Draw background
 		playdate.graphics.setColor(playdate.graphics.kColorWhite)
@@ -45,13 +44,23 @@ function Menu:reinit()
 
 		-- Draw video thumbnail
 		if that.items[column] ~= nil then
-			-- local thumbnailContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
-			-- playdate.graphics.pushContext(thumbnailContext)
-			-- local videorama = Videorama(that.items[column].video, that.items[column].audio)
-			-- local thumbnail = videorama:getThumbnail()
-			-- thumbnail:draw(0, 0)
-			-- playdate.graphics.popContext()
-			-- thumbnailContext:draw(x, y)
+			-- Thumbnail context
+			local thumbnailContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
+			playdate.graphics.pushContext(thumbnailContext)
+				local thumbnail = that.items[column].thumbnail
+				thumbnail:draw(0, 0)
+			playdate.graphics.popContext()
+
+			-- Thumbnail mask
+			local maskImage = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
+			playdate.graphics.pushContext(maskImage)
+				playdate.graphics.setColor(playdate.graphics.kColorWhite)
+				playdate.graphics.fillRoundRect(0, 0, width, height, 4)
+			playdate.graphics.popContext()
+			thumbnailContext:setMaskImage(maskImage)
+
+			-- Draw
+			thumbnailContext:draw(x, y)
 		end
 
 		-- Draw outline if selected
@@ -87,7 +96,7 @@ function Menu:reinit()
 			self.gridview:selectNextColumn(true)
 		end,
 		cranked = function(change, acceleratedChange)
-			local ticks = playdate.getCrankTicks(2)
+			local ticks = playdate.getCrankTicks(4)
 			if ticks == 1 then
 				self.gridview:selectNextColumn(true)
 			elseif ticks == -1 then
@@ -95,7 +104,7 @@ function Menu:reinit()
 			end
 		end,
 	}
-	playdate.inputHandlers.push(myInputHandlers)
+	playdate.inputHandlers.push(myInputHandlers, true)
 
 	self:draw()
 
@@ -131,9 +140,10 @@ function Menu:getFiles()
 		if i ~= nil and i > 1 then
 			local duo = {}
 			duo.video = property
+			duo.thumbnail = getThumbnail(property)
 			-- Isolate the file base name
 			local baseName = string.sub(property .. '', 1, i - 1)
-			-- Try with a '.wav' extension
+			-- Try with different audio extensions
 			local audioExtensions = {'.wav', '.mp3'}
 			for _, ext in ipairs(audioExtensions) do
 				local audioFileName = baseName .. ext
@@ -146,5 +156,19 @@ function Menu:getFiles()
 		end
 	end
 	return videoFiles
+
+end
+
+-- getThumbnail()
+--
+function getThumbnail(videoPath)
+
+	local thumbnail = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+	local video = playdate.graphics.video.new(videoPath)
+	assert(video)
+	video:setContext(thumbnail)
+	local frame = math.floor(video:getFrameCount() / 4)
+	video:renderFrame(frame)
+	return thumbnail
 
 end
