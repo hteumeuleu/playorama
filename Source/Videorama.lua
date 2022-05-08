@@ -20,14 +20,38 @@ function Videorama:init(videoPath, audioPath)
 	end
 
 	self.video = playdate.graphics.video.new(videoPath)
+	assert(self.video, "Cannot open video.")
 	self.audio = playdate.sound.sampleplayer.new(audioPath)
+	assert(self.audio, "Cannot open audio.")
 	self.lastFrame = 0
 	self.playbackRate = 1
-	self.isPlaying = false
 
-	self.video:useScreenContext()
+	-- Context
+	self.context = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+	self.video:setContext(self.context)
+
+	-- Add mask
+	local mask = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+	playdate.graphics.pushContext(mask)
+		playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		playdate.graphics.fillRoundRect(0, 0, 400, 240, 16)
+	playdate.graphics.popContext()
+	self.context:setMaskImage(mask)
 
 	return self
+
+end
+
+-- draw()
+--
+function Videorama:draw()
+
+	if self:isFFing() then
+		local contextWithVCRFilter = self.context:vcrPauseFilterImage()
+		contextWithVCRFilter:draw(0,0)
+	else
+		self.context:draw(0,0)
+	end
 
 end
 
@@ -40,7 +64,6 @@ function Videorama:update()
 
 	if self.audio:isPlaying() ~= true then
 		self.audio:play(self.lastFrame)
-		self.isPlaying = true
 	end
 
 	self.audio:setRate(self.playbackRate)
@@ -60,6 +83,8 @@ function Videorama:update()
 		self.video:renderFrame(frame)
 		self.lastFrame = frame
 	end
+
+	self:draw()
 end
 
 -- setContext(image)
@@ -89,15 +114,16 @@ function Videorama:setRate(rate)
 		self.playbackRate = kMinPlaybackRate
 	end
 
-	-- Update isPlaying status
-	if self.playbackRate == 0 then
-		self.isPlaying = false
-	else
-		self.isPlaying = true
-	end
-
 	-- Update actual audio player rate
 	self.audio:setRate(self.playbackRate)
+
+end
+
+-- isPlaying()
+--
+function Videorama:isPlaying()
+
+	return self.playbackRate == 0
 
 end
 
@@ -122,7 +148,7 @@ end
 --
 function Videorama:togglePause()
 
-	self:setPaused(self.isPlaying)
+	self:setPaused(not self:isPlaying())
 
 end
 
@@ -171,5 +197,17 @@ end
 function Videorama:getCurrentTime()
 
 	return self.audio:getOffset()
+
+end
+
+-- isFFing()
+--
+-- Returns true if the video is fast forwarding (or "backwarding").
+function Videorama:isFFing()
+
+	if self.playbackRate > 1.2 or self.playbackRate < 0.8  then
+		return true
+	end
+	return false
 
 end

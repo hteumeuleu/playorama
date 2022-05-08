@@ -11,15 +11,26 @@ local menu = nil
 local player = nil
 
 local gameState = GameState({kMenuState, kPlayState})
--- gameState:set(kPlayState)
+gameState:set(kMenuState)
 
 function initPlayState()
 	-- Play state
 	if(gameState:get() == kPlayState) then
 
+		if player == nil then
+			player = Player()
+		end
+		local selection = menu:getSelection()
+		local v = Videorama(selection.video, selection.audio)
+		player:setVideo(v)
+		print(selection.video, selection.audio)
+		player.videorama:setPaused(false)
+		player:setInputHandlers()
+
 		local myInputHandlers = {
 			BButtonUp = function()
 				gameState:set(kMenuState)
+				player.videorama:setPaused(true)
 				initMenuState()
 			end
 		}
@@ -35,7 +46,7 @@ function initMenuState()
 		if menu == nil then
 			menu = Menu()
 		end
-		menu:reinit()
+		menu:reset()
 
 		local myInputHandlers = {
 			AButtonUp = function()
@@ -60,17 +71,11 @@ function playdate.update()
 
 	-- Menu state
 	if(gameState:get() == kMenuState) then
-		if menu == nil then
-			menu = Menu()
-		end
 		menu:update()
 	end
 
 	-- Play state
 	if(gameState:get() == kPlayState) then
-		if player == nil then
-			player = Player()
-		end
 		player:update()
 	end
 end

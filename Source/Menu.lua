@@ -24,9 +24,9 @@ function Menu:update()
 
 end
 
--- reinit()
+-- reset()
 --
-function Menu:reinit()
+function Menu:reset()
 
 	-- Grid view
 	self.gridview = playdate.ui.gridview.new(360, 160)
@@ -88,6 +88,7 @@ function Menu:reinit()
 
 	-- Setup control handlers
 	playdate.inputHandlers.pop()
+	playdate.inputHandlers.pop()
 	local myInputHandlers = {
 		leftButtonUp = function()
 			self.gridview:selectPreviousColumn(true)
@@ -104,7 +105,7 @@ function Menu:reinit()
 			end
 		end,
 	}
-	playdate.inputHandlers.push(myInputHandlers, true)
+	playdate.inputHandlers.push(myInputHandlers)
 
 	self:draw()
 
@@ -170,5 +171,14 @@ function getThumbnail(videoPath)
 	local frame = math.floor(video:getFrameCount() / 4)
 	video:renderFrame(frame)
 	return thumbnail
+
+end
+
+-- getSelection()
+--
+function Menu:getSelection()
+
+	local section, row, column = self.gridview:getSelection()
+	return self.items[column]
 
 end
