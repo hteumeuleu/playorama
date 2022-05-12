@@ -9,6 +9,7 @@ local kMenuState <const> = "Menu"
 local kPlayState <const> = "Play"
 local menu = nil
 local player = nil
+local current = 1
 
 local gameState = GameState({kMenuState, kPlayState})
 gameState:set(kMenuState)
@@ -21,6 +22,7 @@ function initPlayState()
 			player = Player()
 		end
 		local selection = menu:getSelection()
+		current = menu:getSelectionIndex()
 		local v = Videorama(selection.video, selection.audio)
 		player:setVideo(v)
 		print(selection.video, selection.audio)
@@ -47,6 +49,7 @@ function initMenuState()
 			menu = Menu()
 		end
 		menu:reset()
+		menu:setSelection(current)
 
 		local myInputHandlers = {
 			AButtonUp = function()

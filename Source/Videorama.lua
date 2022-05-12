@@ -19,24 +19,29 @@ function Videorama:init(videoPath, audioPath)
 		audioPath = 'assets/sample.wav'
 	end
 
-	self.video = playdate.graphics.video.new(videoPath)
-	assert(self.video, "Cannot open video.")
-	self.audio = playdate.sound.sampleplayer.new(audioPath)
-	assert(self.audio, "Cannot open audio.")
-	self.lastFrame = 0
-	self.playbackRate = 1
+	self.video, videoerr = playdate.graphics.video.new(videoPath)
+	assert(self.video, "Cannot open video at `".. videoPath .. "`.")
+	self.audio, audioerr = playdate.sound.sampleplayer.new(audioPath)
+	assert(self.audio, "Cannot open audio at `".. audioPath .. "`.")
 
-	-- Context
-	self.context = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-	self.video:setContext(self.context)
+	-- if videoerr ~= nil and audioerr ~= nil then
 
-	-- Add mask
-	local mask = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-	playdate.graphics.pushContext(mask)
-		playdate.graphics.setColor(playdate.graphics.kColorWhite)
-		playdate.graphics.fillRoundRect(0, 0, 400, 240, 16)
-	playdate.graphics.popContext()
-	self.context:setMaskImage(mask)
+		self.lastFrame = 0
+		self.playbackRate = 1
+
+		-- Context
+		self.context = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+		self.video:setContext(self.context)
+
+		-- Add mask
+		local mask = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+		playdate.graphics.pushContext(mask)
+			playdate.graphics.setColor(playdate.graphics.kColorWhite)
+			playdate.graphics.fillRoundRect(0, 0, 400, 240, 16)
+		playdate.graphics.popContext()
+		self.context:setMaskImage(mask)
+
+	-- end
 
 	return self
 

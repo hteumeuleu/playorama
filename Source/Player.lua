@@ -8,7 +8,6 @@ function Player:init()
 	Player.super.init(self)
 	self.videorama = Videorama()
 	self.controls = Controls()
-	self.controls:show() -- for debug
 	self:setTotalTime()
 
 	-- Input

@@ -30,7 +30,7 @@ function Menu:reset()
 
 	-- Grid view
 	self.gridview = playdate.ui.gridview.new(360, 160)
-	self.gridview:setNumberOfColumns(table.getsize(self.items))
+	self.gridview:setNumberOfColumns(#self.items)
 	self.gridview:setNumberOfRows(1)
 	self.gridview:setCellPadding(5, 5, 0, 0)
 
@@ -145,7 +145,7 @@ function Menu:getFiles()
 			-- Isolate the file base name
 			local baseName = string.sub(property .. '', 1, i - 1)
 			-- Try with different audio extensions
-			local audioExtensions = {'.wav', '.mp3'}
+			local audioExtensions = {'.pda', '.wav', '.mp3'}
 			for _, ext in ipairs(audioExtensions) do
 				local audioFileName = baseName .. ext
 				if playdate.file.exists(audioFileName) then
@@ -153,7 +153,9 @@ function Menu:getFiles()
 					break
 				end
 			end
-			table.insert(videoFiles, duo)
+			if duo ~= nil then
+				table.insert(videoFiles, duo)
+			end
 		end
 	end
 	return videoFiles
@@ -180,5 +182,23 @@ function Menu:getSelection()
 
 	local section, row, column = self.gridview:getSelection()
 	return self.items[column]
+
+end
+
+-- getSelectionIndex()
+--
+function Menu:getSelectionIndex()
+
+	local section, row, column = self.gridview:getSelection()
+	return column
+
+end
+
+-- setSelection(index)
+--
+function Menu:setSelection(index)
+
+	self.gridview:setSelection(1, 1, index)
+	self.gridview:scrollCellToCenter(1, 1, index, false)
 
 end
