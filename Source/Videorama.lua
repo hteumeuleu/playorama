@@ -11,37 +11,48 @@ function Videorama:init(videoPath, audioPath)
 
 	Videorama.super.init(self)
 
-	if videoPath == nil then
-		videoPath = 'assets/sample.pdv'
+	-- Return nil if there's no audio or video
+	if videoPath == nil or audioPath == nil then
+		local error = "Missing video or audio path."
+		return nil, error
 	end
 
-	if audioPath == nil then
-		audioPath = 'assets/sample.wav'
-	end
-
+	-- Open video and audio
 	self.video, videoerr = playdate.graphics.video.new(videoPath)
-	assert(self.video, "Cannot open video at `".. videoPath .. "`.")
 	self.audio, audioerr = playdate.sound.sampleplayer.new(audioPath)
-	assert(self.audio, "Cannot open audio at `".. audioPath .. "`.")
 
-	-- if videoerr ~= nil and audioerr ~= nil then
+	-- Return nil if there's a problem when opening the video
+	if videoerr ~= nil then
+		local error = "Cannot open video at `".. videoPath .. "`."
+		return nil, error
+	end
 
-		self.lastFrame = 0
-		self.playbackRate = 1
+	-- Return nil if there's a problem when opening the audio
+	if audioerr ~= nil then
+		local error = "Cannot open audio at `".. audioPath .. "`."
+		return nil, error
+	end
 
-		-- Context
-		self.context = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-		self.video:setContext(self.context)
+	-- No nil up til here? Alright, let's do this!
+	printTable(self.video, self.audio)
 
-		-- Add mask
-		local mask = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-		playdate.graphics.pushContext(mask)
-			playdate.graphics.setColor(playdate.graphics.kColorWhite)
-			playdate.graphics.fillRoundRect(0, 0, 400, 240, 16)
-		playdate.graphics.popContext()
-		self.context:setMaskImage(mask)
+	-- Variables to keep track of the last frame played and the current playback rate
+	self.lastFrame = 0
+	self.playbackRate = 1
 
-	-- end
+	-- Creates the graphical context to render the video
+	-- I use a custom context instead of `useScreenContext` to apply a mask later on.
+	self.context = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+	self.video:setContext(self.context)
+
+	-- See, there it is. (The mask.)
+	-- Basically a round rectangle for a little retro style.
+	local mask = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+	playdate.graphics.pushContext(mask)
+		playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		playdate.graphics.fillRoundRect(0, 0, 400, 240, 16)
+	playdate.graphics.popContext()
+	self.context:setMaskImage(mask)
 
 	return self
 
@@ -67,29 +78,32 @@ function Videorama:update()
 
     playdate.timer.updateTimers() -- Required to use timers and crankIndicator
 
-	if self.audio:isPlaying() ~= true then
-		self.audio:play(self.lastFrame)
+    if self.audio ~= nil then
+		if self.audio:isPlaying() ~= true then
+			self.audio:play(self.lastFrame)
+		end
+
+		self.audio:setRate(self.playbackRate)
+
+		-- Picks frame to show
+		local frame = math.floor(self.audio:getOffset() * self.video:getFrameRate())
+
+		if frame < 0 then
+			frame = self.video:getFrameCount()
+		end
+
+		if frame > self.video:getFrameCount() then
+			frame = 0
+		end
+
+		if frame ~= self.lastFrame then
+			self.video:renderFrame(frame)
+			self.lastFrame = frame
+		end
+
+		self:draw()
+
 	end
-
-	self.audio:setRate(self.playbackRate)
-
-	-- Picks frame to show
-	local frame = math.floor(self.audio:getOffset() * self.video:getFrameRate())
-
-	if frame < 0 then
-		frame = self.video:getFrameCount()
-	end
-
-	if frame > self.video:getFrameCount() then
-		frame = 0
-	end
-
-	if frame ~= self.lastFrame then
-		self.video:renderFrame(frame)
-		self.lastFrame = frame
-	end
-
-	self:draw()
 end
 
 -- setContext(image)
@@ -106,6 +120,10 @@ end
 -- Sets the playback rate for the video.
 -- 1.0 is normal speed, 0.5 is half speed, 0 is paused.
 function Videorama:setRate(rate)
+
+	if self.playbackRate == nil or rate == nil then
+		return false
+	end
 
 	self.playbackRate = rate
 
@@ -193,6 +211,9 @@ end
 --
 function Videorama:getTotalTime()
 
+	if self.audio == nil then
+		return 0
+	end
 	return self.audio:getLength()
 
 end
@@ -201,6 +222,9 @@ end
 --
 function Videorama:getCurrentTime()
 
+	if self.audio == nil then
+		return 0
+	end
 	return self.audio:getOffset()
 
 end

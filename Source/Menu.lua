@@ -48,7 +48,9 @@ function Menu:reset()
 			local thumbnailContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
 			playdate.graphics.pushContext(thumbnailContext)
 				local thumbnail = that.items[column].thumbnail
-				thumbnail:draw(0, 0)
+				if thumbnail ~= nil then
+					thumbnail:draw(0, 0)
+				end
 			playdate.graphics.popContext()
 
 			-- Thumbnail mask
@@ -139,9 +141,7 @@ function Menu:getFiles()
 		local i = string.find(property .. '', '.pdv')
 		-- If this is a video, check if there’s a sound file
 		if i ~= nil and i > 1 then
-			local duo = {}
-			duo.video = property
-			duo.thumbnail = getThumbnail(property)
+			local duo = nil
 			-- Isolate the file base name
 			local baseName = string.sub(property .. '', 1, i - 1)
 			-- Try with different audio extensions
@@ -149,15 +149,26 @@ function Menu:getFiles()
 			for _, ext in ipairs(audioExtensions) do
 				local audioFileName = baseName .. ext
 				if playdate.file.exists(audioFileName) then
+					duo = {}
+					duo.video = property
+					duo.thumbnail = getThumbnail(property)
 					duo.audio = audioFileName
+					if duo ~= nil then
+						table.insert(videoFiles, duo)
+					end
 					break
 				end
 			end
-			if duo ~= nil then
-				table.insert(videoFiles, duo)
-			end
 		end
 	end
+
+	-- Add default sample video
+	duo = {}
+	duo.video = "assets/sample.pdv"
+	duo.thumbnail = getThumbnail("assets/sample.pdv")
+	duo.audio = "assets/sample.pda"
+	table.insert(videoFiles, duo)
+
 	return videoFiles
 
 end
@@ -167,8 +178,10 @@ end
 function getThumbnail(videoPath)
 
 	local thumbnail = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-	local video = playdate.graphics.video.new(videoPath)
-	assert(video)
+	local video, videoerr = playdate.graphics.video.new(videoPath)
+	if videoerr ~= nil then
+		return nil
+	end
 	video:setContext(thumbnail)
 	local frame = math.floor(video:getFrameCount() / 4)
 	video:renderFrame(frame)

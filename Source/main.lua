@@ -22,21 +22,26 @@ function initPlayState()
 			player = Player()
 		end
 		local selection = menu:getSelection()
-		current = menu:getSelectionIndex()
 		local v = Videorama(selection.video, selection.audio)
-		player:setVideo(v)
-		print(selection.video, selection.audio)
-		player.videorama:setPaused(false)
-		player:setInputHandlers()
 
-		local myInputHandlers = {
-			BButtonUp = function()
-				gameState:set(kMenuState)
-				player.videorama:setPaused(true)
-				initMenuState()
-			end
-		}
-		playdate.inputHandlers.push(myInputHandlers)
+		if v ~= nil then
+			-- I keep track of the current video played
+			-- to scroll back to it when going back to the menu
+			current = menu:getSelectionIndex()
+			player:setVideo(v)
+			print(selection.video, selection.audio)
+			player.videorama:setPaused(false)
+			player:setInputHandlers()
+
+			local myInputHandlers = {
+				BButtonUp = function()
+					gameState:set(kMenuState)
+					player.videorama:setPaused(true)
+					initMenuState()
+				end
+			}
+			playdate.inputHandlers.push(myInputHandlers)
+		end
 
 	end
 end

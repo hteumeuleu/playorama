@@ -6,9 +6,9 @@ class('Player').extends()
 function Player:init()
 
 	Player.super.init(self)
-	self.videorama = Videorama()
+	self.videorama = nil
 	self.controls = Controls()
-	self:setTotalTime()
+	-- self:setTotalTime()
 
 	-- Input
 	self:setInputHandlers()
@@ -48,15 +48,20 @@ end
 
 function Player:update()
 
-	self.videorama:update()
-	self:setCurrentTime()
-	self.controls:update()
+	printTable(self.videorama)
+
+	if self.videorama ~= nil then
+		self.videorama:update()
+		self:setCurrentTime()
+		self.controls:update()
+	end
 
 end
 
 function Player:setVideo(videorama)
 
 	self.videorama = videorama
+	self:setTotalTime()
 
 end
 

@@ -42,53 +42,53 @@ function Controls:draw()
 	local controlsImage = playdate.graphics.image.new(kControlsWidth, kControlsHeight + kExtraHeightForBounce)
 	playdate.graphics.pushContext(controlsImage)
 
-	-- Controls bar black background
-	playdate.graphics.setColor(playdate.graphics.kColorBlack)
-	playdate.graphics.fillRoundRect(0, 0, kControlsWidth, kControlsHeight + kExtraHeightForBounce, kControlsBorderRadius)
-
-	-- Current time text
-	local kControlsFont <const> = playdate.graphics.getFont()
-	local kTextForMeasurement <const> = "*00:00*"
-	local kControlsTextY <const> = math.floor((kControlsHeight - kControlsFont:getHeight()) / 2) + kControlsBorderWidth
-	local currentTimeString = ("*" .. getTimeAsAString(self.currentTime) .. "*")
-	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-	playdate.graphics.drawText(currentTimeString, kControlsPadding, kControlsTextY)
-
-	-- Total time text
-	local totalTimeString = ("*" .. getTimeAsAString(self.totalTime) .. "*")
-	local totalTimeX = kControlsWidth - kControlsPadding
-	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-	playdate.graphics.drawTextAligned(totalTimeString, totalTimeX, kControlsTextY, kTextAlignment.right)
-
-	-- Resets DrawMode (used for texts only)
-	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
-
-	-- Scrobble bar
-	local scrobbleBarLeft = kControlsFont:getTextWidth(kTextForMeasurement)
-	local kScrobbleBarWidth <const> = kControlsWidth - (scrobbleBarLeft * 2)
-	local kScrobbleBarHeight <const> = 20
-	local kBarHeight <const> = 4
-	local barImage = playdate.graphics.image.new(kScrobbleBarWidth, kScrobbleBarHeight)
-	local scrobbleBarTop = (kControlsHeight - kScrobbleBarHeight) / 2 - kControlsBorderWidth
-	playdate.graphics.pushContext(barImage)
-		playdate.graphics.setColor(playdate.graphics.kColorWhite)
-		playdate.graphics.fillRoundRect(0, ((kScrobbleBarHeight - kBarHeight) / 2), kScrobbleBarWidth, kBarHeight, kControlsBorderRadius)
-
-		-- Scrobble dot
-		local dotImage = playdate.graphics.image.new(20, 20)
-		playdate.graphics.pushContext(dotImage)
+		-- Controls bar black background
 		playdate.graphics.setColor(playdate.graphics.kColorBlack)
-		playdate.graphics.fillCircleInRect(0, 0, 20, 20)
-		playdate.graphics.setColor(playdate.graphics.kColorWhite)
-		playdate.graphics.setLineWidth(2)
-		playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-		playdate.graphics.drawCircleInRect(0, 0, 20, 20)
-		playdate.graphics.popContext() -- dotImage
-		local dotX = self:getScrobbleX(kScrobbleBarWidth)
-		dotImage:draw(dotX, 0)
+		playdate.graphics.fillRoundRect(0, 0, kControlsWidth, kControlsHeight + kExtraHeightForBounce, kControlsBorderRadius)
 
-	playdate.graphics.popContext() -- barImage
-	barImage:draw(scrobbleBarLeft, scrobbleBarTop)
+		-- Current time text
+		local kControlsFont <const> = playdate.graphics.getFont()
+		local kTextForMeasurement <const> = "*00:00*"
+		local kControlsTextY <const> = math.floor((kControlsHeight - kControlsFont:getHeight()) / 2) + kControlsBorderWidth
+		local currentTimeString = ("*" .. getTimeAsAString(self.currentTime) .. "*")
+		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+		playdate.graphics.drawText(currentTimeString, kControlsPadding, kControlsTextY)
+
+		-- Total time text
+		local totalTimeString = ("*" .. getTimeAsAString(self.totalTime) .. "*")
+		local totalTimeX = kControlsWidth - kControlsPadding
+		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+		playdate.graphics.drawTextAligned(totalTimeString, totalTimeX, kControlsTextY, kTextAlignment.right)
+
+		-- Resets DrawMode (used for texts only)
+		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
+
+		-- Scrobble bar
+		local scrobbleBarLeft = kControlsFont:getTextWidth(kTextForMeasurement)
+		local kScrobbleBarWidth <const> = kControlsWidth - (scrobbleBarLeft * 2)
+		local kScrobbleBarHeight <const> = 20
+		local kBarHeight <const> = 4
+		local barImage = playdate.graphics.image.new(kScrobbleBarWidth, kScrobbleBarHeight)
+		local scrobbleBarTop = (kControlsHeight - kScrobbleBarHeight) / 2 - kControlsBorderWidth
+		playdate.graphics.pushContext(barImage)
+			playdate.graphics.setColor(playdate.graphics.kColorWhite)
+			playdate.graphics.fillRoundRect(0, ((kScrobbleBarHeight - kBarHeight) / 2), kScrobbleBarWidth, kBarHeight, kControlsBorderRadius)
+
+			-- Scrobble dot
+			local dotImage = playdate.graphics.image.new(20, 20)
+			playdate.graphics.pushContext(dotImage)
+				playdate.graphics.setColor(playdate.graphics.kColorBlack)
+				playdate.graphics.fillCircleInRect(0, 0, 20, 20)
+				playdate.graphics.setColor(playdate.graphics.kColorWhite)
+				playdate.graphics.setLineWidth(2)
+				playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+				playdate.graphics.drawCircleInRect(0, 0, 20, 20)
+			playdate.graphics.popContext() -- dotImage
+			local dotX = self:getScrobbleX(kScrobbleBarWidth)
+			dotImage:draw(dotX, 0)
+
+		playdate.graphics.popContext() -- barImage
+		barImage:draw(scrobbleBarLeft, scrobbleBarTop)
 
 	-- Draw controls
 	playdate.graphics.popContext() -- controlsImage
