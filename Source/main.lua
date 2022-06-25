@@ -24,7 +24,7 @@ function initPlayState()
 		local selection = menu:getSelection()
 		local v = Videorama(selection.video, selection.audio)
 
-		if v ~= nil then
+		if v ~= nil and v.error == nil then
 			-- I keep track of the current video played
 			-- to scroll back to it when going back to the menu
 			current = menu:getSelectionIndex()
@@ -40,6 +40,9 @@ function initPlayState()
 				end
 			}
 			playdate.inputHandlers.push(myInputHandlers)
+		else
+			gameState:set(kMenuState)
+			initMenuState()
 		end
 
 	end

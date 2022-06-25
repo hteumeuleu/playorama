@@ -23,14 +23,16 @@ function Videorama:init(videoPath, audioPath)
 
 	-- Return nil if there's a problem when opening the video
 	if videoerr ~= nil then
-		local error = "Cannot open video at `".. videoPath .. "`."
-		return nil, error
+		self.error = "Cannot open video at `".. videoPath .. "`: [" .. videoerr .. "]"
+		print(self.error)
+		return self
 	end
 
 	-- Return nil if there's a problem when opening the audio
 	if audioerr ~= nil then
-		local error = "Cannot open audio at `".. audioPath .. "`."
-		return nil, error
+		self.error = "Cannot open audio at `".. audioPath .. "`: [" .. audioerr .. "]"
+		print(self.error)
+		return self
 	end
 
 	-- No nil up til here? Alright, let's do this!
