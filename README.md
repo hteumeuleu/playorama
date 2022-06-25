@@ -1,6 +1,6 @@
 ![Playorama](/Source/SystemAssets/card.png)
 
-# A video player for the Playdate
+# A cranky video player for the Playdate
 
 Playorama is a _cranky_ video player for the Playdate. You can use the crank to fast forward and backward through a video.
 
