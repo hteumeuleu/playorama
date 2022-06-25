@@ -34,7 +34,6 @@ function Videorama:init(videoPath, audioPath)
 	end
 
 	-- No nil up til here? Alright, let's do this!
-	printTable(self.video, self.audio)
 
 	-- Variables to keep track of the last frame played and the current playback rate
 	self.lastFrame = 0

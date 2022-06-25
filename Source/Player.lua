@@ -48,8 +48,6 @@ end
 
 function Player:update()
 
-	printTable(self.videorama)
-
 	if self.videorama ~= nil then
 		self.videorama:update()
 		self:setCurrentTime()

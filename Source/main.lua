@@ -29,7 +29,6 @@ function initPlayState()
 			-- to scroll back to it when going back to the menu
 			current = menu:getSelectionIndex()
 			player:setVideo(v)
-			print(selection.video, selection.audio)
 			player.videorama:setPaused(false)
 			player:setInputHandlers()
 
