@@ -129,6 +129,18 @@ function Menu:draw()
 
 end
 
+-- drawError()
+--
+function Menu:drawError(message)
+
+	local cuberick = playdate.graphics.font.new("fonts/font-Cuberick-Bold")
+	playdate.graphics.setFont(cuberick)
+	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+	playdate.graphics.drawText(message, 20, 220)
+	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
+
+end
+
 
 -- getFiles()
 --
