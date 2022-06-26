@@ -1,7 +1,6 @@
-name=playorama
+name=Playorama
 author=HTeuMeuLeu
 description=A cranky video player for the Playdate.
 bundleID=com.hteumeuleu.playorama
-version=0.1
-buildNumber=000
+version=1.0.0-beta.2
 imagePath=SystemAssets
