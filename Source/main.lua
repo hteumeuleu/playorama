@@ -1,22 +1,18 @@
 import "CoreLibs/object"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
-import "GameState"
+import "State"
 import "Player"
 import "Menu"
 
-local kMenuState <const> = "Menu"
-local kPlayState <const> = "Play"
+local state = State()
 local menu = nil
 local player = nil
 local current = 1
 
-local gameState = GameState({kMenuState, kPlayState})
-gameState:set(kMenuState)
-
 function initPlayState()
 	-- Play state
-	if(gameState:get() == kPlayState) then
+	if(state:get() == state.kPlayState) then
 
 		local selection = menu:getSelection()
 		local v = Videorama(selection.video, selection.audio)
@@ -34,14 +30,14 @@ function initPlayState()
 
 			local myInputHandlers = {
 				BButtonUp = function()
-					gameState:set(kMenuState)
+					state:set(state.kMenuState)
 					player.videorama:setPaused(true)
 					initMenuState()
 				end
 			}
 			playdate.inputHandlers.push(myInputHandlers)
 		else
-			gameState:set(kMenuState)
+			state:set(state.kMenuState)
 			menu:drawError(v.error)
 		end
 
@@ -50,7 +46,7 @@ end
 
 -- Menu state
 function initMenuState()
-	if(gameState:get() == kMenuState) then
+	if(state:get() == state.kMenuState) then
 
 		if menu == nil then
 			menu = Menu()
@@ -60,7 +56,7 @@ function initMenuState()
 
 		local myInputHandlers = {
 			AButtonUp = function()
-				gameState:set(kPlayState)
+				state:set(state.kPlayState)
 				initPlayState()
 			end
 		}
@@ -80,12 +76,12 @@ function playdate.update()
 	playdate.timer.updateTimers() -- Required to use timers and crankIndicator
 
 	-- Menu state
-	if(gameState:get() == kMenuState) then
+	if(state:get() == state.kMenuState) then
 		menu:update()
 	end
 
 	-- Play state
-	if(gameState:get() == kPlayState) then
+	if(state:get() == state.kPlayState) then
 		player:update()
 	end
 end
