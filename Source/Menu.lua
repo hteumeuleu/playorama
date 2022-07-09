@@ -1,3 +1,5 @@
+import "Videorama"
+
 class('Menu').extends()
 
 -- init()
@@ -47,7 +49,7 @@ function Menu:reset()
 			-- Thumbnail context
 			local thumbnailContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
 			playdate.graphics.pushContext(thumbnailContext)
-				local thumbnail = that.items[column].thumbnail
+				local thumbnail = that.items[column].videorama:getThumbnail()
 				if thumbnail ~= nil then
 					thumbnail:draw(0, 0)
 				end
@@ -84,7 +86,7 @@ function Menu:reset()
 		-- Draw text inside
 		local kControlsFont <const> = playdate.graphics.getFont()
 		local textY = math.floor((height - kControlsFont:getHeight()) / 2)
-		local cellText = that.items[column].video..""
+		local cellText = that.items[column].videorama:getDisplayName()
 		playdate.graphics.drawTextInRect(cellText, x, y + textY, width, height, nil, nil, kTextAlignment.center)
 	end
 
@@ -143,30 +145,39 @@ end
 
 
 -- getFiles()
+-- Returns an array of Videorama objects.
 --
 function Menu:getFiles()
 
-	local files = playdate.file.listFiles()
-	local videoFiles = {}
-	for key, property in ipairs(files) do
-		-- Get the index of the '.pdv' extension
-		local i = string.find(property .. '', '.pdv')
-		-- If this is a video, check if there’s a sound file
+	-- List all available files on the Playdate.
+	local kFiles <const> = playdate.file.listFiles()
+	-- Init the array we’ll return.
+	local availableFiles = {}
+	-- Loop through all files.
+	for _, fileName in ipairs(kFiles) do
+		-- Check if the file name contains '.pdv'.
+		local i = string.find(fileName .. '', '.pdv')
+		-- If it does, then it's a catch. We've got a video!
+		-- Now we'll see if there's a sound file as well.
 		if i ~= nil and i > 1 then
-			local duo = nil
-			-- Isolate the file base name
-			local baseName = string.sub(property .. '', 1, i - 1)
-			-- Try with different audio extensions
-			local audioExtensions = {'.pda', '.wav', '.mp3'}
+			-- Isolate the video file base name.
+			local baseName = string.sub(fileName .. '', 1, i - 1)
+			-- Define different supported audio extensions.
+			-- Contrary to what the docs say, the Playdate can not
+			-- read a '.wav' file from the file system.
+			-- Trust me, I spent hours figuring this out.
+			local audioExtensions = {'.pda', '.mp3'}
+			-- Loop through supported audio extensions.
 			for _, ext in ipairs(audioExtensions) do
+				-- Define what the audio file name might be.
 				local audioFileName = baseName .. ext
+				-- If this file exists, then hurray! We've got audio!
 				if playdate.file.exists(audioFileName) then
-					duo = {}
-					duo.video = property
-					duo.thumbnail = getThumbnail(property)
-					duo.audio = audioFileName
-					if duo ~= nil then
-						table.insert(videoFiles, duo)
+					local item = {}
+					local videorama, verror = createVideorama(fileName, audioFileName)
+					if videorama ~= nil and verror == nil then
+						item.videorama = videorama
+						table.insert(availableFiles, item)
 					end
 					break
 				end
@@ -174,30 +185,19 @@ function Menu:getFiles()
 		end
 	end
 
-	-- Add default sample video
-	duo = {}
-	duo.video = "assets/sample.pdv"
-	duo.thumbnail = getThumbnail("assets/sample.pdv")
-	duo.audio = "assets/sample.pda"
-	table.insert(videoFiles, duo)
-
-	return videoFiles
-
-end
-
--- getThumbnail()
---
-function getThumbnail(videoPath)
-
-	local thumbnail = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-	local video, videoerr = playdate.graphics.video.new(videoPath)
-	if videoerr ~= nil then
-		return nil
+	-- If no videos were found, we add a secret sample video.
+	if #(availableFiles) == 0 then
+		local defaultVideo = "assets/sample.pdv"
+		local defaultAudio = "assets/sample.pda"
+		local defaultVideorama, verror = createVideorama(defaultVideo, defaultAudio)
+		local item = {}
+		if defaultVideorama ~= nil and verror == nil then
+			item.videorama = defaultVideorama
+			table.insert(availableFiles, item)
+		end
 	end
-	video:setContext(thumbnail)
-	local frame = math.floor(video:getFrameCount() / 4)
-	video:renderFrame(frame)
-	return thumbnail
+
+	return availableFiles
 
 end
 

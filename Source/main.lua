@@ -15,9 +15,10 @@ function initPlayState()
 	if(state:get() == state.kPlayState) then
 
 		local selection = menu:getSelection()
-		local v = Videorama(selection.video, selection.audio)
+		local v = selection.videorama
 
-		if v ~= nil and v.error == nil then
+		if true then
+		-- if v ~= nil and v.error == nil then
 			if player == nil then
 				player = Player()
 			end

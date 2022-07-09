@@ -7,9 +7,30 @@ local kPlaybackRateStep <const> = 0.1
 
 class('Videorama').extends()
 
+function createVideorama(videoPath, audioPath)
+    local v = Videorama(videoPath, audioPath)
+	if v ~= nil and v.error == nil then
+        return v
+    end
+    return nil, v.error
+end
+
+function Videorama:reinit()
+
+	self.video, videoerr = playdate.graphics.video.new(self.videoPath)
+	if videoerr ~= nil then
+		self.error = "Cannot open video at `".. videoPath .. "`: [" .. videoerr .. "]"
+		print(self.error)
+		return self
+	end
+end
+
 function Videorama:init(videoPath, audioPath)
 
 	Videorama.super.init(self)
+	self.videoPath = videoPath
+	self.audioPath = audioPath
+	self.name = string.sub(videoPath .. '', 1, string.find(videoPath .. '', '.pdv') - 1)
 
 	-- Return nil if there's no audio or video
 	if videoPath == nil or audioPath == nil then
@@ -112,7 +133,16 @@ end
 -- Sets the given image to the video render context.
 function Videorama:setContext(image)
 
-	self.video:setContext(image)
+	return self.video:setContext(image)
+
+end
+
+-- getContext()
+--
+-- Gets the video render context <image>.
+function Videorama:getContext()
+
+	return self.video:getContext()
 
 end
 
@@ -201,9 +231,11 @@ end
 function Videorama:getThumbnail()
 
 	local thumbnail = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-	self.video:setContext(thumbnail)
-	local frame = math.floor(self.video:getFrameCount() / 4)
+	local currentContext = self:getContext()
+	self:setContext(thumbnail)
+	local frame = math.floor(self.video:getFrameCount() / 2)
 	self.video:renderFrame(frame)
+	self:setContext(currentContext)
 	return thumbnail
 
 end
@@ -239,5 +271,14 @@ function Videorama:isFFing()
 		return true
 	end
 	return false
+
+end
+
+-- getDisplayName()
+--
+-- Returns a string representing the name of the video to display
+function Videorama:getDisplayName()
+
+	return self.name
 
 end
