@@ -15,16 +15,6 @@ function createVideorama(videoPath, audioPath)
     return nil, v.error
 end
 
-function Videorama:reinit()
-
-	self.video, videoerr = playdate.graphics.video.new(self.videoPath)
-	if videoerr ~= nil then
-		self.error = "Cannot open video at `".. videoPath .. "`: [" .. videoerr .. "]"
-		print(self.error)
-		return self
-	end
-end
-
 function Videorama:init(videoPath, audioPath)
 
 	Videorama.super.init(self)
