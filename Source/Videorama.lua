@@ -30,7 +30,7 @@ function Videorama:init(videoPath, audioPath)
 	Videorama.super.init(self)
 	self.videoPath = videoPath
 	self.audioPath = audioPath
-	self.name = string.sub(videoPath .. '', 1, string.find(videoPath .. '', '.pdv') - 1)
+	self.name = string.gsub(string.sub(videoPath .. '', 1, string.find(videoPath .. '', '.pdv') - 1), "_", "__")
 
 	-- Return nil if there's no audio
 	if videoPath == nil then
@@ -106,7 +106,7 @@ function Videorama:update()
     local frame = self.lastFrame
 
     -- If it has audio, we define the frame to show based on the
-    -- current audio offset and frame rate
+    -- current audio offset and frame rate.
     if self:hasAudio() then
 		if self.audio:isPlaying() ~= true then
 			self.audio:play(self.lastFrame)
