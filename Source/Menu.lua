@@ -160,6 +160,8 @@ function Menu:getFiles()
 		-- If it does, then it's a catch. We've got a video!
 		-- Now we'll see if there's a sound file as well.
 		if i ~= nil and i > 1 then
+			local item = {}
+			item.videoPath = fileName
 			-- Isolate the video file base name.
 			local baseName = string.sub(fileName .. '', 1, i - 1)
 			-- Define different supported audio extensions.
@@ -173,14 +175,16 @@ function Menu:getFiles()
 				local audioFileName = baseName .. ext
 				-- If this file exists, then hurray! We've got audio!
 				if playdate.file.exists(audioFileName) then
-					local item = {}
-					local videorama, verror = createVideorama(fileName, audioFileName)
-					if videorama ~= nil and verror == nil then
-						item.videorama = videorama
-						table.insert(availableFiles, item)
-					end
+					item.audioPath = audioFileName
 					break
 				end
+			end
+			-- Create a Videorama and add it to the available files array.
+			local videorama, verror = createVideorama(item.videoPath, item.audioPath)
+			printTable(item, verror)
+			if videorama ~= nil and verror == nil then
+				item.videorama = videorama
+				table.insert(availableFiles, item)
 			end
 		end
 	end

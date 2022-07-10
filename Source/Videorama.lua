@@ -32,15 +32,14 @@ function Videorama:init(videoPath, audioPath)
 	self.audioPath = audioPath
 	self.name = string.sub(videoPath .. '', 1, string.find(videoPath .. '', '.pdv') - 1)
 
-	-- Return nil if there's no audio or video
-	if videoPath == nil or audioPath == nil then
-		local error = "Missing video or audio path."
+	-- Return nil if there's no audio
+	if videoPath == nil then
+		local error = "Missing video path."
 		return nil, error
 	end
 
-	-- Open video and audio
+	-- Open video
 	self.video, videoerr = playdate.graphics.video.new(videoPath)
-	self.audio, audioerr = playdate.sound.sampleplayer.new(audioPath)
 
 	-- Return nil if there's a problem when opening the video
 	if videoerr ~= nil then
@@ -49,11 +48,16 @@ function Videorama:init(videoPath, audioPath)
 		return self
 	end
 
-	-- Return nil if there's a problem when opening the audio
-	if audioerr ~= nil then
-		self.error = "Cannot open audio at `".. audioPath .. "`: [" .. audioerr .. "]"
-		print(self.error)
-		return self
+	-- Open audio
+	if self.audioPath ~= nil then
+		self.audio, audioerr = playdate.sound.sampleplayer.new(audioPath)
+
+		-- Return nil if there's a problem when opening the audio
+		if audioerr ~= nil then
+			self.error = "Cannot open audio at `".. audioPath .. "`: [" .. audioerr .. "]"
+			print(self.error)
+			return self
+		end
 	end
 
 	-- No nil up til here? Alright, let's do this!
@@ -61,6 +65,7 @@ function Videorama:init(videoPath, audioPath)
 	-- Variables to keep track of the last frame played and the current playback rate
 	self.lastFrame = 0
 	self.playbackRate = 1
+	self.isPaused = true
 
 	-- Creates the graphical context to render the video
 	-- I use a custom context instead of `useScreenContext` to apply a mask later on.
@@ -84,48 +89,56 @@ end
 --
 function Videorama:draw()
 
-	if self:isFFing() then
-		local contextWithVCRFilter = self.context:vcrPauseFilterImage()
-		contextWithVCRFilter:draw(0,0)
-	else
+	-- if self:isFFing() then
+	-- 	local contextWithVCRFilter = self.context:vcrPauseFilterImage()
+	-- 	contextWithVCRFilter:draw(0,0)
+	-- else
 		self.context:draw(0,0)
-	end
+	-- end
 
 end
 
 -- update()
 --
--- Sets the frame to show based on current audio position.
+-- Update and renders the frame to show.
 function Videorama:update()
 
-    playdate.timer.updateTimers() -- Required to use timers and crankIndicator
+    local frame = self.lastFrame
 
-    if self.audio ~= nil then
+    -- If it has audio, we define the frame to show based on the
+    -- current audio offset and frame rate
+    if self:hasAudio() then
 		if self.audio:isPlaying() ~= true then
 			self.audio:play(self.lastFrame)
+			self.isPaused = false
 		end
 
 		self.audio:setRate(self.playbackRate)
 
-		-- Picks frame to show
-		local frame = math.floor(self.audio:getOffset() * self.video:getFrameRate())
-
-		if frame < 0 then
-			frame = self.video:getFrameCount()
+		frame = math.floor(self.audio:getOffset() * self.video:getFrameRate())
+	else
+	-- If there's no audio and if the video is not paused,
+	-- we increment the lastFrame.
+		if self:isPlaying() then
+			local increment = 1 * self.playbackRate
+			frame = math.floor(self.lastFrame + increment)
 		end
-
-		if frame > self.video:getFrameCount() then
-			frame = 0
-		end
-
-		if frame ~= self.lastFrame then
-			self.video:renderFrame(frame)
-			self.lastFrame = frame
-		end
-
-		self:draw()
-
 	end
+
+	if frame < 0 then
+		frame = self.video:getFrameCount()
+	end
+
+	if frame > self.video:getFrameCount() then
+		frame = 0
+	end
+
+	if frame ~= self.lastFrame then
+		self.video:renderFrame(frame)
+		self.lastFrame = frame
+	end
+
+	self:draw()
 end
 
 -- setContext(image)
@@ -169,7 +182,9 @@ function Videorama:setRate(rate)
 	end
 
 	-- Update actual audio player rate
-	self.audio:setRate(self.playbackRate)
+	if self:hasAudio() then
+		self.audio:setRate(self.playbackRate)
+	end
 
 end
 
@@ -177,7 +192,7 @@ end
 --
 function Videorama:isPlaying()
 
-	return self.playbackRate == 0
+	return not self.isPaused
 
 end
 
@@ -192,8 +207,10 @@ function Videorama:setPaused(flag)
 
 	if flag == true then
 		self:setRate(0)
+		self.isPaused = true
 	else
 		self:setRate(self.playbackRateBeforePause)
+		self.isPaused = false
 	end
 
 end
@@ -233,7 +250,7 @@ function Videorama:getThumbnail()
 	local thumbnail = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
 	local currentContext = self:getContext()
 	self:setContext(thumbnail)
-	local frame = math.floor(self.video:getFrameCount() / 2)
+	local frame = math.floor(self.video:getFrameCount() / 4)
 	self.video:renderFrame(frame)
 	self:setContext(currentContext)
 	return thumbnail
@@ -242,23 +259,27 @@ end
 
 -- getTotalTime()
 --
+-- Returns the total duration, in seconds.
 function Videorama:getTotalTime()
 
-	if self.audio == nil then
-		return 0
+	if self:hasAudio() then
+		return self.audio:getLength()
+	else
+		return (self.video:getFrameCount() / self.video:getFrameRate())
 	end
-	return self.audio:getLength()
 
 end
 
 -- getCurrentTime()
 --
+-- Returns the current play time, in seconds.
 function Videorama:getCurrentTime()
 
-	if self.audio == nil then
-		return 0
+	if self:hasAudio() then
+		return self.audio:getOffset()
+	else
+		return (self.lastFrame / self.video:getFrameRate())
 	end
-	return self.audio:getOffset()
 
 end
 
@@ -280,5 +301,14 @@ end
 function Videorama:getDisplayName()
 
 	return self.name
+
+end
+
+-- hasAudio()
+--
+-- Returns a boolean whether the current Videorama has audio.
+function Videorama:hasAudio()
+
+    return self.audio ~= nil
 
 end
