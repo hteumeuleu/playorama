@@ -12,6 +12,11 @@ function Menu:init()
 
 	Menu.super.init(self)
 	self.items = self:getFiles()
+	self.x = 0
+	self.gridWidth = 400
+	self.gridHeight = 160
+	self.cellWidth = 360
+	self.cellHeight = self.gridHeight
 	return self
 
 end
@@ -21,9 +26,9 @@ end
 function Menu:update()
 
 	if self.gridview.needsDisplay == true then
-		playdate.graphics.setClipRect(0, 50, 400, 160)
+		playdate.graphics.setClipRect(0, 50, self.gridWidth, self.gridHeight)
 		playdate.graphics.clear(playdate.graphics.kColorBlack)
-		self.gridview:drawInRect(0, 50, 400, 160)
+		self.gridview:drawInRect(0, 50, self.gridWidth, self.gridHeight)
 		playdate.graphics.clearClipRect()
 	end
 
@@ -34,7 +39,7 @@ end
 function Menu:reset()
 
 	-- Grid view
-	self.gridview = playdate.ui.gridview.new(360, 160)
+	self.gridview = playdate.ui.gridview.new(self.cellWidth, self.cellHeight)
 	self.gridview:setNumberOfColumns(#self.items)
 	self.gridview:setNumberOfRows(1)
 	self.gridview:setCellPadding(5, 5, 0, 0)
@@ -71,21 +76,21 @@ function Menu:reset()
 			thumbnailContext:draw(x, y)
 		end
 
-		-- Draw outline if selected
+		-- Outer border
+		playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+		playdate.graphics.setLineWidth(2)
 		if selected then
-			local outerBorderColor = playdate.graphics.kColorWhite
-			local innerBorderColor = playdate.graphics.kColorBlack
-			-- Outer border
-			playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-			playdate.graphics.setLineWidth(2)
-			playdate.graphics.setColor(outerBorderColor)
-			playdate.graphics.drawRoundRect(x, y, width, height, 4)
-			-- Inner border
-			playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-			playdate.graphics.setLineWidth(3)
-			playdate.graphics.setColor(innerBorderColor)
-			playdate.graphics.drawRoundRect(x+2, y+2, width-4, height-4, 4)
+			playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		else
+			local p = { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 }
+			playdate.graphics.setPattern(p)
 		end
+		playdate.graphics.drawRoundRect(x, y, width, height, 4)
+		-- Inner border
+		playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+		playdate.graphics.setLineWidth(3)
+		playdate.graphics.setColor(playdate.graphics.kColorBlack)
+		playdate.graphics.drawRoundRect(x+2, y+2, width-4, height-4, 4)
 
 		-- Draw text inside
 		local currentFont = playdate.graphics.getFont()
@@ -111,11 +116,37 @@ function Menu:reset()
 			self.gridview:selectNextColumn(true)
 		end,
 		cranked = function(change, acceleratedChange)
-			local ticks = playdate.getCrankTicks(4)
-			if ticks == 1 then
-				self.gridview:selectNextColumn(true)
-			elseif ticks == -1 then
-				self.gridview:selectPreviousColumn(true)
+			local cols = self.gridview:getNumberOfColumns()
+			local maxScroll = (self.cellWidth * (cols - 1)) + (self.gridWidth - self.cellWidth)
+			local newX = math.floor(self.x + change)
+			if (newX <= maxScroll) and (newX >= 0) and (self.gridX == 0) then
+				self.x = newX
+				self.gridview:setScrollPosition(self.x, 0, false)
+				-- Sets the currently most visible item as the selection
+				local _, _, column = self.gridview:getSelection()
+				local index = math.floor((self.x / (self.cellWidth / 2)) / 2 + 0.5) + 1
+				if(column ~= index) then
+					self.gridview:setSelection(1, 1, index)
+				end
+				-- Sets a timer to detect the end of cranking
+				local function autoScrollAfterCrank(index)
+					self.gridview:setSelection(1, 1, index)
+					-- Because of the lack of callback after grid view animations,
+					-- we save the current x position of the grid view…
+					local oldX = self.x
+					-- Then we move it to its desired value, without animation.
+					self.gridview:scrollCellToCenter(1, 1, index, false)
+					-- We save the x value as the new self.x.
+					self.x = self.gridview:getScrollPosition()
+					-- Then we position the grid back to its previous position…
+					self.gridview:setScrollPosition(oldX, 0, false)
+					-- And animate it to its new one.
+					self.gridview:scrollCellToCenter(1, 1, index, true)
+				end
+				if(self.crankTimer ~= nil) then
+					self.crankTimer:remove()
+				end
+				self.crankTimer = playdate.timer.performAfterDelay(300, autoScrollAfterCrank, index)
 			end
 		end,
 	}
@@ -192,7 +223,6 @@ function Menu:getFiles()
 			end
 			-- Create a Videorama and add it to the available files array.
 			local videorama, verror = createVideorama(item.videoPath, item.audioPath)
-			printTable(item, verror)
 			if videorama ~= nil and verror == nil then
 				item.videorama = videorama
 				table.insert(availableFiles, item)
