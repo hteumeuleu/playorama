@@ -53,8 +53,9 @@ function Menu:reset()
 			local thumbnailContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
 			playdate.graphics.pushContext(thumbnailContext)
 				local thumbnail = that.items[column].videorama:getThumbnail()
+				local w, h = thumbnail:getSize()
 				if thumbnail ~= nil then
-					thumbnail:draw(0, 0)
+					thumbnail:draw((width - w) / 2 + 10, (height - h) / 2 - 10)
 				end
 			playdate.graphics.popContext()
 
