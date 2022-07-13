@@ -1,5 +1,9 @@
 import "Videorama"
 
+-- Fonts
+local kFontCuberickBold <const> = playdate.graphics.font.new("fonts/font-Cuberick-Bold")
+local kFontRoobertBold <const> = playdate.graphics.font.new("fonts/Roobert-11-Bold")
+
 class('Menu').extends()
 
 -- init()
@@ -8,7 +12,6 @@ function Menu:init()
 
 	Menu.super.init(self)
 	self.items = self:getFiles()
-	self.gridview = nil
 	return self
 
 end
@@ -84,10 +87,16 @@ function Menu:reset()
 		end
 
 		-- Draw text inside
-		local kControlsFont <const> = playdate.graphics.getFont()
-		local textY = math.floor((height - kControlsFont:getHeight()) / 2)
+		local currentFont = playdate.graphics.getFont()
+		playdate.graphics.setFont(kFontCuberickBold)
+		local textY = math.floor(height - kFontCuberickBold:getHeight() - 9)
 		local cellText = that.items[column].videorama:getDisplayName()
-		playdate.graphics.drawTextInRect(cellText, x, y + textY, width, height, nil, nil, kTextAlignment.center)
+		playdate.graphics.setColor(playdate.graphics.kColorBlack)
+		playdate.graphics.fillRoundRect(x+9, y + textY - 1, kFontCuberickBold:getTextWidth(cellText) + 5, kFontCuberickBold:getHeight() + 2, 3)
+		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+		playdate.graphics.drawText(cellText, x+12, y + textY)
+		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
+		playdate.graphics.setFont(currentFont)
 	end
 
 	-- Setup control handlers
@@ -123,11 +132,12 @@ function Menu:draw()
 	playdate.graphics.clear(playdate.graphics.kColorBlack)
 
 	-- Text title
-	local roobert = playdate.graphics.font.new("fonts/Roobert-11-Bold")
-	playdate.graphics.setFont(roobert)
+	local currentFont = playdate.graphics.getFont()
+	playdate.graphics.setFont(kFontRoobertBold)
 	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
 	playdate.graphics.drawText("playorama", 20, 16)
 	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
+	playdate.graphics.setFont(currentFont)
 
 end
 

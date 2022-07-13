@@ -292,7 +292,7 @@ end
 -- Returns a string representing the name of the video to display
 function Videorama:getDisplayName()
 
-	return self.name
+	return string.upper(self.name)
 
 end
 
