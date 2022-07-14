@@ -242,8 +242,7 @@ function Videorama:getThumbnail()
 	local thumbnail = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
 	local currentContext = self:getContext()
 	self:setContext(thumbnail)
-	-- local frame = math.floor(self.video:getFrameCount() / 4)
-	local frame = 1
+	local frame = math.floor(self.video:getFrameCount() / 4)
 	self.video:renderFrame(frame)
 	self:setContext(currentContext)
 	return thumbnail
