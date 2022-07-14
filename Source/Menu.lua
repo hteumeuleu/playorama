@@ -119,7 +119,7 @@ function Menu:reset()
 			local cols = self.gridview:getNumberOfColumns()
 			local maxScroll = (self.cellWidth * (cols - 1)) + (self.gridWidth - self.cellWidth)
 			local newX = math.floor(self.x + change)
-			if (newX <= maxScroll) and (newX >= 0) and (self.gridX == 0) then
+			if (newX <= maxScroll) and (newX >= 0) then
 				self.x = newX
 				self.gridview:setScrollPosition(self.x, 0, false)
 				-- Sets the currently most visible item as the selection
