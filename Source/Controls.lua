@@ -2,13 +2,14 @@ import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/timer"
 
-local kControlsHeight <const> = 40
 local kControlsMargin <const> = 0
 local kControlsPadding <const> = 10
 local kControlsWidth <const> = 400 - (kControlsMargin * 2)
+local kControlsHeight <const> = 40
 local kControlsBorderWidth <const> = 0
 local kControlsBorderRadius <const> = 4
 local kControlsTop <const> = 240 - kControlsHeight - kControlsMargin
+local kExtraHeightForBounce <const> = 20
 
 class('Controls').extends()
 
@@ -19,6 +20,7 @@ function Controls:init()
 	self.totalTime = 0
 	self.isVisible = false
 	self.y = 240
+	self.x = 0
 
 	return self
 
@@ -34,28 +36,48 @@ function Controls:update()
 
 end
 
+-- getContext()
+--
+function Controls:getImage()
+
+	if self.img ~= nil then
+		return self.img
+	else
+		self.img = playdate.graphics.image.new(kControlsWidth, kControlsHeight + kExtraHeightForBounce)
+		return self.img
+	end
+
+end
+
+-- drawBackgroundImage()
+--
+-- Draws the black background image.
+function Controls:drawBackgroundImage()
+
+	playdate.graphics.setColor(playdate.graphics.kColorBlack)
+	playdate.graphics.fillRect(0, 0, kControlsWidth, kControlsHeight + kExtraHeightForBounce)
+
+end
+
 -- draw()
 --
 function Controls:draw()
 
-	local kExtraHeightForBounce <const> = 20
-	local controlsImage = playdate.graphics.image.new(kControlsWidth, kControlsHeight + kExtraHeightForBounce)
+	local controlsImage = self:getImage()
 	playdate.graphics.pushContext(controlsImage)
-
-		-- Controls bar black background
-		playdate.graphics.setColor(playdate.graphics.kColorBlack)
-		playdate.graphics.fillRoundRect(0, 0, kControlsWidth, kControlsHeight + kExtraHeightForBounce, kControlsBorderRadius)
+		self:drawBackgroundImage()
 
 		-- Current time text
-		local kControlsFont <const> = playdate.graphics.getFont()
+		playdate.graphics.setFont(kFontCuberickBold)
+		local kControlsFont <const> = kFontCuberickBold
 		local kTextForMeasurement <const> = "*00:00*"
 		local kControlsTextY <const> = math.floor((kControlsHeight - kControlsFont:getHeight()) / 2) + kControlsBorderWidth
-		local currentTimeString = ("*" .. getTimeAsAString(self.currentTime) .. "*")
+		local currentTimeString = (getTimeAsAString(self.currentTime))
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
 		playdate.graphics.drawText(currentTimeString, kControlsPadding, kControlsTextY)
 
 		-- Total time text
-		local totalTimeString = ("*" .. getTimeAsAString(self.totalTime) .. "*")
+		local totalTimeString = (getTimeAsAString(self.totalTime))
 		local totalTimeX = kControlsWidth - kControlsPadding
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
 		playdate.graphics.drawTextAligned(totalTimeString, totalTimeX, kControlsTextY, kTextAlignment.right)
@@ -90,7 +112,7 @@ function Controls:draw()
 		playdate.graphics.popContext() -- barImage
 		barImage:draw(scrobbleBarLeft, scrobbleBarTop)
 
-	-- Draw controls
+	-- Pop context and draw
 	playdate.graphics.popContext() -- controlsImage
 	controlsImage:draw(kControlsMargin, self.y)
 
