@@ -26,6 +26,7 @@ function Menu:update()
 		playdate.graphics.clear(playdate.graphics.kColorBlack)
 		self.gridview:drawInRect(0, 50, self.gridWidth, self.gridHeight)
 		playdate.graphics.clearClipRect()
+		self.x = self.gridview:getScrollPosition()
 	end
 
 end
