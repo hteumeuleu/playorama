@@ -15,32 +15,25 @@ function initPlayState()
 	if(state:get() == state.kPlayState) then
 
 		local selection = menu:getSelection()
-		local v = selection.videorama
 
-		if true then
-		-- if v ~= nil and v.error == nil then
-			if player == nil then
-				player = Player()
-			end
-			-- I keep track of the current video played
-			-- to scroll back to it when going back to the menu
-			current = menu:getSelectionIndex()
-			player:setVideo(v)
-			player.videorama:setPaused(false)
-			player:setInputHandlers()
-
-			local myInputHandlers = {
-				BButtonUp = function()
-					state:set(state.kMenuState)
-					player.videorama:setPaused(true)
-					initMenuState()
-				end
-			}
-			playdate.inputHandlers.push(myInputHandlers)
-		else
-			state:set(state.kMenuState)
-			menu:drawError(v.error)
+		if player == nil then
+			player = Player()
 		end
+		-- I keep track of the current video played
+		-- to scroll back to it when going back to the menu
+		current = menu:getSelectionIndex()
+		player:setVideo(selection)
+		player.videorama:setPaused(false)
+		player:setInputHandlers()
+
+		local myInputHandlers = {
+			BButtonUp = function()
+				state:set(state.kMenuState)
+				player.videorama:setPaused(true)
+				initMenuState()
+			end
+		}
+		playdate.inputHandlers.push(myInputHandlers)
 
 	end
 end

@@ -57,7 +57,7 @@ function Menu:reset()
 			-- Thumbnail context
 			local thumbnailContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
 			playdate.graphics.pushContext(thumbnailContext)
-				local thumbnail = that.items[column].videorama:getThumbnail()
+				local thumbnail = that.items[column]:getThumbnail()
 				local w, h = thumbnail:getSize()
 				if thumbnail ~= nil then
 					thumbnail:draw((width - w) / 2 + 10, (height - h) / 2 - 10)
@@ -96,7 +96,7 @@ function Menu:reset()
 		local currentFont = playdate.graphics.getFont()
 		playdate.graphics.setFont(kFontCuberickBold)
 		local textY = math.floor(height - kFontCuberickBold:getHeight() - 9)
-		local cellText = that.items[column].videorama:getDisplayName()
+		local cellText = that.items[column]:getDisplayName()
 		playdate.graphics.setColor(playdate.graphics.kColorBlack)
 		playdate.graphics.fillRoundRect(x+9, y + textY - 1, kFontCuberickBold:getTextWidth(cellText) + 5, kFontCuberickBold:getHeight() + 2, 3)
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
@@ -224,8 +224,7 @@ function Menu:getFiles()
 			-- Create a Videorama and add it to the available files array.
 			local videorama, verror = createVideorama(item.videoPath, item.audioPath)
 			if videorama ~= nil and verror == nil then
-				item.videorama = videorama
-				table.insert(availableFiles, item)
+				table.insert(availableFiles, videorama)
 			end
 		end
 	end
@@ -235,10 +234,8 @@ function Menu:getFiles()
 		local defaultVideo = "assets/sample.pdv"
 		local defaultAudio = "assets/sample.pda"
 		local defaultVideorama, verror = createVideorama(defaultVideo, defaultAudio)
-		local item = {}
 		if defaultVideorama ~= nil and verror == nil then
-			item.videorama = defaultVideorama
-			table.insert(availableFiles, item)
+			table.insert(availableFiles, defaultVideorama)
 		end
 	end
 
