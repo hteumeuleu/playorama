@@ -1,9 +1,5 @@
 import "Videorama"
 
--- Fonts
-local kFontCuberickBold <const> = playdate.graphics.font.new("fonts/font-Cuberick-Bold")
-local kFontRoobertBold <const> = playdate.graphics.font.new("fonts/Roobert-11-Bold")
-
 class('Menu').extends()
 
 -- init()
