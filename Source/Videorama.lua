@@ -296,6 +296,14 @@ function Videorama:getDisplayName()
 
 end
 
+-- getDisplayRate()
+--
+function Videorama:getDisplayRate()
+
+	return math.floor(self.playbackRate) .. "x"
+
+end
+
 -- hasAudio()
 --
 -- Returns a boolean whether the current Videorama has audio.

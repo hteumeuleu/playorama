@@ -40,6 +40,7 @@ function Player:setInputHandlers()
 			elseif acceleratedChange < -1 then
 				self.videorama:decreaseRate()
 			end
+			self.controls:setRate(self.videorama:getDisplayRate())
 		end,
 	}
 	playdate.inputHandlers.push(playerInputHandlers)

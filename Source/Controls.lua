@@ -21,6 +21,7 @@ function Controls:init()
 	self.isVisible = false
 	self.y = 240
 	self.x = 0
+	self.rate = "1x"
 
 	return self
 
@@ -76,9 +77,15 @@ function Controls:draw()
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
 		playdate.graphics.drawText(currentTimeString, kControlsPadding, kControlsTextY)
 
+		-- Playback rate
+		local rateX = kControlsWidth - kControlsPadding
+		local kRateForMeasurement <const> = "*4x*"
+		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+		playdate.graphics.drawTextAligned(self.rate, rateX, kControlsTextY, kTextAlignment.right)
+
 		-- Total time text
 		local totalTimeString = (getTimeAsAString(self.totalTime))
-		local totalTimeX = kControlsWidth - kControlsPadding
+		local totalTimeX = kControlsWidth - (kControlsPadding * 2) - kControlsFont:getTextWidth(kRateForMeasurement)
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
 		playdate.graphics.drawTextAligned(totalTimeString, totalTimeX, kControlsTextY, kTextAlignment.right)
 
@@ -87,7 +94,7 @@ function Controls:draw()
 
 		-- Scrobble bar
 		local scrobbleBarLeft = kControlsFont:getTextWidth(kTextForMeasurement)
-		local kScrobbleBarWidth <const> = kControlsWidth - (scrobbleBarLeft * 2)
+		local kScrobbleBarWidth <const> = kControlsWidth - (scrobbleBarLeft * 2) - (kControlsPadding * 2) - kControlsFont:getTextWidth(kRateForMeasurement)
 		local kScrobbleBarHeight <const> = 20
 		local kBarHeight <const> = 4
 		local barImage = playdate.graphics.image.new(kScrobbleBarWidth, kScrobbleBarHeight)
@@ -200,6 +207,14 @@ end
 function Controls:setCurrentTime(time)
 
 	self.currentTime = time
+
+end
+
+-- setRate()
+--
+function Controls:setRate(rate)
+
+	self.rate = rate
 
 end
 
