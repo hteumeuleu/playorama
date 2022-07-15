@@ -45,10 +45,6 @@ function Menu:reset()
 
 	function self.gridview:drawCell(section, row, column, selected, x, y, width, height)
 
-		-- Draw background
-		playdate.graphics.setColor(playdate.graphics.kColorWhite)
-		playdate.graphics.fillRoundRect(x, y, width, height, 4)
-
 		-- Draw video thumbnail
 		if that.items[column] ~= nil then
 			-- Thumbnail context
