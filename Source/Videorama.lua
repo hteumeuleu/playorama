@@ -40,7 +40,11 @@ function Videorama:init(videoPath, audioPath)
 
 	-- Open audio
 	if self.audioPath ~= nil then
-		self.audio, audioerr = playdate.sound.sampleplayer.new(audioPath)
+		if self:isFilePlayer() then
+			self.audio, audioerr = playdate.sound.fileplayer.new(audioPath)
+		else
+			self.audio, audioerr = playdate.sound.sampleplayer.new(audioPath)
+		end
 
 		-- Return nil if there's a problem when opening the audio
 		if audioerr ~= nil then
@@ -55,6 +59,7 @@ function Videorama:init(videoPath, audioPath)
 	-- Variables to keep track of the last frame played and the current playback rate
 	self.lastFrame = 0
 	self.playbackRate = 1
+	self.playbackRateBeforePause = self.playbackRate
 	self.isPaused = true
 
 	-- Creates the graphical context to render the video
@@ -98,9 +103,16 @@ function Videorama:update()
     -- If it has audio, we define the frame to show based on the
     -- current audio offset and frame rate.
     if self:hasAudio() then
-		if self.audio:isPlaying() ~= true then
-			self.audio:play(self.lastFrame)
-			self.isPaused = false
+		if not self.audio:isPlaying() then
+			local _, err = self.audio:play()
+			if err ~= nil then
+				self.error = err
+				self.audioPath = nil
+				self.audio = nil
+				return self.error
+			else
+				self.isPaused = false
+			end
 		end
 
 		self.audio:setRate(self.playbackRate)
@@ -170,6 +182,10 @@ function Videorama:setRate(rate)
 	-- Watch for lower limit
 	if self.playbackRate < kMinPlaybackRate then
 		self.playbackRate = kMinPlaybackRate
+	end
+
+	if self:isFilePlayer() and self.playbackRate < 0 then
+		self.playbackRate = 0
 	end
 
 	-- Update actual audio player rate
@@ -310,5 +326,43 @@ end
 function Videorama:hasAudio()
 
     return self.audio ~= nil
+
+end
+
+-- isAudioM4A()
+--
+-- Returns a boolean whether the audio stream is in `.m4a` extension.
+function Videorama:isAudioM4A()
+
+	if self.audioPath ~= nil then
+		local i = string.find(string.lower(self.audioPath), '.m4a')
+		if i ~= nil and i > 1 then
+			return true
+		end
+	end
+	return false
+
+end
+
+-- isAudioMP3()
+--
+-- Returns a boolean whether the audio stream is in `.mp3` extension.
+function Videorama:isAudioMP3()
+
+	if self.audioPath ~= nil then
+		local i = string.find(string.lower(self.audioPath), '.mp3')
+		if i ~= nil and i > 1 then
+			return true
+		end
+	end
+	return false
+
+end
+
+-- isFilePlayer()
+--
+function Videorama:isFilePlayer()
+
+	return self:isAudioMP3() or self:isAudioM4A()
 
 end
