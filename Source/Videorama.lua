@@ -24,8 +24,8 @@ function Videorama:init(videoPath, audioPath)
 
 	-- Return nil if there's no audio
 	if videoPath == nil then
-		local error = "Missing video path."
-		return nil, error
+		self.error = "Missing video path."
+		return nil, self.error
 	end
 
 	-- Open video
