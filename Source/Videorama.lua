@@ -38,22 +38,6 @@ function Videorama:init(videoPath, audioPath)
 		return self
 	end
 
-	-- Open audio
-	if self.audioPath ~= nil then
-		if self:isFilePlayer() then
-			self.audio, audioerr = playdate.sound.fileplayer.new(audioPath)
-		else
-			self.audio, audioerr = playdate.sound.sampleplayer.new(audioPath)
-		end
-
-		-- Return nil if there's a problem when opening the audio
-		if audioerr ~= nil then
-			self.error = "Cannot open audio at `".. audioPath .. "`: [" .. audioerr .. "]"
-			print(self.error)
-			return self
-		end
-	end
-
 	-- No nil up til here? Alright, let's do this!
 
 	-- Variables to keep track of the last frame played and the current playback rate
@@ -77,9 +61,54 @@ function Videorama:init(videoPath, audioPath)
 	playdate.graphics.popContext()
 	self.context:setMaskImage(mask)
 
+	self:unload()
+
 	return self
 
 end
+
+function Videorama:load()
+
+	-- Open video
+	self.video, videoerr = playdate.graphics.video.new(self.videoPath)
+	self.video:setContext(self.context)
+
+	-- Return nil if there's a problem when opening the video
+	if videoerr ~= nil then
+		self.error = "Cannot open video at `".. self.videoPath .. "`: [" .. videoerr .. "]"
+		print(self.error)
+		return false, self.error
+	end
+
+	-- Open audio
+	if self.audioPath ~= nil then
+		if self:isFilePlayer() then
+			self.audio, audioerr = playdate.sound.fileplayer.new(self.audioPath)
+		else
+			self.audio, audioerr = playdate.sound.sampleplayer.new(self.audioPath)
+		end
+
+		-- Return nil if there's a problem when opening the audio
+		if audioerr ~= nil then
+			self.error = "Cannot open audio at `".. self.audioPath .. "`: [" .. audioerr .. "]"
+			print(self.error)
+			return false, self.error
+		end
+	end
+	return true, self
+
+end
+
+function Videorama:unload()
+
+	if self.audio ~= nil then
+		self.audio:stop()
+	end
+	self.audio = nil
+	self.video = nil
+
+end
+
 
 -- draw()
 --
@@ -105,7 +134,7 @@ function Videorama:update()
     -- current audio offset and frame rate.
     if self:hasAudio() then
 		if not self.audio:isPlaying() then
-			local _, err = self.audio:play()
+			local _, err = self.audio:play(0)
 			if err ~= nil then
 				self.error = err
 				self.audioPath = nil
@@ -257,11 +286,11 @@ end
 function Videorama:getThumbnail()
 
 	local thumbnail = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-	local currentContext = self:getContext()
-	self:setContext(thumbnail)
-	local frame = math.floor(self.video:getFrameCount() / 4)
-	self.video:renderFrame(frame)
-	self:setContext(currentContext)
+	local video = playdate.graphics.video.new(self.videoPath)
+	video:setContext(thumbnail)
+	local frame = math.floor(video:getFrameCount() / 4)
+	video:renderFrame(frame)
+	video = nil
 	return thumbnail
 
 end

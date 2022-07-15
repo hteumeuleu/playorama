@@ -57,10 +57,20 @@ function Player:update()
 
 end
 
-function Player:setVideo(videorama)
+function Player:loadAndPlay(videorama)
 
 	self.videorama = videorama
+	self.videorama:load()
 	self:setTotalTime()
+	self.videorama:setPaused(false)
+
+end
+
+function Player:unload()
+
+	self.videorama:setPaused(true)
+	self.videorama:unload()
+	self.videorama = nil
 
 end
 

@@ -26,14 +26,13 @@ function initPlayState()
 		-- I keep track of the current video played
 		-- to scroll back to it when going back to the menu
 		current = menu:getSelectionIndex()
-		player:setVideo(selection)
-		player.videorama:setPaused(false)
+		player:loadAndPlay(selection)
 		player:setInputHandlers()
 
 		local myInputHandlers = {
 			BButtonUp = function()
 				state:set(state.kMenuState)
-				player.videorama:setPaused(true)
+				player:unload()
 				initMenuState()
 			end
 		}
