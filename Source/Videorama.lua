@@ -61,6 +61,7 @@ function Videorama:init(videoPath, audioPath)
 	self.playbackRate = 1
 	self.playbackRateBeforePause = self.playbackRate
 	self.isPaused = true
+	self.lastModified = self:getLastModifiedTimestamp()
 
 	-- Creates the graphical context to render the video
 	-- I use a custom context instead of `useScreenContext` to apply a mask later on.
@@ -364,5 +365,22 @@ end
 function Videorama:isFilePlayer()
 
 	return self:isAudioMP3() or self:isAudioM4A()
+
+end
+
+-- getLastModifiedTimestamp()
+--
+-- Gets the last modified date of the original video file.
+-- Returns a number (useful for sorting).
+function Videorama:getLastModifiedTimestamp()
+
+	local timestamp = 197001010000
+
+	if self.videoPath then
+		local d = playdate.file.modtime(self.videoPath)
+		timestamp = (d.year * 100000000) + (d.month * 1000000) + (d.day * 10000) + (d.hour * 100) + (d.minute)
+	end
+
+	return timestamp
 
 end

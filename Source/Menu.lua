@@ -236,6 +236,10 @@ function Menu:getFiles()
 		end
 	end
 
+	table.sort(availableFiles, function (left, right)
+		return left.lastModified > right.lastModified
+	end)
+
 	return availableFiles
 
 end
