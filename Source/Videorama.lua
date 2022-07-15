@@ -94,8 +94,6 @@ end
 function Videorama:update()
 
     local frame = self.lastFrame
-    local elapsed = playdate.getElapsedTime()
-	playdate.resetElapsedTime()
 
     -- If it has audio, we define the frame to show based on the
     -- current audio offset and frame rate.
@@ -112,6 +110,7 @@ function Videorama:update()
 	-- If there's no audio and if the video is not paused,
 	-- we increment the lastFrame.
 		if self:isPlaying() then
+   			local elapsed = playdate.getElapsedTime()
 			frame = math.ceil(self.lastFrame + elapsed * self.video:getFrameRate() * self.playbackRate)
 		end
 	end
@@ -127,6 +126,7 @@ function Videorama:update()
 	if frame ~= self.lastFrame then
 		self.video:renderFrame(frame)
 		self.lastFrame = frame
+		playdate.resetElapsedTime()
 	end
 
 	self:draw()
