@@ -174,6 +174,18 @@ function Videorama:update()
 	self:draw()
 end
 
+function Videorama:setFrame(frame)
+
+	if frame ~= self.lastFrame then
+		self.video:renderFrame(frame)
+		self.lastFrame = frame
+		playdate.resetElapsedTime()
+	end
+
+	self:draw()
+
+end
+
 -- setContext(image)
 --
 -- Sets the given image to the video render context.

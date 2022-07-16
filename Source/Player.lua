@@ -35,12 +35,19 @@ function Player:setInputHandlers()
 			self.videorama:setRate(1)
 		end,
 		cranked = function(change, acceleratedChange)
-			if acceleratedChange > 1 then
-				self.videorama:increaseRate()
-			elseif acceleratedChange < -1 then
-				self.videorama:decreaseRate()
+			if self.videorama:hasAudio() then
+				if acceleratedChange > 1 then
+					self.videorama:increaseRate()
+				elseif acceleratedChange < -1 then
+					self.videorama:decreaseRate()
+				end
+				self.controls:setRate(self.videorama:getDisplayRate())
+			else
+				self.videorama:setPaused(true)
+				local tick = playdate.getCrankTicks(self.videorama.video:getFrameRate())
+				local n = self.videorama.lastFrame + tick
+				self.videorama:setFrame(n)
 			end
-			self.controls:setRate(self.videorama:getDisplayRate())
 		end,
 	}
 	playdate.inputHandlers.push(playerInputHandlers)
