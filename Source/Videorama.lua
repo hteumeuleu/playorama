@@ -257,7 +257,7 @@ end
 --
 function Videorama:togglePause()
 
-	self:setPaused(not self:isPlaying())
+	self:setPaused(not self.isPaused)
 
 end
 
