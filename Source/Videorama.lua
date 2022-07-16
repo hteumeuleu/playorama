@@ -415,11 +415,11 @@ end
 -- Returns a number (useful for sorting).
 function Videorama:getLastModifiedTimestamp()
 
-	local timestamp = 197001010000
+	local timestamp = 0
 
 	if self.videoPath then
 		local d = playdate.file.modtime(self.videoPath)
-		timestamp = (d.year * 100000000) + (d.month * 1000000) + (d.day * 10000) + (d.hour * 100) + (d.minute)
+		timestamp = playdate.epochFromTime(d)
 	end
 
 	return timestamp
