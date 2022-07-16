@@ -21,7 +21,7 @@ end
 --
 function Menu:update()
 
-	if self.gridview.needsDisplay == true then
+	if self:needsDisplay() then
 		playdate.graphics.setClipRect(0, 50, self.gridWidth, self.gridHeight)
 		playdate.graphics.clear(playdate.graphics.kColorBlack)
 		self.gridview:drawInRect(0, 50, self.gridWidth, self.gridHeight)
@@ -31,9 +31,20 @@ function Menu:update()
 
 end
 
+-- needsDisplay()
+--
+-- Returns a Boolean if the grid needs to be displayed.
+function Menu:needsDisplay()
+
+	return self.gridview.needsDisplay or self.isPressed
+
+end
+
 -- reset()
 --
 function Menu:reset()
+
+	self.isPressed = false
 
 	-- Grid view
 	self.gridview = playdate.ui.gridview.new(self.cellWidth, self.cellHeight)
@@ -44,6 +55,22 @@ function Menu:reset()
 	local that = self
 
 	function self.gridview:drawCell(section, row, column, selected, x, y, width, height)
+
+		local kButtonTopOffset = 0
+		local kButtonBottomOffset = 2
+
+		if selected and that.isPressed then
+			kButtonTopOffset = 2
+			kButtonBottomOffset = 0
+		end
+
+		-- White background
+		if selected then
+			playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		else
+			playdate.graphics.setPattern({ 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 })
+		end
+		playdate.graphics.fillRoundRect(x, y+kButtonTopOffset, width, height-kButtonTopOffset, 4)
 
 		-- Draw video thumbnail
 		if that.items[column] ~= nil then
@@ -61,34 +88,24 @@ function Menu:reset()
 			local maskImage = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
 			playdate.graphics.pushContext(maskImage)
 				playdate.graphics.setColor(playdate.graphics.kColorWhite)
-				playdate.graphics.fillRoundRect(0, 0, width, height, 4)
+				playdate.graphics.fillRoundRect(4, 4, width-8, height-8-kButtonBottomOffset, 4)
 			playdate.graphics.popContext()
 			thumbnailContext:setMaskImage(maskImage)
 
 			-- Draw
-			thumbnailContext:draw(x, y)
+			thumbnailContext:draw(x, y+kButtonTopOffset)
 		end
 
-		-- Outer border
-		playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-		playdate.graphics.setLineWidth(2)
-		if selected then
-			playdate.graphics.setColor(playdate.graphics.kColorWhite)
-		else
-			local p = { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 }
-			playdate.graphics.setPattern(p)
-		end
-		playdate.graphics.drawRoundRect(x, y, width, height, 4)
 		-- Inner border
 		playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
 		playdate.graphics.setLineWidth(3)
 		playdate.graphics.setColor(playdate.graphics.kColorBlack)
-		playdate.graphics.drawRoundRect(x+2, y+2, width-4, height-4, 4)
+		playdate.graphics.drawRoundRect(x+2, y+2+kButtonTopOffset, width-4, height-4-kButtonTopOffset-kButtonBottomOffset, 4)
 
 		-- Draw text inside
 		local currentFont = playdate.graphics.getFont()
 		playdate.graphics.setFont(kFontCuberickBold)
-		local textY = math.floor(height - kFontCuberickBold:getHeight() - 9)
+		local textY = math.floor(height - kFontCuberickBold:getHeight() - 9 - kButtonBottomOffset)
 		local cellText = that.items[column]:getDisplayName()
 		playdate.graphics.setColor(playdate.graphics.kColorBlack)
 		playdate.graphics.fillRoundRect(x+9, y + textY - 1, kFontCuberickBold:getTextWidth(cellText) + 5, kFontCuberickBold:getHeight() + 2, 3)
@@ -102,6 +119,12 @@ function Menu:reset()
 	playdate.inputHandlers.pop()
 	playdate.inputHandlers.pop()
 	local myInputHandlers = {
+		AButtonDown = function()
+			self.isPressed = true
+		end,
+		AButtonUp = function()
+			self.isPressed = false
+		end,
 		leftButtonUp = function()
 			self.gridview:selectPreviousColumn(true)
 		end,
