@@ -35,19 +35,23 @@ function Player:setInputHandlers()
 			self.videorama:setRate(1)
 		end,
 		cranked = function(change, acceleratedChange)
+			local framerate = self.videorama.video:getFrameRate()
+			local tick = playdate.getCrankTicks(framerate)
 			if self.videorama:hasAudio() then
-				if acceleratedChange > 1 then
-					self.videorama:increaseRate()
-				elseif acceleratedChange < -1 then
-					self.videorama:decreaseRate()
+				local elapsed = self:getTimeSinceLastTick() / 1000
+				local fps = 1 / framerate
+				local rate = (elapsed / fps) * tick
+				print(tick, elapsed, rate)
+				self.videorama:setRate(rate)
+				if math.abs(tick) == 1 then
+					self:resetTimeSinceLastTick()
 				end
-				self.controls:setRate(self.videorama:getDisplayRate())
 			else
 				self.videorama:setPaused(true)
-				local tick = playdate.getCrankTicks(self.videorama.video:getFrameRate())
 				local n = self.videorama.lastFrame + tick
 				self.videorama:setFrame(n)
 			end
+			self.controls:setRate(self.videorama:getDisplayRate())
 		end,
 	}
 	playdate.inputHandlers.push(playerInputHandlers)
@@ -90,5 +94,22 @@ end
 function Player:setTotalTime()
 
 	self.controls:setTotalTime(self.videorama:getTotalTime())
+
+end
+
+function Player:getTimeSinceLastTick()
+
+	local now = playdate.getCurrentTimeMilliseconds()
+	if self.timeSinceLastTick ~= nil then
+		return now - self.timeSinceLastTick
+	else
+		return 0
+	end
+
+end
+
+function Player:resetTimeSinceLastTick()
+
+	self.timeSinceLastTick = playdate.getCurrentTimeMilliseconds()
 
 end
