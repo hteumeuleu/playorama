@@ -13,6 +13,9 @@ function Menu:init()
 	self.gridHeight = 160
 	self.cellWidth = 360
 	self.cellHeight = self.gridHeight
+	if #self.items == 1 then
+		self.cellWidth = 390
+	end
 	return self
 
 end
