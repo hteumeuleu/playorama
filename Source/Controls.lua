@@ -154,6 +154,13 @@ function Controls:hide()
 
 end
 
+function Controls:hideNow()
+
+	self.isVisible = false
+	self.y = 240
+
+end
+
 -- show()
 --
 function Controls:show()

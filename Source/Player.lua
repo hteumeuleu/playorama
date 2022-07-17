@@ -71,6 +71,8 @@ function Player:loadAndPlay(videorama)
 	self.videorama:load()
 	self:setTotalTime()
 	self.videorama:setPaused(false)
+	self.controls:hideNow()
+	self.controls:setRate(self.videorama:getDisplayRate())
 
 end
 
