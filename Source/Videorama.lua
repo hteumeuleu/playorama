@@ -237,6 +237,14 @@ function Videorama:setRate(rate)
 
 end
 
+-- getRate()
+--
+function Videorama:getRate()
+
+	return self.playbackRate
+
+end
+
 -- toggleRate()
 --
 function Videorama:toggleRate(direction)
@@ -380,7 +388,8 @@ end
 --
 function Videorama:getDisplayRate()
 
-	return math.floor(self.playbackRate) .. "x"
+	local roundedValue = math.floor(self.playbackRate * 10 + 0.5) / 10
+	return roundedValue .. "x"
 
 end
 
