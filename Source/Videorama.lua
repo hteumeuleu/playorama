@@ -128,31 +128,31 @@ end
 -- Update and renders the frame to show.
 function Videorama:update()
 
-    local frame = self.lastFrame
+	local frame = self.lastFrame
 
-    -- If it has audio, we define the frame to show based on the
-    -- current audio offset and frame rate.
-    if self:hasAudio() then
-		if not self.audio:isPlaying() then
-			local _, err = self.audio:play(0)
-			if err ~= nil then
-				self.error = err
-				self.audioPath = nil
-				self.audio = nil
-				return self.error
-			else
-				self.isPaused = false
+	if self:isPlaying() then
+		-- If it has audio, we define the frame to show based on the
+		-- current audio offset and frame rate.
+		if self:hasAudio() then
+			if not self.audio:isPlaying() then
+				local _, err = self.audio:play(0)
+				if err ~= nil then
+					self.error = err
+					self.audioPath = nil
+					self.audio = nil
+					return self.error
+				else
+					self.isPaused = false
+				end
 			end
-		end
 
-		self.audio:setRate(self.playbackRate)
+			self.audio:setRate(self.playbackRate)
 
-		frame = math.floor(self.audio:getOffset() * self.video:getFrameRate())
-	else
-	-- If there's no audio and if the video is not paused,
-	-- we increment the lastFrame.
-		if self:isPlaying() then
-   			local elapsed = playdate.getElapsedTime()
+			frame = math.floor(self.audio:getOffset() * self.video:getFrameRate())
+		else
+		-- If there's no audio and if the video is not paused,
+		-- we increment the lastFrame.
+			local elapsed = playdate.getElapsedTime()
 			frame = math.ceil(self.lastFrame + elapsed * self.video:getFrameRate() * self.playbackRate)
 		end
 	end
@@ -180,6 +180,10 @@ function Videorama:setFrame(frame)
 		self.video:renderFrame(frame)
 		self.lastFrame = frame
 		playdate.resetElapsedTime()
+
+		if self:hasAudio() then
+			self.audio:setOffset(self:getCurrentTime())
+		end
 	end
 
 	self:draw()
@@ -342,11 +346,7 @@ end
 -- Returns the total duration, in seconds.
 function Videorama:getTotalTime()
 
-	if self:hasAudio() then
-		return self.audio:getLength()
-	else
-		return (self.video:getFrameCount() / self.video:getFrameRate())
-	end
+	return (self.video:getFrameCount() / self.video:getFrameRate())
 
 end
 
@@ -355,11 +355,7 @@ end
 -- Returns the current play time, in seconds.
 function Videorama:getCurrentTime()
 
-	if self:hasAudio() then
-		return self.audio:getOffset()
-	else
-		return (self.lastFrame / self.video:getFrameRate())
-	end
+	return (self.lastFrame / self.video:getFrameRate())
 
 end
 

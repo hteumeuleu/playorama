@@ -21,7 +21,7 @@ function Controls:init()
 	self.isVisible = false
 	self.y = 240
 	self.x = 0
-	self.rate = "1x"
+	self.rate = "1.0x"
 
 	return self
 

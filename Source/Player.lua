@@ -21,17 +21,25 @@ function Player:setInputHandlers()
 	local playerInputHandlers = {
 		AButtonDown = function()
 			self.videorama:togglePause()
+			if self.videorama:isPlaying() then
+				self:setRate()
+			else
+				self.controls:setRate("CRK!")
+			end
 		end,
 		upButtonDown = function()
 			self.controls:toggle()
 		end,
+		upButtonUp = function()
+			self.videorama:draw()
+		end,
 		leftButtonDown = function()
 			self.videorama:toggleRate(-1)
-			self.controls:setRate(self.videorama:getDisplayRate())
+			self:setRate()
 		end,
 		rightButtonDown = function()
 			self.videorama:toggleRate(1)
-			self.controls:setRate(self.videorama:getDisplayRate())
+			self:setRate()
 		end,
 		cranked = function(change, acceleratedChange)
 			if self.videorama:isPlaying() then
@@ -40,14 +48,12 @@ function Player:setInputHandlers()
 				elseif acceleratedChange < -1 then
 					self.videorama:decreaseRate()
 				end
-				self.controls:setRate(self.videorama:getDisplayRate())
+				self:setRate()
 			else
-				-- local framerate = self.videorama.video:getFrameRate()
-				-- local tick = playdate.getCrankTicks(framerate)
-				-- local n = self.videorama.lastFrame + tick
-				-- print(tick, n)
-				-- self.videorama:setFrame(n)
-				-- TODO ☝️ Y u no work?!?
+				local framerate = self.videorama.video:getFrameRate()
+				local tick = playdate.getCrankTicks(framerate)
+				local n = self.videorama.lastFrame + tick
+				self.videorama:setFrame(n)
 			end
 		end,
 	}
@@ -58,7 +64,9 @@ end
 function Player:update()
 
 	if self.videorama ~= nil then
-		self.videorama:update()
+		if self.videorama:isPlaying() then
+			self.videorama:update()
+		end
 		self:setCurrentTime()
 		self.controls:update()
 	end
@@ -96,19 +104,8 @@ function Player:setTotalTime()
 
 end
 
-function Player:getTimeSinceLastTick()
+function Player:setRate()
 
-	local now = playdate.getCurrentTimeMilliseconds()
-	if self.timeSinceLastTick ~= nil then
-		return now - self.timeSinceLastTick
-	else
-		return 1000
-	end
-
-end
-
-function Player:resetTimeSinceLastTick()
-
-	self.timeSinceLastTick = playdate.getCurrentTimeMilliseconds()
+	self.controls:setRate(self.videorama:getDisplayRate())
 
 end
