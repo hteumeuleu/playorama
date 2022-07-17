@@ -25,9 +25,9 @@ end
 function Menu:update()
 
 	if self:needsDisplay() then
-		playdate.graphics.setClipRect(0, 50, self.gridWidth, self.gridHeight)
+		playdate.graphics.setClipRect(0, 60, self.gridWidth, self.gridHeight)
 		playdate.graphics.clear(playdate.graphics.kColorBlack)
-		self.gridview:drawInRect(0, 50, self.gridWidth, self.gridHeight)
+		self.gridview:drawInRect(0, 60, self.gridWidth, self.gridHeight)
 		playdate.graphics.clearClipRect()
 		self.x = self.gridview:getScrollPosition()
 	end
@@ -182,13 +182,9 @@ function Menu:draw()
 	-- Black background
 	playdate.graphics.clear(playdate.graphics.kColorBlack)
 
-	-- Text title
-	local currentFont = playdate.graphics.getFont()
-	playdate.graphics.setFont(kFontRoobertBold)
-	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-	playdate.graphics.drawText("playorama", 20, 16)
-	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
-	playdate.graphics.setFont(currentFont)
+	-- Logo
+	local logo = playdate.graphics.image.new("assets/logo")
+	logo:drawCentered(200, 30)
 
 end
 

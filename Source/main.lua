@@ -7,7 +7,6 @@ import "Menu"
 
 -- Fonts
 kFontCuberickBold = playdate.graphics.font.new("fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
-kFontRoobertBold = playdate.graphics.font.new("fonts/Roobert-11-Bold", playdate.graphics.font.kVariantBold)
 
 local state = State()
 local menu = nil
