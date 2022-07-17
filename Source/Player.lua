@@ -29,10 +29,12 @@ function Player:setInputHandlers()
 			self.controls:toggle()
 		end,
 		leftButtonDown = function()
-			self.videorama:setRate(-1)
+			self.videorama:toggleRate(-1)
+			self.controls:setRate(self.videorama:getDisplayRate())
 		end,
 		rightButtonDown = function()
-			self.videorama:setRate(1)
+			self.videorama:toggleRate(1)
+			self.controls:setRate(self.videorama:getDisplayRate())
 		end,
 		cranked = function(change, acceleratedChange)
 			local framerate = self.videorama.video:getFrameRate()

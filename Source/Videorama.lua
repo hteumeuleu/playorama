@@ -237,6 +237,28 @@ function Videorama:setRate(rate)
 
 end
 
+-- toggleRate()
+--
+function Videorama:toggleRate(direction)
+
+	local newRate = 0
+	local roundedAbs = math.floor(math.abs(self.playbackRate) + 0.5)
+	if (self.playbackRate > 0 and direction == -1) or (self.playbackRate < 0 and direction == 1) then
+		newRate = 1
+	elseif roundedAbs >= 4 or roundedAbs < 1 then
+		newRate = 1
+	elseif roundedAbs >= 2 then
+		newRate = 4
+	elseif roundedAbs >= 1 then
+		newRate = 2
+	end
+	if direction ~= nil then
+		newRate = newRate * direction
+	end
+	self:setRate(newRate)
+
+end
+
 -- isPlaying()
 --
 function Videorama:isPlaying()
