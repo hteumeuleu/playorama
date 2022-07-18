@@ -155,11 +155,11 @@ function Menu:reset()
 		end,
 		cranked = function(change, acceleratedChange)
 			local cols = self.gridview:getNumberOfColumns()
-			local maxScroll = (self.cellWidth * (cols - 1)) + (self.gridWidth - self.cellWidth)
+			local maxScroll = ((self.cellWidth + 10) * (cols - 1))
 			local newX = math.floor(self.x + change)
-			if (newX <= maxScroll) and (newX >= 0) then
+			if (newX < maxScroll) and (newX >= 0) then
 				self.x = newX
-				self.gridview:setScrollPosition(self.x, 0, false)
+				local err = self.gridview:setScrollPosition(self.x, 0, false)
 				-- Sets the currently most visible item as the selection
 				local _, _, column = self.gridview:getSelection()
 				local index = math.floor((self.x / (self.cellWidth / 2)) / 2 + 0.5) + 1
