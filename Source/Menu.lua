@@ -8,6 +8,7 @@ function Menu:init()
 
 	Menu.super.init(self)
 	self.items = self:getFiles()
+	self.thumbnails = self:getThumbnails()
 	self.x = 0
 	self.gridWidth = 400
 	self.gridHeight = 160
@@ -80,7 +81,7 @@ function Menu:reset()
 			-- Thumbnail context
 			local thumbnailContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
 			playdate.graphics.pushContext(thumbnailContext)
-				local thumbnail = that.items[column]:getThumbnail()
+				local thumbnail = that.thumbnails[column]
 				local w, h = thumbnail:getSize()
 				if thumbnail ~= nil then
 					thumbnail:draw((width - w) / 2 + 10, (height - h) / 2 - 10)
@@ -259,6 +260,19 @@ function Menu:getFiles()
 	end)
 
 	return availableFiles
+
+end
+
+-- getThumbnails()
+--
+function Menu:getThumbnails()
+
+	local thumbs = {}
+	for _, videorama in ipairs(self.items) do
+		local thumbnail = videorama:getThumbnail()
+		table.insert(thumbs, thumbnail)
+	end
+	return thumbs
 
 end
 
