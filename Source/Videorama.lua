@@ -251,7 +251,7 @@ end
 function Videorama:toggleRate(direction)
 
 	local newRate = 0
-	local roundedAbs = math.floor(math.abs(self.playbackRate) + 0.5)
+	local roundedAbs = math.abs(self.playbackRate)
 	if (self.playbackRate > 0 and direction == -1) or (self.playbackRate < 0 and direction == 1) then
 		newRate = 1
 	elseif roundedAbs >= 4 or roundedAbs < 1 then

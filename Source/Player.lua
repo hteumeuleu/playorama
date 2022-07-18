@@ -44,16 +44,16 @@ function Player:setInputHandlers()
 			self:setRate()
 		end,
 		cranked = function(change, acceleratedChange)
+			local framerate = self.videorama.video:getFrameRate()
+			local tick = playdate.getCrankTicks(framerate)
 			if self.videorama:isPlaying() then
-				if acceleratedChange > 1 then
+				if tick == 1 then
 					self.videorama:increaseRate()
-				elseif acceleratedChange < -1 then
+				elseif tick == -1 then
 					self.videorama:decreaseRate()
 				end
 				self:setRate()
 			else
-				local framerate = self.videorama.video:getFrameRate()
-				local tick = playdate.getCrankTicks(framerate)
 				local n = self.videorama.lastFrame + tick
 				self.videorama:setFrame(n)
 			end
