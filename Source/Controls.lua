@@ -69,8 +69,8 @@ function Controls:draw()
 		self:drawBackgroundImage()
 
 		-- Current time text
-		playdate.graphics.setFont(kFontCuberickBold)
-		local kControlsFont <const> = kFontCuberickBold
+		playdate.graphics.setFont(gFontCuberickBold)
+		local kControlsFont <const> = gFontCuberickBold
 		local kTextForMeasurement <const> = "*00:00*"
 		local kControlsTextY <const> = math.floor((kControlsHeight - kControlsFont:getHeight()) / 2) + kControlsBorderWidth
 		local currentTimeString = (getTimeAsAString(self.currentTime))

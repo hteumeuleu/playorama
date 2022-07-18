@@ -5,8 +5,8 @@ import "State"
 import "Player"
 import "Menu"
 
--- Fonts
-kFontCuberickBold = playdate.graphics.font.new("fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
+-- Global variables
+gFontCuberickBold = playdate.graphics.font.new("fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
 
 local state = State()
 local menu = nil
