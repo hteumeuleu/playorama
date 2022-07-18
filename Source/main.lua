@@ -1,4 +1,6 @@
 import "CoreLibs/object"
+import "CoreLibs/graphics"
+import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
 import "State"

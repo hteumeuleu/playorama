@@ -1,7 +1,3 @@
-import "CoreLibs/object"
-import "CoreLibs/graphics"
-import "CoreLibs/timer"
-
 local kControlsMargin <const> = 0
 local kControlsPadding <const> = 10
 local kControlsWidth <const> = 400 - (kControlsMargin * 2)

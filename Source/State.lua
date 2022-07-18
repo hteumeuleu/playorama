@@ -1,5 +1,3 @@
-import "CoreLibs/object"
-
 class('State').extends()
 
 -- init()

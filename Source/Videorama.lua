@@ -1,6 +1,3 @@
-import "CoreLibs/object"
-import "CoreLibs/timer"
-
 local kMinPlaybackRate <const> = -4
 local kMaxPlaybackRate <const> = 4
 local kPlaybackRateStep <const> = 0.1
