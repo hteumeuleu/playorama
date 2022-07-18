@@ -7,7 +7,9 @@ import "Menu"
 
 -- Global variables
 gFontCuberickBold = playdate.graphics.font.new("fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
+gOptionVcrEffect = false
 
+-- App variables
 local state = State()
 local menu = nil
 local player = nil
@@ -61,6 +63,20 @@ function initMenuState()
 	end
 end
 
+-- Add options in System menu
+local function setSystemMenu()
+
+	local menu = playdate.getSystemMenu()
+
+	local checkmarkMenuItem, error = menu:addCheckmarkMenuItem("VCR Effect", gOptionVcrEffect, function(value)
+		gOptionVcrEffect = value
+	end)
+
+end
+
+setSystemMenu()
+
+-- Init app in menu
 initMenuState()
 
 -- Setup the Crank Indicator

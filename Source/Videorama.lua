@@ -114,12 +114,12 @@ end
 --
 function Videorama:draw()
 
-	-- if self:isFFing() then
-	-- 	local contextWithVCRFilter = self.context:vcrPauseFilterImage()
-	-- 	contextWithVCRFilter:draw(0,0)
-	-- else
+	if self:isFFing() and gOptionVcrEffect then
+		local contextWithVCRFilter = self.context:vcrPauseFilterImage()
+		contextWithVCRFilter:draw(0,0)
+	else
 		self.context:draw(0,0)
-	-- end
+	end
 
 end
 
