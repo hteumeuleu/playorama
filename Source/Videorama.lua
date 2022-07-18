@@ -449,3 +449,23 @@ function Videorama:getLastModifiedTimestamp()
 	return timestamp
 
 end
+
+-- mute()
+--
+function Videorama:mute()
+
+	if self.audio then
+		self.audio:setVolume(0)
+	end
+
+end
+
+-- unmute()
+--
+function Videorama:unmute()
+
+	if self.audio then
+		self.audio:setVolume(1)
+	end
+
+end

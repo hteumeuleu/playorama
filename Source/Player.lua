@@ -23,8 +23,10 @@ function Player:setInputHandlers()
 			self.videorama:togglePause()
 			if self.videorama:isPlaying() then
 				self:setRate()
+				self.videorama:unmute()
 			else
 				self.controls:setRate("CRK!")
+				self.videorama:mute()
 			end
 		end,
 		upButtonDown = function()
