@@ -42,3 +42,4 @@ luac.out
 # Local data
 *.pdx
 *.sublime-*
+Support/
