@@ -17,6 +17,23 @@ function Menu:init()
 	if #self.items == 1 then
 		self.cellWidth = 390
 	end
+	self.logo = playdate.graphics.image.new("assets/logo")
+	self:buildReelSprite()
+
+	-- Background
+	playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
+	playdate.graphics.sprite.setBackgroundDrawingCallback(
+		function(x, y, width, height)
+			self.isBackgroundDrawing = true
+			playdate.graphics.setClipRect(x, y, width, height)
+				playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
+				self:draw()
+				self:update()
+			playdate.graphics.clearClipRect()
+			self.isBackgroundDrawing = false
+		end
+	)
+
 	return self
 
 end
@@ -25,10 +42,11 @@ end
 --
 function Menu:update()
 
+	playdate.graphics.sprite.update()
 	if self:needsDisplay() then
 		playdate.graphics.setClipRect(0, 60, self.gridWidth, self.gridHeight)
-		playdate.graphics.clear(playdate.graphics.kColorBlack)
-		self.gridview:drawInRect(0, 60, self.gridWidth, self.gridHeight)
+			playdate.graphics.clear(playdate.graphics.kColorBlack)
+			self.gridview:drawInRect(0, 60, self.gridWidth, self.gridHeight)
 		playdate.graphics.clearClipRect()
 		self.x = self.gridview:getScrollPosition()
 	end
@@ -40,7 +58,7 @@ end
 -- Returns a Boolean if the grid needs to be displayed.
 function Menu:needsDisplay()
 
-	return self.gridview.needsDisplay or self.isPressed
+	return self.gridview.needsDisplay or self.isPressed or self.isBackgroundDrawing
 
 end
 
@@ -168,6 +186,11 @@ function Menu:reset()
 				end
 				self.crankTimer = playdate.timer.performAfterDelay(300, autoScrollAfterCrank, index)
 			end
+			-- Sprite rotation
+			if self.sprite then
+				local r = self.sprite:getRotation()
+				self.sprite:setRotation(r + change)
+			end
 		end,
 	}
 	playdate.inputHandlers.push(myInputHandlers)
@@ -180,12 +203,8 @@ end
 --
 function Menu:draw()
 
-	-- Black background
-	playdate.graphics.clear(playdate.graphics.kColorBlack)
-
 	-- Logo
-	local logo = playdate.graphics.image.new("assets/logo")
-	logo:drawCentered(200, 30)
+	self.logo:drawCentered(200, 30)
 
 end
 
@@ -300,5 +319,27 @@ function Menu:setSelection(index)
 
 	self.gridview:setSelection(1, 1, index)
 	self.gridview:scrollCellToCenter(1, 1, index, false)
+
+end
+
+-- buildReelSprite()
+--
+function Menu:buildReelSprite()
+
+	local img = playdate.graphics.image.new(21, 21)
+	playdate.graphics.pushContext(img)
+		playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		playdate.graphics.fillCircleInRect(0, 0, 21, 21)
+		playdate.graphics.setColor(playdate.graphics.kColorBlack)
+		playdate.graphics.fillCircleInRect(8, 1, 6, 6)
+		playdate.graphics.fillCircleInRect(1, 6, 6, 6)
+		playdate.graphics.fillCircleInRect(14, 6, 6, 6)
+		playdate.graphics.fillCircleInRect(4, 13, 6, 6)
+		playdate.graphics.fillCircleInRect(11, 13, 6, 6)
+	playdate.graphics.popContext()
+	self.sprite = playdate.graphics.sprite.new(img)
+	self.sprite:moveTo(196, 33)
+	self.sprite:add()
+	self.sprite:update()
 
 end
