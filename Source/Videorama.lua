@@ -276,6 +276,14 @@ function Videorama:isPlaying()
 
 end
 
+-- isPaused()
+--
+function Videorama:isPaused()
+
+	return self.isPaused
+
+end
+
 -- setPaused(flag)
 --
 -- Pauses the video and audio based on the boolean flag.

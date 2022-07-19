@@ -24,7 +24,13 @@ function Player:setInputHandlers()
 			if self.videorama:isPlaying() then
 				self:setRate()
 				self.videorama:unmute()
+				self.controls:setPlayText("PLAY")
+				if self.videorama:hasAudio() then
+					self.controls:setSoundText("S")
+				end
 			else
+				self.controls:setPlayText("PAUSE")
+				self.controls:setSoundText("M")
 				self.controls:setRate("CRK!")
 				self.videorama:mute()
 			end
@@ -36,12 +42,16 @@ function Player:setInputHandlers()
 			self.videorama:draw()
 		end,
 		leftButtonDown = function()
-			self.videorama:toggleRate(-1)
-			self:setRate()
+			if self.videorama:isPlaying() then
+				self.videorama:toggleRate(-1)
+				self:setRate()
+			end
 		end,
 		rightButtonDown = function()
-			self.videorama:toggleRate(1)
-			self:setRate()
+			if self.videorama:isPlaying() then
+				self.videorama:toggleRate(1)
+				self:setRate()
+			end
 		end,
 		cranked = function(change, acceleratedChange)
 			local framerate = self.videorama.video:getFrameRate()
@@ -83,6 +93,11 @@ function Player:loadAndPlay(videorama)
 	self.videorama:setPaused(false)
 	self.controls:hideNow()
 	self.controls:setRate(self.videorama:getDisplayRate())
+	if self.videorama:hasAudio() then
+		self.controls:setSoundText("S")
+	else
+		self.controls:setSoundText("M")
+	end
 
 end
 

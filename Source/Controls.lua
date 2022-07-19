@@ -6,8 +6,9 @@ local kControlsBorderWidth <const> = 0
 local kControlsBorderRadius <const> = 4
 local kControlsTop <const> = 240 - kControlsHeight - kControlsMargin
 local kExtraHeightForBounce <const> = 20
+local kControlsFont <const> = playdate.graphics.getFont()
 
-class('Controls').extends()
+class('Controls').extends(playdate.graphics.sprite)
 
 function Controls:init()
 
@@ -18,6 +19,9 @@ function Controls:init()
 	self.y = 240
 	self.x = 0
 	self.rate = "1.0x"
+	self.hasSound = true
+	self.playText = "PLAY"
+	self.soundText = "S"
 
 	return self
 
@@ -33,7 +37,7 @@ function Controls:update()
 
 end
 
--- getContext()
+-- getImage()
 --
 function Controls:getImage()
 
@@ -56,6 +60,109 @@ function Controls:drawBackgroundImage()
 
 end
 
+-- drawPlayButton()
+--
+function Controls:drawPlayButton()
+
+	local buttonWidth <const> = 56
+	local buttonHeight <const> = 28
+	local offset <const> = math.floor((kControlsHeight - buttonHeight) / 2)
+	local x <const> = offset
+	local y <const> = offset
+	local textY <const> = y + 3 + math.floor((buttonHeight - kControlsFont:getHeight()) / 2)
+	local text = self.playText
+	playdate.graphics.setLineWidth(3)
+	playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+	playdate.graphics.setColor(playdate.graphics.kColorWhite)
+	playdate.graphics.setPattern({ 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 })
+	playdate.graphics.drawRoundRect(x, y, buttonWidth, buttonHeight, 4)
+	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+	playdate.graphics.drawTextInRect(text, x+3, textY, buttonWidth-6, buttonHeight-6, nil, nil, kTextAlignment.center)
+
+end
+
+-- drawSoundIcon()
+--
+function Controls:drawSoundIcon()
+
+	local iconWidth <const> = 28
+	local iconHeight <const> = 28
+	local offset <const> = math.floor((kControlsHeight - iconHeight) / 2)
+	local x <const> = offset + 56 + offset
+	local y <const> = offset
+	local textY <const> = y + 3 + math.floor((iconHeight - kControlsFont:getHeight()) / 2)
+	local text = self.soundText
+	playdate.graphics.setLineWidth(3)
+	playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+	playdate.graphics.setColor(playdate.graphics.kColorWhite)
+	playdate.graphics.setPattern({ 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 })
+	playdate.graphics.drawRoundRect(x, y, iconWidth, iconHeight, 4)
+	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+	playdate.graphics.drawTextInRect(text, x+3, textY, iconWidth-6, iconHeight-6, nil, nil, kTextAlignment.center)
+
+end
+
+-- drawRateButton()
+--
+function Controls:drawRateButton()
+
+	local buttonWidth <const> = 38
+	local buttonHeight <const> = 28
+	local offset <const> = math.floor((kControlsHeight - buttonHeight) / 2)
+	local x <const> = 400 - buttonWidth - offset
+	local y <const> = offset
+	local textY <const> = y + 3 + math.floor((buttonHeight - kControlsFont:getHeight()) / 2)
+	local text = self.rate
+	if text == "CRK!" then
+		text = "🎣"
+	end
+	playdate.graphics.setLineWidth(3)
+	playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+	playdate.graphics.setColor(playdate.graphics.kColorWhite)
+	playdate.graphics.setPattern({ 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 })
+	playdate.graphics.drawRoundRect(x, y, buttonWidth, buttonHeight, 4)
+	playdate.graphics.drawTextInRect(text, x+3, textY, buttonWidth-6, buttonHeight-6, nil, nil, kTextAlignment.center)
+
+end
+
+-- drawCurrentTime()
+--
+function Controls:drawCurrentTime()
+
+	local x <const> = 6 + 56 + 6 + 28 + 8
+	local y <const> = math.floor((kControlsHeight - kControlsFont:getHeight() + 6) / 2)
+	local currentTimeString = getTimeAsAString(self.currentTime)
+	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+	playdate.graphics.drawText(currentTimeString, x, y)
+
+end
+
+-- drawTotalTime()
+--
+function Controls:drawTotalTime()
+
+	local x <const> = 400 - 6 - 38 - 6
+	local y <const> = math.floor((kControlsHeight - kControlsFont:getHeight() + 6) / 2)
+	local totalTimeString = getTimeAsAString(self.totalTime)
+	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+	playdate.graphics.drawTextAligned(totalTimeString, x, y, kTextAlignment.right)
+
+end
+
+-- drawScrobbleBar()
+--
+function Controls:drawScrobbleBar()
+
+	playdate.graphics.setLineWidth(0)
+	-- Background shape
+	playdate.graphics.setPattern({ 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 })
+	playdate.graphics.fillRoundRect(146, 18, 162, 4, 4)
+	-- Current shape
+	playdate.graphics.setColor(playdate.graphics.kColorWhite)
+	playdate.graphics.fillRoundRect(146, 18, self:getScrobbleWidth(162), 4, 4)
+
+end
+
 -- draw()
 --
 function Controls:draw()
@@ -63,57 +170,12 @@ function Controls:draw()
 	local controlsImage = self:getImage()
 	playdate.graphics.pushContext(controlsImage)
 		self:drawBackgroundImage()
-
-		-- Current time text
-		playdate.graphics.setFont(gFontCuberickBold)
-		local kControlsFont <const> = gFontCuberickBold
-		local kTextForMeasurement <const> = "*00:00*"
-		local kControlsTextY <const> = math.floor((kControlsHeight - kControlsFont:getHeight()) / 2) + kControlsBorderWidth
-		local currentTimeString = (getTimeAsAString(self.currentTime))
-		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-		playdate.graphics.drawText(currentTimeString, kControlsPadding, kControlsTextY)
-
-		-- Playback rate
-		local rateX = kControlsWidth - kControlsPadding
-		local kRateForMeasurement <const> = "*4x*"
-		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-		playdate.graphics.drawTextAligned(self.rate, rateX, kControlsTextY, kTextAlignment.right)
-
-		-- Total time text
-		local totalTimeString = (getTimeAsAString(self.totalTime))
-		local totalTimeX = kControlsWidth - (kControlsPadding * 2) - kControlsFont:getTextWidth(kRateForMeasurement)
-		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-		playdate.graphics.drawTextAligned(totalTimeString, totalTimeX, kControlsTextY, kTextAlignment.right)
-
-		-- Resets DrawMode (used for texts only)
-		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
-
-		-- Scrobble bar
-		local scrobbleBarLeft = kControlsFont:getTextWidth(kTextForMeasurement)
-		local kScrobbleBarWidth <const> = kControlsWidth - (scrobbleBarLeft * 2) - (kControlsPadding * 2) - kControlsFont:getTextWidth(kRateForMeasurement)
-		local kScrobbleBarHeight <const> = 20
-		local kBarHeight <const> = 4
-		local barImage = playdate.graphics.image.new(kScrobbleBarWidth, kScrobbleBarHeight)
-		local scrobbleBarTop = (kControlsHeight - kScrobbleBarHeight) / 2 - kControlsBorderWidth
-		playdate.graphics.pushContext(barImage)
-			playdate.graphics.setColor(playdate.graphics.kColorWhite)
-			playdate.graphics.fillRoundRect(0, ((kScrobbleBarHeight - kBarHeight) / 2), kScrobbleBarWidth, kBarHeight, kControlsBorderRadius)
-
-			-- Scrobble dot
-			local dotImage = playdate.graphics.image.new(20, 20)
-			playdate.graphics.pushContext(dotImage)
-				playdate.graphics.setColor(playdate.graphics.kColorBlack)
-				playdate.graphics.fillCircleInRect(0, 0, 20, 20)
-				playdate.graphics.setColor(playdate.graphics.kColorWhite)
-				playdate.graphics.setLineWidth(2)
-				playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-				playdate.graphics.drawCircleInRect(0, 0, 20, 20)
-			playdate.graphics.popContext() -- dotImage
-			local dotX = self:getScrobbleX(kScrobbleBarWidth)
-			dotImage:draw(dotX, 0)
-
-		playdate.graphics.popContext() -- barImage
-		barImage:draw(scrobbleBarLeft, scrobbleBarTop)
+		self:drawPlayButton()
+		self:drawSoundIcon()
+		self:drawCurrentTime()
+		self:drawScrobbleBar()
+		self:drawTotalTime()
+		self:drawRateButton()
 
 	-- Pop context and draw
 	playdate.graphics.popContext() -- controlsImage
@@ -180,12 +242,12 @@ function Controls:setY(y)
 
 end
 
--- getScrobbleX(time)
+-- getScrobbleWidth(barWidth)
 --
-function Controls:getScrobbleX(barWidth)
+function Controls:getScrobbleWidth(barWidth)
 
 	local xMin = 0
-	local xMax = barWidth - 20
+	local xMax = barWidth
 	local x = math.floor((self.currentTime * xMax) / self.totalTime)
 	if x > xMax then
 		x = xMax
@@ -210,6 +272,22 @@ end
 function Controls:setCurrentTime(time)
 
 	self.currentTime = time
+
+end
+
+-- setSoundText()
+--
+function Controls:setSoundText(text)
+
+	self.soundText = text
+
+end
+
+-- setPlayText()
+--
+function Controls:setPlayText(text)
+
+	self.playText = text
 
 end
 

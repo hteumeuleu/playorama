@@ -9,8 +9,11 @@ import "Player"
 import "Menu"
 
 -- Global variables
-gFontCuberickBold = playdate.graphics.font.new("fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
 gOptionVcrEffect = false
+
+-- Define global font
+local kFontCuberickBold <const> = playdate.graphics.font.new("fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
+playdate.graphics.setFont(kFontCuberickBold)
 
 -- App variables
 local state = State()
