@@ -173,6 +173,14 @@ end
 
 function Videorama:setFrame(frame)
 
+	if frame < 0 then
+		frame = self.video:getFrameCount()
+	end
+
+	if frame > self.video:getFrameCount() then
+		frame = 0
+	end
+
 	if frame ~= self.lastFrame then
 		self.video:renderFrame(frame)
 		self.lastFrame = frame
