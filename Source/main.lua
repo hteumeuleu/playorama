@@ -34,7 +34,6 @@ function initMenuState()
 		menu = Menu()
 	end
 	-- We reset the menu drawing functions.
-	-- TODO: Check if this still needs to be done here as there are no more memory leaks.
 	menu:reset()
 	-- We set the menu selection to the last played item.
 	menu:setSelection(lastPlayedItem)
@@ -107,6 +106,7 @@ function playdate.update()
 end
 
 -- Startup initializations
+playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
 playdate.setCrankSoundsDisabled(false)
 initSystemMenu()
 initMenuState()
