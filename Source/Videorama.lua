@@ -87,11 +87,26 @@ function Videorama:load()
 	end
 
 	-- Open audio
+	self.isADPCM = false
+	self.isFilePlayer = false
 	if self.audioPath ~= nil then
-		if self:isFilePlayer() then
-			self.audio, audioerr = playdate.sound.fileplayer.new(self.audioPath)
+		-- Try with a sample player first.
+		-- Sample player is better because it can play sound backwards. But it's also way heavier in memory.
+		self.audio, audioerr = playdate.sound.sampleplayer.new(self.audioPath)
+		if audioerr == nil then
+			-- No error, so we got ourselves a sample player! Yay!
+			-- But we need to make sure the sample format is ok to play backwards.
+			-- It must not be ADPCM.
+			-- (4 = AdpcmMono and 5 = AdpcmStereo)
+			local sample = self.audio:getSample()
+			local format = sample:getFormat()
+			if format == 4 or format == 5 then
+				self.isADPCM = true
+			end
 		else
-			self.audio, audioerr = playdate.sound.sampleplayer.new(self.audioPath)
+			audioerr = nil
+			self.audio, audioerr = playdate.sound.fileplayer.new(self.audioPath)
+			self.isFilePlayer = true
 		end
 
 		-- Return nil if there's a problem when opening the audio
@@ -244,7 +259,7 @@ function Videorama:setRate(rate)
 		self.playbackRate = kMinPlaybackRate
 	end
 
-	if self:isFilePlayer() and self.playbackRate < 0 then
+	if not self:canPlayBackwards() and self.playbackRate < 0 then
 		self.playbackRate = 0
 	end
 
@@ -278,9 +293,7 @@ function Videorama:toggleRate(direction)
 	elseif roundedAbs >= 1 then
 		newRate = 2
 	end
-	if direction ~= nil then
-		newRate = newRate * direction
-	end
+	newRate = newRate * direction
 	self:setRate(newRate)
 
 end
@@ -352,7 +365,9 @@ end
 -- Decreases the playback rate speed by kPlaybackRateStep value.
 function Videorama:decreaseRate()
 
-	self:setRate(self.playbackRate - kPlaybackRateStep)
+	if self:canPlayBackwards() or (self.playbackRate - kPlaybackRateStep >= 0) then
+		self:setRate(self.playbackRate - kPlaybackRateStep)
+	end
 
 end
 
@@ -426,13 +441,13 @@ function Videorama:hasAudio()
 
 end
 
--- isAudioM4A()
+-- hasAudioExtension(ext)
 --
--- Returns a boolean whether the audio stream is in `.m4a` extension.
-function Videorama:isAudioM4A()
+-- Returns a boolean whether the audio stream ends with `.ext` extension.
+function Videorama:hasAudioExtension(ext)
 
 	if self.audioPath ~= nil then
-		local i = string.find(string.lower(self.audioPath), '.m4a')
+		local i = string.find(string.lower(self.audioPath), ext)
 		if i ~= nil and i > 1 then
 			return true
 		end
@@ -441,26 +456,11 @@ function Videorama:isAudioM4A()
 
 end
 
--- isAudioMP3()
+-- canPlayBackwards()
 --
--- Returns a boolean whether the audio stream is in `.mp3` extension.
-function Videorama:isAudioMP3()
+function Videorama:canPlayBackwards()
 
-	if self.audioPath ~= nil then
-		local i = string.find(string.lower(self.audioPath), '.mp3')
-		if i ~= nil and i > 1 then
-			return true
-		end
-	end
-	return false
-
-end
-
--- isFilePlayer()
---
-function Videorama:isFilePlayer()
-
-	return self:isAudioMP3() or self:isAudioM4A()
+	return not (self.isFilePlayer or self.isADPCM) or (self.audio == nil)
 
 end
 
