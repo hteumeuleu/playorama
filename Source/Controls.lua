@@ -177,7 +177,7 @@ function Controls:draw()
 		self:drawCurrentTime()
 		self:drawScrobbleBar()
 		self:drawTotalTime()
-		if self.rate == "CRK!" then
+		if self:isPaused() then
 			self:drawPauseButton()
 		else
 			self:drawRateButton()
@@ -304,6 +304,22 @@ end
 function Controls:setRate(rate)
 
 	self.rate = rate
+
+end
+
+-- setPaused()
+--
+function Controls:setPaused(value)
+
+	self.paused = value
+
+end
+
+-- isPaused()
+--
+function Controls:isPaused()
+
+	return self.paused
 
 end
 

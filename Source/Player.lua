@@ -22,10 +22,11 @@ function Player:setInputHandlers()
 		AButtonDown = function()
 			self.videorama:togglePause()
 			if self.videorama:isPlaying() then
-				self:setRate()
+				self.controls:setPaused(false)
+				self:setRateText()
 				self.videorama:unmute()
 			else
-				self.controls:setRate("CRK!")
+				self.controls:setPaused(true)
 				self.videorama:mute()
 			end
 		end,
@@ -73,7 +74,7 @@ function Player:update()
 		if self.videorama:isPlaying() then
 			self.videorama:update()
 		end
-		self:setCurrentTime()
+		self:setCurrentTimeText()
 		self.controls:update()
 	end
 
@@ -83,7 +84,7 @@ function Player:loadAndPlay(videorama)
 
 	self.videorama = videorama
 	self.videorama:load()
-	self:setTotalTime()
+	self:setTotalTimeText()
 	self.videorama:setPaused(false)
 	self.controls:hideNow()
 	self.controls:setRate(self.videorama:getDisplayRate())
@@ -99,19 +100,19 @@ function Player:unload()
 
 end
 
-function Player:setCurrentTime()
+function Player:setCurrentTimeText()
 
 	self.controls:setCurrentTime(self.videorama:getCurrentTime())
 
 end
 
-function Player:setTotalTime()
+function Player:setTotalTimeText()
 
 	self.controls:setTotalTime(self.videorama:getTotalTime())
 
 end
 
-function Player:setRate()
+function Player:setRateText()
 
 	self.controls:setRate(self.videorama:getDisplayRate())
 
