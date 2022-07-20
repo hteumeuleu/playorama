@@ -292,6 +292,15 @@ function Videorama:isPaused()
 
 end
 
+-- play()
+--
+-- Play the video and audio at current offset.
+function Videorama:play()
+
+	self:setPaused(false)
+
+end
+
 -- setPaused(flag)
 --
 -- Pauses the video and audio based on the boolean flag.

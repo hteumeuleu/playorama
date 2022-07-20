@@ -3,10 +3,14 @@ import "Controls"
 
 class('Player').extends()
 
+-- Player
+--
+-- Combines a `Videorama` object and a `Controls` object
+-- to form a controllable video player.
 function Player:init()
 
 	Player.super.init(self)
-	self.videorama = nil
+
 	self.controls = Controls()
 	self:setInputHandlers()
 
@@ -14,6 +18,25 @@ function Player:init()
 
 end
 
+-- update(videorama)
+--
+-- Method invoked on every cycle to update what needs to be updated.
+-- (Mainly: trigger the video frame update and update the controls)
+function Player:update()
+
+	if self.videorama ~= nil then
+		if self.videorama:isPlaying() then
+			self.videorama:update()
+		end
+		self:setCurrentTimeText()
+		self.controls:update()
+	end
+
+end
+
+-- setInputHandlers()
+--
+-- Set input handlers used during playback.
 function Player:setInputHandlers()
 
 	playdate.inputHandlers.pop()
@@ -39,13 +62,13 @@ function Player:setInputHandlers()
 		leftButtonDown = function()
 			if self.videorama:isPlaying() then
 				self.videorama:toggleRate(-1)
-				self:setRate()
+				self:setRateText()
 			end
 		end,
 		rightButtonDown = function()
 			if self.videorama:isPlaying() then
 				self.videorama:toggleRate(1)
-				self:setRate()
+				self:setRateText()
 			end
 		end,
 		cranked = function(change, acceleratedChange)
@@ -57,7 +80,7 @@ function Player:setInputHandlers()
 				elseif tick == -1 then
 					self.videorama:decreaseRate()
 				end
-				self:setRate()
+				self:setRateText()
 			else
 				local n = self.videorama.lastFrame + tick
 				self.videorama:setFrame(n)
@@ -68,30 +91,26 @@ function Player:setInputHandlers()
 
 end
 
-function Player:update()
+-- setVideorama(videorama)
+--
+-- Sets the videorama object to be played.
+function Player:setVideorama(videorama)
 
-	if self.videorama ~= nil then
-		if self.videorama:isPlaying() then
-			self.videorama:update()
-		end
-		self:setCurrentTimeText()
-		self.controls:update()
-	end
-
-end
-
-function Player:loadAndPlay(videorama)
-
+	-- Video
 	self.videorama = videorama
 	self.videorama:load()
-	self:setTotalTimeText()
-	self.videorama:setPaused(false)
+	self.videorama:play()
+	-- Controls
 	self.controls:hideNow()
-	self.controls:setRate(self.videorama:getDisplayRate())
-	self.controls:setHasSound(self.videorama:hasAudio())
+	self:setMutedIcon()
+	self:setTotalTimeText()
+	self:setRateText()
 
 end
 
+-- unload()
+--
+-- Stops and unloads the videorama object to free up memory.
 function Player:unload()
 
 	self.videorama:setPaused(true)
@@ -100,20 +119,39 @@ function Player:unload()
 
 end
 
+-- setCurrentTimeText()
+--
+-- Helper method to set the current time to display inside the controls.
 function Player:setCurrentTimeText()
 
 	self.controls:setCurrentTime(self.videorama:getCurrentTime())
 
 end
 
+-- setTotalTimeText()
+--
+-- Helper method to set the total time to display inside the controls.
 function Player:setTotalTimeText()
 
 	self.controls:setTotalTime(self.videorama:getTotalTime())
 
 end
 
+
+-- setRateText()
+--
+-- Helper method to set the rate playback to display inside the controls.
 function Player:setRateText()
 
 	self.controls:setRate(self.videorama:getDisplayRate())
+
+end
+
+-- setRateText()
+--
+-- Helper method to set a boolean that determines if the “no audio available” icon should display inside the controls.
+function Player:setMutedIcon()
+
+	self.controls:setHasSound(self.videorama:hasAudio())
 
 end

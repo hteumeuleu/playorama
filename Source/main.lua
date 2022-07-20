@@ -33,7 +33,7 @@ function initPlayState()
 		-- I keep track of the current video played
 		-- to scroll back to it when going back to the menu
 		current = menu:getSelectionIndex()
-		player:loadAndPlay(selection)
+		player:setVideorama(selection)
 		player:setInputHandlers()
 
 		local myInputHandlers = {
