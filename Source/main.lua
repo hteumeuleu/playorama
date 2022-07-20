@@ -4,7 +4,6 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
-import "State"
 import "Player"
 import "Menu"
 
@@ -16,90 +15,98 @@ local kFontCuberickBold <const> = playdate.graphics.font.new("fonts/font-Cuberic
 playdate.graphics.setFont(kFontCuberickBold)
 
 -- App variables
-local state = State()
+local kMenuState <const> = "Menu"
+local kPlayState <const> = "Play"
+local state = kMenuState
 local menu = nil
 local player = nil
-local current = 1
+local lastPlayedItem = 1
 
-function initPlayState()
-	-- Play state
-	if(state:get() == state.kPlayState) then
-
-		local selection = menu:getSelection()
-
-		if player == nil then
-			player = Player()
-		end
-		-- I keep track of the current video played
-		-- to scroll back to it when going back to the menu
-		current = menu:getSelectionIndex()
-		player:setVideorama(selection)
-		player:setInputHandlers()
-
-		local myInputHandlers = {
-			BButtonUp = function()
-				state:set(state.kMenuState)
-				player:unload()
-				initMenuState()
-			end
-		}
-		playdate.inputHandlers.push(myInputHandlers)
-
-	end
-end
-
--- Menu state
+-- initMenuState()
+--
+-- Sets the current state of the app to the Menu.
 function initMenuState()
-	if(state:get() == state.kMenuState) then
 
-		if menu == nil then
-			menu = Menu()
-		end
-		menu:reset()
-		menu:setSelection(current)
+	state = kMenuState
 
-		local myInputHandlers = {
-			AButtonUp = function()
-				state:set(state.kPlayState)
-				initPlayState()
-			end
-		}
-		playdate.inputHandlers.push(myInputHandlers)
-
+	-- If the Menu class hasn't been instanciated yet, we do it now.
+	if menu == nil then
+		menu = Menu()
 	end
+	-- We reset the menu drawing functions.
+	-- TODO: Check if this still needs to be done here as there are no more memory leaks.
+	menu:reset()
+	-- We set the menu selection to the last played item.
+	menu:setSelection(lastPlayedItem)
+
+	local myInputHandlers = {
+		AButtonUp = function()
+			initPlayState()
+		end
+	}
+	playdate.inputHandlers.push(myInputHandlers)
+
 end
 
--- Add options in System menu
-local function setSystemMenu()
+-- initPlayState()
+--
+-- Sets the current state of the app to the Player.
+function initPlayState()
 
-	local menu = playdate.getSystemMenu()
+	state = kPlayState
 
-	local checkmarkMenuItem, error = menu:addCheckmarkMenuItem("VCR Effect", gOptionVcrEffect, function(value)
+	-- If the Player class hasn't been instanciated yet, we do it now.
+	if player == nil then
+		player = Player()
+	end
+	-- We keep track of the video that gets played
+	-- to scroll back to it when going back to the menu.
+	lastPlayedItem = menu:getSelectionIndex()
+	-- We load the video inside the player.
+	player:setVideorama(menu:getSelection())
+	player:setInputHandlers()
+
+	local myInputHandlers = {
+		BButtonUp = function()
+			player:unload()
+			initMenuState()
+		end
+	}
+	playdate.inputHandlers.push(myInputHandlers)
+
+end
+
+-- initSystemMenu()
+--
+-- Add options in System menu.
+local function initSystemMenu()
+
+	local systemMenu = playdate.getSystemMenu()
+
+	-- Add an option for the VCR effect.
+	-- If checked, frames will get a VCR effect when accelerating.
+	local checkmarkMenuItem, error = systemMenu:addCheckmarkMenuItem("VCR Effect", gOptionVcrEffect, function(value)
 		gOptionVcrEffect = value
 	end)
 
 end
 
-setSystemMenu()
-
--- Init app in menu
-initMenuState()
-
--- Setup the Crank Indicator
-playdate.ui.crankIndicator:start()
-playdate.setCrankSoundsDisabled(true)
-
+-- playdate.update()
+--
+-- Main cycle routine.
+-- Updates either the menu or player accordingly.
 function playdate.update()
 
-	playdate.timer.updateTimers() -- Required to use timers and crankIndicator
+	playdate.timer.updateTimers()
 
-	-- Menu state
-	if(state:get() == state.kMenuState) then
+	if(state == kMenuState) then
 		menu:update()
-	end
-
-	-- Play state
-	if(state:get() == state.kPlayState) then
+	elseif(state == kPlayState) then
 		player:update()
 	end
 end
+
+-- Startup initializations
+playdate.setCrankSoundsDisabled(false)
+initSystemMenu()
+initMenuState()

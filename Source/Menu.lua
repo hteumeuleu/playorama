@@ -138,8 +138,8 @@ function Menu:reset()
 	end
 
 	-- Setup control handlers
-	playdate.inputHandlers.pop()
-	playdate.inputHandlers.pop()
+	playdate.inputHandlers.pop() -- Player.lua
+	playdate.inputHandlers.pop() -- main.lua
 	local myInputHandlers = {
 		AButtonDown = function()
 			self.isPressed = true

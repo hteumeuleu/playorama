@@ -12,7 +12,6 @@ function Player:init()
 	Player.super.init(self)
 
 	self.controls = Controls()
-	self:setInputHandlers()
 
 	return self
 
@@ -39,8 +38,8 @@ end
 -- Set input handlers used during playback.
 function Player:setInputHandlers()
 
-	playdate.inputHandlers.pop()
-	playdate.inputHandlers.pop()
+	playdate.inputHandlers.pop() -- Menu.lua
+	playdate.inputHandlers.pop() -- main.lua
 	local playerInputHandlers = {
 		AButtonDown = function()
 			self.videorama:togglePause()
