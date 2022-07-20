@@ -4,14 +4,9 @@ local kPlaybackRateStep <const> = 0.1
 
 class('Videorama').extends()
 
-function createVideorama(videoPath, audioPath)
-    local v = Videorama(videoPath, audioPath)
-	if v ~= nil and v.error == nil then
-        return v
-    end
-    return nil, v.error
-end
-
+-- Videorama class
+--
+-- Combines audio and video into an object ready to play.
 function Videorama:init(videoPath, audioPath)
 
 	Videorama.super.init(self)
@@ -64,6 +59,20 @@ function Videorama:init(videoPath, audioPath)
 
 end
 
+-- createVideorama(videoPath, audioPath)
+--
+-- Factory method to create a Videorama object.
+function createVideorama(videoPath, audioPath)
+    local v = Videorama(videoPath, audioPath)
+	if v ~= nil and v.error == nil then
+        return v
+    end
+    return nil, v.error
+end
+
+-- load()
+--
+-- Loads the associated video and audio files.
 function Videorama:load()
 
 	-- Open video
@@ -92,7 +101,7 @@ function Videorama:load()
 			return false, self.error
 		end
 	end
-	return true, self
+	return true
 
 end
 
@@ -386,10 +395,7 @@ end
 -- Returns true if the video is fast forwarding (or "backwarding").
 function Videorama:isFFing()
 
-	if self.playbackRate > 1.2 or self.playbackRate < 0.8  then
-		return true
-	end
-	return false
+	return (self.playbackRate > 1.2 or self.playbackRate < 0.8)
 
 end
 
