@@ -107,6 +107,6 @@ end
 
 -- Startup initializations
 playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
-playdate.setCrankSoundsDisabled(false)
+playdate.setCrankSoundsDisabled(true)
 initSystemMenu()
 initMenuState()
