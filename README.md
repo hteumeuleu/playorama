@@ -6,7 +6,7 @@ Playorama is a _cranky_ video player for the Playdate. You can use the crank to 
 
 ## 1. How to use
 
-*Warning*: The app is still very rough around the edges and the process to get your own videos on the Playdate is a bit clunky. There’s a demo video included in the application if you’re not at ease with encoding video and audio.
+*Warning*: The process to get your own videos on the Playdate is a bit clunky. There’s a demo video included in the application if you’re not at ease with encoding video and audio.
 
 ### 1.1. Controls
 
@@ -15,20 +15,19 @@ While a video is playing, you can use the following controls.
 * `A`: pause
 * `B`: menu
 * `Up`: toggle track bar
-* `Right`: play at 1x speed
-* `Left`: play at -1x speed
+* `Left` and `Right`: toggle through different playback speed
 * `Crank`: change playback speed up to 4x 
 
 ### 1.2. Download and install
 
 1. Download the latest release at https://github.com/hteumeuleu/playorama/releases .
-2. Get the `playorama.pdx` file.
+2. Get the `Playorama.pdx` file.
 3. Sideload it to your Playdate device. (You can refer to the official [Sideloading Playdate games](https://help.play.date/games/sideloading/) documentation.)
 
 ### 1.3. Add videos
 
 1. Connect your Playdate to your computer in [Data Disk mode](https://help.play.date/games/sideloading/#data-disk-mode).
-2. In the main `Data` folder, create a `com.hteumeuleu.playorama` folder.
+2. In the main `Data` folder, locate or create the folder the app has access to. The folder shall be named `com.hteumeuleu.playorama` if you sideloaded the app over a USB connection, or `user.xxxx.playorama` (where `xxxx` should be replaced by your user number used in other folder names) if you sideloaded the app through the Playdate website.
 3. Add your video and audio files inside. Both files should have the same base name (for example: `sample.pdv` and `sample.pda`).
 
 ### 1.4. Sample videos
