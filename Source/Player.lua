@@ -12,9 +12,24 @@ function Player:init()
 	Player.super.init(self)
 
 	self.controls = Controls()
+	self.controls:setTimerUpdateCallback(
+		function(x, y, width, height)
+			self:drawingCallback(x, y, width, height)
+		end
+	)
 
 	return self
 
+end
+
+-- drawingCallback()
+--
+function Player:drawingCallback(x, y, width, height)
+	self.isBackgroundDrawing = true
+	playdate.graphics.setClipRect(x, y, width, height)
+		self.videorama:update()
+	playdate.graphics.clearClipRect()
+	self.isBackgroundDrawing = false
 end
 
 -- update(videorama)
@@ -24,7 +39,7 @@ end
 function Player:update()
 
 	if self.videorama ~= nil then
-		if self.videorama:isPlaying() then
+		if self.videorama:isPlaying() or self.isBackgroundDrawing then
 			self.videorama:update()
 		end
 		self:setCurrentTimeText()

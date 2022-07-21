@@ -210,15 +210,18 @@ end
 --
 function Controls:hide()
 
-	if self.timer ~= nil then
-		self.timer:remove()
-	end
-	self.timer = playdate.timer.new(500, self.y, 260, playdate.easingFunctions.outBounce)
-	self.timer.updateCallback = function(timer)
-		self.y = timer.value
-	end
-	self.timer.timerEndedCallback = function(timer)
-		self.isVisible = false
+	if self.timer == nil then
+		self.timer = playdate.timer.new(300, self.y, 260, playdate.easingFunctions.outBounce)
+		self.timer.updateCallback = function(timer)
+			self.y = timer.value
+			if type(self.timerUpdateCallback) == "function" then
+				self.timerUpdateCallback(0, kControlsTop, 400, 240 - kControlsTop)
+			end
+		end
+		self.timer.timerEndedCallback = function(timer)
+			self.isVisible = false
+			self.timer = nil
+		end
 	end
 
 end
@@ -234,14 +237,28 @@ end
 --
 function Controls:show()
 
-	if self.timer ~= nil then
-		self.timer:remove()
-	end
 	self.isVisible = true
-	self.timer = playdate.timer.new(500, self.y, kControlsTop, playdate.easingFunctions.outElastic)
-	self.timer.updateCallback = function(timer)
-		self.y = timer.value
+	if self.timer == nil then
+		self.timer = playdate.timer.new(500, self.y, kControlsTop, playdate.easingFunctions.outElastic)
+		self.timer.updateCallback = function(timer)
+			local lastY = self.y
+			self.y = timer.value
+			if type(self.timerUpdateCallback) == "function" then
+				self.timerUpdateCallback(0, lastY, 400, 240 - lastY)
+			end
+		end
+		self.timer.timerEndedCallback = function(timer)
+			self.timer = nil
+		end
 	end
+
+end
+
+-- setTimerUpdateCallback()
+--
+function Controls:setTimerUpdateCallback(callback)
+
+	self.timerUpdateCallback = callback
 
 end
 
