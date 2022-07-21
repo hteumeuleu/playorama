@@ -173,7 +173,8 @@ function Videorama:update()
 		-- If there's no audio and if the video is not paused,
 		-- we increment the lastFrame.
 			local elapsed = playdate.getElapsedTime()
-			frame = math.ceil(self.lastFrame + elapsed * self.video:getFrameRate() * self.playbackRate)
+			local target = 1 / (self.video:getFrameRate() * self.playbackRate)
+			frame = self.lastFrame + math.floor(elapsed / target + 0.5)
 		end
 	end
 
