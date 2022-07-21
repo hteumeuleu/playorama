@@ -76,9 +76,10 @@ end
 function Controls:drawSoundIcon()
 
 	local icon <const> = self:getMuteIcon()
-	local x <const> = kControlsPadding
+	local x <const> = self.currentOffset + kControlsPadding
 	local y <const> = 10
 	icon:draw(x, y)
+	self.currentOffset = x + icon.width
 
 end
 
@@ -127,11 +128,12 @@ end
 --
 function Controls:drawCurrentTime()
 
-	local x <const> = 8 + 20 + 8
+	local x <const> = self.currentOffset + kControlsPadding
 	local y <const> = math.floor((kControlsHeight - kControlsFont:getHeight() + 6) / 2)
 	local currentTimeString = getTimeAsAString(self.currentTime)
 	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
 	playdate.graphics.drawText(currentTimeString, x, y)
+	self.currentOffset = x + 38
 
 end
 
@@ -139,11 +141,12 @@ end
 --
 function Controls:drawTotalTime()
 
-	local x <const> = 400 - (kControlsPadding * 3) - 40 - kControlsMargin
+	local x <const> = self.currentOffset + kControlsPadding
 	local y <const> = math.floor((kControlsHeight - kControlsFont:getHeight() + 6) / 2)
 	local totalTimeString = getTimeAsAString(self.totalTime)
 	playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-	playdate.graphics.drawTextAligned(totalTimeString, x, y, kTextAlignment.right)
+	playdate.graphics.drawTextAligned(totalTimeString, x, y, kTextAlignment.left)
+	self.currentOffset = x + 38
 
 end
 
@@ -151,8 +154,8 @@ end
 --
 function Controls:drawScrobbleBar()
 
-	local scrobbleBarWidth <const> = 204
-	local x <const> = 80
+	local scrobbleBarWidth <const> = kControlsWidth - (4 * kControlsPadding) - 40 - 38 - self.currentOffset --204
+	local x <const> = self.currentOffset + kControlsPadding
 	local y <const> = 18
 	playdate.graphics.setLineWidth(0)
 	-- Background shape
@@ -161,6 +164,7 @@ function Controls:drawScrobbleBar()
 	-- Current shape
 	playdate.graphics.setColor(playdate.graphics.kColorWhite)
 	playdate.graphics.fillRoundRect(x, y, self:getScrobbleWidth(scrobbleBarWidth), 4, 4)
+	self.currentOffset = x + scrobbleBarWidth
 
 end
 
@@ -170,6 +174,7 @@ function Controls:draw()
 
 	local controlsImage = self:getImage()
 	playdate.graphics.pushContext(controlsImage)
+		self.currentOffset = 0
 		self:drawBackgroundImage()
 		if not self:getHasSound() then
 			self:drawSoundIcon()
