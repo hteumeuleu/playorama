@@ -70,9 +70,6 @@ function Player:setInputHandlers()
 		upButtonDown = function()
 			self.controls:toggle()
 		end,
-		upButtonUp = function()
-			self.videorama:draw()
-		end,
 		leftButtonDown = function()
 			if self.videorama:isPlaying() then
 				self.videorama:toggleRate(-1)
