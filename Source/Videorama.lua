@@ -12,7 +12,6 @@ function Videorama:init(videoPath, audioPath)
 	Videorama.super.init(self)
 	self.videoPath = videoPath
 	self.audioPath = audioPath
-	self.name = string.gsub(string.sub(videoPath .. '', 1, string.find(videoPath .. '', '.pdv') - 1), "_", "__")
 
 	-- Return nil if there's no audio
 	if videoPath == nil then
@@ -419,8 +418,20 @@ end
 -- Returns a string representing the name of the video to display
 function Videorama:getDisplayName()
 
-	return string.upper(self.name)
-
+	local extIndex = string.find(self.videoPath .. '', '.pdv')
+	local fullPath = string.sub(self.videoPath .. '', 1, extIndex - 1)
+	local reverseSlashIndex = string.find(string.reverse(fullPath), '/')
+	if reverseSlashIndex == nil then
+		reverseSlashIndex = 1
+	end
+	local lastSlashIndex = string.len(fullPath) - reverseSlashIndex + 1
+	local basePath = string.sub(fullPath, 1, lastSlashIndex)
+	local baseName = string.sub(fullPath, lastSlashIndex + 1)
+	if baseName == "" then 
+		baseName = basePath
+	end
+	baseName = string.upper(baseName)
+	return baseName
 end
 
 -- getDisplayRate()

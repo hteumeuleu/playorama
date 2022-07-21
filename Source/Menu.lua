@@ -236,13 +236,34 @@ function Menu:reset()
 
 end
 
+local function getFilesRecursive(path)
+
+	local files = {}
+	if not path then
+		path = "/"
+	end
+	local currentFiles = playdate.file.listFiles(path)
+	for _, currentPath in ipairs(currentFiles) do
+		if playdate.file.isdir(currentPath) then
+			local subfolderFiles = getFilesRecursive(currentPath)
+			for _, subPath in ipairs(subfolderFiles) do
+				table.insert(files, currentPath .. subPath)
+			end
+		else
+			table.insert(files, currentPath)
+		end
+	end
+	return files
+
+end
+
 -- getFiles()
 --
 -- Returns an array of Videorama objects.
 function Menu:getFiles()
 
 	-- List all available files on the Playdate.
-	local kFiles <const> = playdate.file.listFiles()
+	local kFiles <const> = getFilesRecursive()
 	-- Init the array we’ll return.
 	local availableFiles = {}
 	-- Loop through all files.
