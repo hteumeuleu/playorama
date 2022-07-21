@@ -209,11 +209,12 @@ function Menu:setInputHandlers()
 					self.gridview:setScrollPosition(oldX, 0, false)
 					-- And animate it to its new one.
 					self.gridview:scrollCellToCenter(1, 1, index, true)
+					self.crankTimer:remove()
 				end
 				if(self.crankTimer ~= nil) then
 					self.crankTimer:remove()
 				end
-				self.crankTimer = playdate.timer.performAfterDelay(300, autoScrollAfterCrank, index)
+				self.crankTimer = playdate.timer.performAfterDelay(100, autoScrollAfterCrank, index)
 			end
 			-- Sprite rotation.
 			if self.sprite then
