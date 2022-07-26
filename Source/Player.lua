@@ -113,6 +113,7 @@ function Player:setVideorama(videorama)
 	self.videorama:play()
 	-- Controls
 	self.controls:hideNow()
+	self.controls:setPaused(false)
 	self:setMutedIcon()
 	self:setTotalTimeText()
 	self:setRateText()
