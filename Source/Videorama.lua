@@ -209,10 +209,6 @@ function Videorama:setFrame(frame)
 		self.video:renderFrame(frame)
 		self.lastFrame = frame
 		playdate.resetElapsedTime()
-
-		if self:hasAudio() then
-			self.audio:setOffset(self:getCurrentTime())
-		end
 	end
 
 	self:draw()
@@ -508,6 +504,8 @@ end
 function Videorama:unmute()
 
 	if self.audio then
+
+		self.audio:setOffset(self:getCurrentTime())
 		self.audio:setVolume(1)
 	end
 
