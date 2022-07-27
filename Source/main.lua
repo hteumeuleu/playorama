@@ -4,6 +4,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
+import "CoreLibs/frameTimer"
 import "Player"
 import "Menu"
 
@@ -21,6 +22,9 @@ local state = kMenuState
 local menu = nil
 local player = nil
 local lastPlayedItem = 1
+local frameBeforeTransition = nil
+local frameTimerTransition = nil
+local transitionSprite = nil
 
 -- initMenuState()
 --
@@ -40,7 +44,19 @@ function initMenuState()
 
 	local myInputHandlers = {
 		AButtonUp = function()
-			initPlayState()
+			if frameTimerTransition == nil then
+				frameBeforeTransition = playdate.graphics.getDisplayImage()
+				frameTimerTransition = playdate.timer.new(300, 1, 0)
+				frameTimerTransition.timerEndedCallback = function(timer)
+					initPlayState()
+					transitionSprite:remove()
+					transitionSprite = nil
+				end
+				transitionSprite = playdate.graphics.sprite.new(frameBeforeTransition)
+				transitionSprite:moveTo(200, 120)
+				transitionSprite:setZIndex(999)
+				transitionSprite:add()
+			end
 		end
 	}
 	playdate.inputHandlers.push(myInputHandlers)
@@ -100,6 +116,10 @@ function playdate.update()
 
 	if(state == kMenuState) then
 		menu:update()
+		if frameTimerTransition ~= nil then
+			print(frameTimerTransition.value)
+			transitionSprite:setScale(frameTimerTransition.value)
+		end
 	elseif(state == kPlayState) then
 		player:update()
 	end
