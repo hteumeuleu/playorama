@@ -427,6 +427,8 @@ function Videorama:getDisplayName()
 	if baseName == "" then 
 		baseName = basePath
 	end
+	baseName = string.gsub(baseName, "*", "**")
+	baseName = string.gsub(baseName, "_", "__")
 	baseName = string.upper(baseName)
 	return baseName
 end
