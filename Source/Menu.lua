@@ -19,6 +19,7 @@ function Menu:init()
 	-- The grid view width and height.
 	self.gridWidth = 400
 	self.gridHeight = 160
+	self.gridX = 0
 	-- An individual cell, inside the grid view, width and height.
 	self.cellWidth = 360
 	self.cellHeight = self.gridHeight
@@ -67,10 +68,10 @@ function Menu:update()
 			-- Clear the screen. (Otherwise we'd see traces of previous items.)
 			playdate.graphics.clear(playdate.graphics.kColorBlack)
 			-- Draw the grid view.
-			self.gridview:drawInRect(0, 60, self.gridWidth, self.gridHeight)
+			self.gridview:drawInRect(self.gridX, 60, self.gridWidth, self.gridHeight)
 		playdate.graphics.clearClipRect()
 		-- Saves the x scroll position of the grid. This is useful when using the crank.
-		self.gridX = self.gridview:getScrollPosition()
+		self.gridScrollX = self.gridview:getScrollPosition()
 	end
 
 end
@@ -95,7 +96,7 @@ function Menu:initGridView()
 	self.gridview:setNumberOfRows(1)
 	self.gridview:setCellPadding(self.cellPadding, self.cellPadding, 0, 0)
 	-- The current scroll position inside the grid view.
-	self.gridX = 0
+	self.gridScrollX = 0
 	-- Copy the current instance of Menu to use within the grid drawCell method.
 	local that = self
 	-- drawCell callback method.
@@ -183,15 +184,25 @@ function Menu:setInputHandlers()
 			self.gridview:selectNextColumn(true)
 		end,
 		cranked = function(change, acceleratedChange)
-			local cols = self.gridview:getNumberOfColumns()
-			local maxScroll = ((self.cellWidth + (self.cellPadding * 2)) * (cols - 1))
-			local newX = math.floor(self.gridX + change)
-			if (newX < maxScroll) and (newX >= 0) then
-				self.gridX = newX
-				local err = self.gridview:setScrollPosition(self.gridX, 0, false)
+			local cols <const> = self.gridview:getNumberOfColumns()
+			local maxScroll <const> = ((self.cellWidth + (self.cellPadding * 2)) * (cols - 1))
+			local maxOutOfBoundsScroll <const> = 60
+			local newX <const> = math.floor(self.gridScrollX + change)
+			if (newX <= 0) or (self.gridX > 0) then
+				print(newX, self.gridX)
+				self.gridX = self.gridX - change
+				if self.gridX < 0 then
+					self.gridX = 0
+				end
+				if self.gridX > maxOutOfBoundsScroll then
+					self.gridX = maxOutOfBoundsScroll
+				end
+			elseif (newX < maxScroll) and (newX >= 0) then
+				self.gridScrollX = newX
+				local err = self.gridview:setScrollPosition(self.gridScrollX, 0, false)
 				-- Sets the currently most visible item as the selection.
 				local _, _, column = self.gridview:getSelection()
-				local index = math.floor((self.gridX / (self.cellWidth / 2)) / 2 + 0.5) + 1
+				local index = math.floor((self.gridScrollX / (self.cellWidth / 2)) / 2 + 0.5) + 1
 				if(column ~= index) then
 					self.gridview:setSelection(1, 1, index)
 				end
@@ -200,11 +211,11 @@ function Menu:setInputHandlers()
 					self.gridview:setSelection(1, 1, index)
 					-- Because of the lack of callback after grid view animations,
 					-- we save the current x position of the grid view…
-					local oldX = self.gridX
+					local oldX = self.gridScrollX
 					-- Then we move it to its desired value, without animation.
 					self.gridview:scrollCellToCenter(1, 1, index, false)
-					-- We save the x value as the new self.gridX.
-					self.gridX = self.gridview:getScrollPosition()
+					-- We save the x value as the new self.gridScrollX.
+					self.gridScrollX = self.gridview:getScrollPosition()
 					-- Then we position the grid back to its previous position…
 					self.gridview:setScrollPosition(oldX, 0, false)
 					-- And animate it to its new one.
