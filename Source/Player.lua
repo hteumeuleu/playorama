@@ -74,12 +74,18 @@ function Player:setInputHandlers()
 			if self.videorama:isPlaying() then
 				self.videorama:toggleRate(-1)
 				self:setRateText()
+			else
+				local n = self.videorama.lastFrame - 1
+				self.videorama:setFrame(n)
 			end
 		end,
 		rightButtonDown = function()
 			if self.videorama:isPlaying() then
 				self.videorama:toggleRate(1)
 				self:setRateText()
+			else
+				local n = self.videorama.lastFrame + 1
+				self.videorama:setFrame(n)
 			end
 		end,
 		cranked = function(change, acceleratedChange)
