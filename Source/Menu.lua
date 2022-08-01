@@ -1,6 +1,9 @@
 import "Videorama"
 
 class('Menu').extends()
+local noiseMax = 1
+local phase = 0
+local dx = 3
 
 -- Menu
 --
@@ -61,14 +64,15 @@ function Menu:update()
 
 	-- Update all sprites. (I mean, the only one — the reel in the logo.)
 	playdate.graphics.sprite.update()
+	-- Always update the grid view to get the blobby animation.
+	playdate.graphics.setClipRect(0, 60, self.gridWidth, self.gridHeight)
+		-- Clear the screen. (Otherwise we'd see traces of previous items.)
+		playdate.graphics.clear(playdate.graphics.kColorBlack)
+		-- Draw the grid view.
+		self.gridview:drawInRect(0, 60, self.gridWidth, self.gridHeight)
+	playdate.graphics.clearClipRect()
 	-- Update the grid view if needed.
 	if self:needsDisplay() then
-		playdate.graphics.setClipRect(0, 60, self.gridWidth, self.gridHeight)
-			-- Clear the screen. (Otherwise we'd see traces of previous items.)
-			playdate.graphics.clear(playdate.graphics.kColorBlack)
-			-- Draw the grid view.
-			self.gridview:drawInRect(0, 60, self.gridWidth, self.gridHeight)
-		playdate.graphics.clearClipRect()
 		-- Saves the x scroll position of the grid. This is useful when using the crank.
 		self.gridX = self.gridview:getScrollPosition()
 	end
@@ -100,6 +104,10 @@ function Menu:initGridView()
 	local that = self
 	-- drawCell callback method.
 	function self.gridview:drawCell(section, row, column, selected, x, y, width, height)
+
+		function map(value, min1, max1, min2, max2)
+			return (value - min1) / (max1 - min1) * (max2 - min2) + min2
+		end
 
 		-- Variables to create a pressed button effect on the current item.
 		local kButtonTopOffset = 0
@@ -133,7 +141,42 @@ function Menu:initGridView()
 			local maskImage = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
 			playdate.graphics.pushContext(maskImage)
 				playdate.graphics.setColor(playdate.graphics.kColorWhite)
-				playdate.graphics.fillRoundRect(4, 4, width-8, height-8-kButtonBottomOffset, 4)
+				if selected then
+					local rect = playdate.geometry.rect.new(20, 20, width-40, height-40)
+					local radius = 120
+					local points = {}
+					for a=0, (2*math.pi), 0.1 do
+						local xoff = map(math.cos(a+phase), -1, 1, 0, noiseMax)
+						local yoff = map(math.sin(a+phase), -1, 1, 0, noiseMax)
+						local r = map(playdate.graphics.perlin(xoff, yoff), 0, 1, radius, radius*1.5)
+						local px = (width / 2) + r * math.cos(a)
+						local py = (height / 2) + r * math.sin(a)
+						table.insert(points, playdate.geometry.point.new(px, py))
+
+						local line = playdate.geometry.lineSegment.new(width / 2, height/2, px, py)
+						local intersects, intersectionPoints = line:intersectsRect(rect)
+						if intersects then
+							for _, point in ipairs(intersectionPoints) do
+								-- table.insert(points, playdate.geometry.point.new(point.x, point.y))
+								break
+							end
+						end
+					end
+					polygon = playdate.geometry.polygon.new(table.unpack(points))
+					polygon:close()
+					playdate.graphics.fillPolygon(polygon)
+					phase = phase + 0.04
+					if dx >= 1 then
+						dx = math.floor((dx - 0.5) * 10) / 10
+						if dx < 1.1 then
+							dx = 1
+						end
+					else
+						dx = math.ceil((dx + 0.5) * 10) / 10
+					end
+				else
+					playdate.graphics.fillRoundRect(4, 4, width-8, height-8-kButtonBottomOffset, 4)
+				end
 			playdate.graphics.popContext()
 			thumbnailContext:setMaskImage(maskImage)
 			-- Draws the context.

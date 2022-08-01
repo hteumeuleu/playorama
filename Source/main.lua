@@ -22,6 +22,8 @@ local menu = nil
 local player = nil
 local lastPlayedItem = 1
 
+math.randomseed(playdate.getSecondsSinceEpoch())
+
 -- initMenuState()
 --
 -- Sets the current state of the app to the Menu.
