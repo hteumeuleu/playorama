@@ -109,6 +109,22 @@ function Menu:initGridView()
 			return (value - min1) / (max1 - min1) * (max2 - min2) + min2
 		end
 
+		function arcToTable(arc, segments)
+			local length = arc:length()
+			local poly = playdate.geometry.polygon.new(segments)
+			local step = length / (segments - 1)
+			local pack = {}
+			local d = 0
+			for i = 1, segments do
+				local p = arc:pointOnArc(d)
+				poly:setPointAt(i, p.x, p.y)
+				table.insert(pack, p.x)
+				table.insert(pack, p.y)
+				d += step
+			end
+			return pack
+		end
+
 		-- Variables to create a pressed button effect on the current item.
 		local kButtonTopOffset = 0
 		local kButtonBottomOffset = 2
@@ -116,6 +132,30 @@ function Menu:initGridView()
 			kButtonTopOffset = 2
 			kButtonBottomOffset = 0
 		end
+
+		-- Creates a polygon to use as the thumbnail shape
+		local radius <const> = 4
+		local topleft = playdate.geometry.arc.new(x + radius, y + radius, radius, 270, 0)
+		local top = playdate.geometry.lineSegment.new(x + radius, y, x + width - radius, y)
+		local topright = playdate.geometry.arc.new(width - radius, 0 + radius, radius, 0, 90)
+		local right = playdate.geometry.lineSegment.new(width, radius, width, height - radius)
+		local bottomright = playdate.geometry.arc.new(width - radius, height - radius, radius, 90, 180)
+		local bottom = playdate.geometry.lineSegment.new(width - radius, height, radius, height)
+		local bottomleft = playdate.geometry.arc.new(0 + radius, height - radius, radius, 180, 270)
+		local left = playdate.geometry.lineSegment.new(0, height - radius, 0, radius)
+		local polygon = playdate.geometry.polygon.new(
+			-- table.unpack(arcToTable(topleft, 8)),
+			top:unpack()
+			-- table.unpack(arcToTable(topright, 8)),
+			-- right:unpack(),
+			-- table.unpack(arcToTable(bottomright, 8)),
+			-- bottom:unpack(),
+			-- table.unpack(arcToTable(bottomleft, 8)),
+			-- left:unpack()
+		)
+		polygon:close()
+		playdate.graphics.setLineWidth(4)
+		playdate.graphics.drawPolygon(polygon)
 
 		-- Item outline.
 		-- White if the current item is selected. Checkboard pattern otherwise.
@@ -142,30 +182,39 @@ function Menu:initGridView()
 			playdate.graphics.pushContext(maskImage)
 				playdate.graphics.setColor(playdate.graphics.kColorWhite)
 				if selected then
-					local rect = playdate.geometry.rect.new(20, 20, width-40, height-40)
-					local radius = 120
+					local rect = playdate.geometry.rect.new(4, 4, width-8, height-8)
+					-- local radius = 120
 					local points = {}
 					for a=0, (2*math.pi), 0.1 do
-						local xoff = map(math.cos(a+phase), -1, 1, 0, noiseMax)
-						local yoff = map(math.sin(a+phase), -1, 1, 0, noiseMax)
-						local r = map(playdate.graphics.perlin(xoff, yoff), 0, 1, radius, radius*1.5)
-						local px = (width / 2) + r * math.cos(a)
-						local py = (height / 2) + r * math.sin(a)
-						table.insert(points, playdate.geometry.point.new(px, py))
-
-						local line = playdate.geometry.lineSegment.new(width / 2, height/2, px, py)
+						local ix = (width / 2) + 240 * math.cos(a)
+						local iy = (height / 2) + 240 * math.sin(a)
+						local line = playdate.geometry.lineSegment.new(width / 2, height/2, ix, iy)
 						local intersects, intersectionPoints = line:intersectsRect(rect)
 						if intersects then
-							for _, point in ipairs(intersectionPoints) do
-								-- table.insert(points, playdate.geometry.point.new(point.x, point.y))
-								break
-							end
+							local point = intersectionPoints[1]
+							local xoff = map(math.cos(a-phase), -1, 1, 0, noiseMax)
+							local yoff = map(math.sin(a-phase), -1, 1, 0, noiseMax)
+							local radiusLine = playdate.geometry.lineSegment.new(width/2, height/2, point.x, point.y)
+							local radius = radiusLine:length()
+							local r = map(playdate.graphics.perlin(xoff, yoff), 0, 1, radius*0.9, radius*1)
+							local px = (width / 2) + r * math.cos(a)
+							local py = (height / 2) + r * math.sin(a)
+							table.insert(points, playdate.geometry.point.new(px, py))
 						end
+
+
+						-- local xoff = map(math.cos(a+phase), -1, 1, 0, noiseMax)
+						-- local yoff = map(math.sin(a+phase), -1, 1, 0, noiseMax)
+						-- local r = map(playdate.graphics.perlin(xoff, yoff), 0, 1, radius, radius*1.5)
+						-- local px = (width / 2) + r * math.cos(a)
+						-- local py = (height / 2) + r * math.sin(a)
+						-- table.insert(points, playdate.geometry.point.new(px, py))
+
 					end
 					polygon = playdate.geometry.polygon.new(table.unpack(points))
 					polygon:close()
 					playdate.graphics.fillPolygon(polygon)
-					phase = phase + 0.04
+					phase = phase + 0.024
 					if dx >= 1 then
 						dx = math.floor((dx - 0.5) * 10) / 10
 						if dx < 1.1 then
@@ -184,10 +233,10 @@ function Menu:initGridView()
 		end
 
 		-- Black inner outline.
-		playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-		playdate.graphics.setLineWidth(3)
-		playdate.graphics.setColor(playdate.graphics.kColorBlack)
-		playdate.graphics.drawRoundRect(x+2, y+2+kButtonTopOffset, width-4, height-4-kButtonTopOffset-kButtonBottomOffset, 4)
+		-- playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+		-- playdate.graphics.setLineWidth(3)
+		-- playdate.graphics.setColor(playdate.graphics.kColorBlack)
+		-- playdate.graphics.drawRoundRect(x+2, y+2+kButtonTopOffset, width-4, height-4-kButtonTopOffset-kButtonBottomOffset, 4)
 
 		-- Text badge with the video title.
 		local font = playdate.graphics.getFont()
