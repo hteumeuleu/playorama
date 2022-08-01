@@ -278,18 +278,23 @@ end
 --
 function Videorama:toggleRate(direction)
 
-	local newRate = 0
-	local roundedAbs = math.abs(self.playbackRate)
-	if (self.playbackRate > 0 and direction == -1) or (self.playbackRate < 0 and direction == 1) then
-		newRate = 1
-	elseif roundedAbs >= 4 or roundedAbs < 1 then
-		newRate = 1
-	elseif roundedAbs >= 2 then
-		newRate = 4
-	elseif roundedAbs >= 1 then
-		newRate = 2
+	local rates = {-4, -2, -1, 1, 2, 4}
+	if not self:canPlayBackwards() then
+		rates = {0.2, 0.5, 1, 2, 4}
 	end
-	newRate = newRate * direction
+	local i
+	if direction == -1 then
+		i = #rates
+		while i > 0 and self.playbackRate <= rates[i] do
+			i = i - 1
+		end
+	else
+		i = 1
+		while i < #rates and self.playbackRate >= rates[i] do
+			i = i + 1
+		end
+	end
+	local newRate = rates[i]
 	self:setRate(newRate)
 
 end
