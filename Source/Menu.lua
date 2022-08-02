@@ -109,22 +109,6 @@ function Menu:initGridView()
 			return (value - min1) / (max1 - min1) * (max2 - min2) + min2
 		end
 
-		function arcToTable(arc, segments)
-			local length = arc:length()
-			local poly = playdate.geometry.polygon.new(segments)
-			local step = length / (segments - 1)
-			local pack = {}
-			local d = 0
-			for i = 1, segments do
-				local p = arc:pointOnArc(d)
-				poly:setPointAt(i, p.x, p.y)
-				table.insert(pack, p.x)
-				table.insert(pack, p.y)
-				d += step
-			end
-			return pack
-		end
-
 		-- Variables to create a pressed button effect on the current item.
 		local kButtonTopOffset = 0
 		local kButtonBottomOffset = 2
@@ -156,32 +140,35 @@ function Menu:initGridView()
 		local polygon = playdate.geometry.polygon.new(table.unpack(points))
 		polygon:close()
 		polygon:translate(x, y)
+		local blobbypolygon = polygon
 
-		local blobbypoints = {}
-		for a=0, (2*math.pi), 0.1 do
-			local ix = (width / 2) + 240 * math.cos(a)
-			local iy = (height / 2) + 240 * math.sin(a)
-			local line = playdate.geometry.lineSegment.new(width / 2, height / 2, ix, iy)
-			local intersects, intersectionPoints = line:intersectsPolygon(polygon)
-			if intersects then
-				local point = intersectionPoints[1]
-				local xoff = map(math.cos(a-phase), -1, 1, 0, noiseMax)
-				local yoff = map(math.sin(a-phase), -1, 1, 0, noiseMax)
-				local radiusLine = playdate.geometry.lineSegment.new(width/2, height/2, point.x, point.y)
-				local blobbyradius = radiusLine:length()
-				local r = map(playdate.graphics.perlin(xoff, yoff), 0, 1, blobbyradius*0.98, blobbyradius*1)
-				local px = (width / 2) + r * math.cos(a)
-				local py = (height / 2) + r * math.sin(a)
-				table.insert(blobbypoints, playdate.geometry.point.new(px, py))
+		if selected then
+			local blobbypoints = {}
+			for a=0, (2*math.pi), 0.05 do
+				local ix = x + (width / 2) + 200 * math.cos(a)
+				local iy = y + (height / 2) + 200 * math.sin(a)
+				local line = playdate.geometry.lineSegment.new(x + (width / 2), y + (height / 2), ix, iy)
+				local intersects, intersectionPoints = line:intersectsPolygon(polygon)
+				if intersects then
+					local point = intersectionPoints[1]
+					local xoff = map(math.cos(a-phase), -1, 1, 0, noiseMax)
+					local yoff = map(math.sin(a-phase), -1, 1, 0, noiseMax)
+					local radiusLine = playdate.geometry.lineSegment.new(x + (width / 2), y + (height / 2), point.x, point.y)
+					local blobbyradius = radiusLine:length()
+					local r = map(playdate.graphics.perlin(xoff, yoff), 0, 1, blobbyradius*0.9, blobbyradius*1)
+					local px = x + (width / 2) + r * math.cos(a)
+					local py = y + (height / 2) + r * math.sin(a)
+					table.insert(blobbypoints, playdate.geometry.point.new(px, py))
+				end
 			end
+			blobbypolygon = playdate.geometry.polygon.new(table.unpack(blobbypoints))
+			blobbypolygon:close()
 		end
-		local blobbypolygon = playdate.geometry.polygon.new(table.unpack(blobbypoints))
-		blobbypolygon:close()
 
 		-- Item outline.
 		-- White if the current item is selected. Checkboard pattern otherwise.
 		if selected then
-			phase = phase + 0.05
+			phase = phase + 0.025
 			if dx >= 1 then
 				dx = math.floor((dx - 0.5) * 10) / 10
 				if dx < 1.1 then
@@ -211,22 +198,26 @@ function Menu:initGridView()
 			local maskImage = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
 			playdate.graphics.pushContext(maskImage)
 				playdate.graphics.setColor(playdate.graphics.kColorWhite)
-				if selected then
-					playdate.graphics.fillPolygon(blobbypolygon)
-				else
-					playdate.graphics.fillRoundRect(4, 4, width-8, height-8-kButtonBottomOffset, 4)
-				end
+				blobbypolygon:translate(-1  * x, -1 * y)
+				playdate.graphics.fillPolygon(blobbypolygon)
 			playdate.graphics.popContext()
 			thumbnailContext:setMaskImage(maskImage)
 			-- Draws the context.
-			thumbnailContext:draw(x, y+kButtonTopOffset)
+			thumbnailContext:draw(x+4, y+4)
 		end
 
 		-- Black inner outline.
-		-- playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
-		-- playdate.graphics.setLineWidth(3)
-		-- playdate.graphics.setColor(playdate.graphics.kColorBlack)
-		-- playdate.graphics.drawRoundRect(x+2, y+2+kButtonTopOffset, width-4, height-4-kButtonTopOffset-kButtonBottomOffset, 4)
+		if selected then
+			blobbypolygon:translate(x, y)
+			local t = playdate.geometry.affineTransform.new()
+			t:scale(0.95, 0.9)
+			t:translate((width * (1 - 0.95)) / 2 + 4, (height / 2) * (1 - 0.9) + 8)
+			t:transformPolygon(blobbypolygon)
+			playdate.graphics.setStrokeLocation(playdate.graphics.kStrokeInside)
+			playdate.graphics.setLineWidth(3)
+			playdate.graphics.setColor(playdate.graphics.kColorBlack)
+			playdate.graphics.drawPolygon(blobbypolygon)
+		end
 
 		-- Text badge with the video title.
 		local font = playdate.graphics.getFont()
