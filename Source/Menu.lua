@@ -135,36 +135,66 @@ function Menu:initGridView()
 
 		-- Creates a polygon to use as the thumbnail shape
 		local radius <const> = 4
-		local topleft = playdate.geometry.arc.new(x + radius, y + radius, radius, 270, 0)
-		local top = playdate.geometry.lineSegment.new(x + radius, y, x + width - radius, y)
-		local topright = playdate.geometry.arc.new(width - radius, 0 + radius, radius, 0, 90)
-		local right = playdate.geometry.lineSegment.new(width, radius, width, height - radius)
-		local bottomright = playdate.geometry.arc.new(width - radius, height - radius, radius, 90, 180)
-		local bottom = playdate.geometry.lineSegment.new(width - radius, height, radius, height)
-		local bottomleft = playdate.geometry.arc.new(0 + radius, height - radius, radius, 180, 270)
-		local left = playdate.geometry.lineSegment.new(0, height - radius, 0, radius)
-		local polygon = playdate.geometry.polygon.new(
-			-- table.unpack(arcToTable(topleft, 8)),
-			top:unpack()
-			-- table.unpack(arcToTable(topright, 8)),
-			-- right:unpack(),
-			-- table.unpack(arcToTable(bottomright, 8)),
-			-- bottom:unpack(),
-			-- table.unpack(arcToTable(bottomleft, 8)),
-			-- left:unpack()
-		)
+		local points = {
+			radius,
+			0,
+			width - radius,
+			0,
+			width,
+			radius,
+			width,
+			height - radius,
+			width - radius,
+			height,
+			radius,
+			height,
+			0,
+			height - radius,
+			0,
+			radius
+		}
+		local polygon = playdate.geometry.polygon.new(table.unpack(points))
 		polygon:close()
-		playdate.graphics.setLineWidth(4)
-		playdate.graphics.drawPolygon(polygon)
+		polygon:translate(x, y)
+
+		local blobbypoints = {}
+		for a=0, (2*math.pi), 0.1 do
+			local ix = (width / 2) + 240 * math.cos(a)
+			local iy = (height / 2) + 240 * math.sin(a)
+			local line = playdate.geometry.lineSegment.new(width / 2, height / 2, ix, iy)
+			local intersects, intersectionPoints = line:intersectsPolygon(polygon)
+			if intersects then
+				local point = intersectionPoints[1]
+				local xoff = map(math.cos(a-phase), -1, 1, 0, noiseMax)
+				local yoff = map(math.sin(a-phase), -1, 1, 0, noiseMax)
+				local radiusLine = playdate.geometry.lineSegment.new(width/2, height/2, point.x, point.y)
+				local blobbyradius = radiusLine:length()
+				local r = map(playdate.graphics.perlin(xoff, yoff), 0, 1, blobbyradius*0.98, blobbyradius*1)
+				local px = (width / 2) + r * math.cos(a)
+				local py = (height / 2) + r * math.sin(a)
+				table.insert(blobbypoints, playdate.geometry.point.new(px, py))
+			end
+		end
+		local blobbypolygon = playdate.geometry.polygon.new(table.unpack(blobbypoints))
+		blobbypolygon:close()
 
 		-- Item outline.
 		-- White if the current item is selected. Checkboard pattern otherwise.
 		if selected then
+			phase = phase + 0.05
+			if dx >= 1 then
+				dx = math.floor((dx - 0.5) * 10) / 10
+				if dx < 1.1 then
+					dx = 1
+				end
+			else
+				dx = math.ceil((dx + 0.5) * 10) / 10
+			end
 			playdate.graphics.setColor(playdate.graphics.kColorWhite)
 		else
 			playdate.graphics.setPattern({ 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 })
 		end
-		playdate.graphics.fillRoundRect(x, y+kButtonTopOffset, width, height-kButtonTopOffset, 4)
+		playdate.graphics.fillPolygon(blobbypolygon)
 
 		-- Thumbnail image.
 		if that.items[column] ~= nil then
@@ -182,47 +212,7 @@ function Menu:initGridView()
 			playdate.graphics.pushContext(maskImage)
 				playdate.graphics.setColor(playdate.graphics.kColorWhite)
 				if selected then
-					local rect = playdate.geometry.rect.new(4, 4, width-8, height-8)
-					-- local radius = 120
-					local points = {}
-					for a=0, (2*math.pi), 0.1 do
-						local ix = (width / 2) + 240 * math.cos(a)
-						local iy = (height / 2) + 240 * math.sin(a)
-						local line = playdate.geometry.lineSegment.new(width / 2, height/2, ix, iy)
-						local intersects, intersectionPoints = line:intersectsRect(rect)
-						if intersects then
-							local point = intersectionPoints[1]
-							local xoff = map(math.cos(a-phase), -1, 1, 0, noiseMax)
-							local yoff = map(math.sin(a-phase), -1, 1, 0, noiseMax)
-							local radiusLine = playdate.geometry.lineSegment.new(width/2, height/2, point.x, point.y)
-							local radius = radiusLine:length()
-							local r = map(playdate.graphics.perlin(xoff, yoff), 0, 1, radius*0.9, radius*1)
-							local px = (width / 2) + r * math.cos(a)
-							local py = (height / 2) + r * math.sin(a)
-							table.insert(points, playdate.geometry.point.new(px, py))
-						end
-
-
-						-- local xoff = map(math.cos(a+phase), -1, 1, 0, noiseMax)
-						-- local yoff = map(math.sin(a+phase), -1, 1, 0, noiseMax)
-						-- local r = map(playdate.graphics.perlin(xoff, yoff), 0, 1, radius, radius*1.5)
-						-- local px = (width / 2) + r * math.cos(a)
-						-- local py = (height / 2) + r * math.sin(a)
-						-- table.insert(points, playdate.geometry.point.new(px, py))
-
-					end
-					polygon = playdate.geometry.polygon.new(table.unpack(points))
-					polygon:close()
-					playdate.graphics.fillPolygon(polygon)
-					phase = phase + 0.024
-					if dx >= 1 then
-						dx = math.floor((dx - 0.5) * 10) / 10
-						if dx < 1.1 then
-							dx = 1
-						end
-					else
-						dx = math.ceil((dx + 0.5) * 10) / 10
-					end
+					playdate.graphics.fillPolygon(blobbypolygon)
 				else
 					playdate.graphics.fillRoundRect(4, 4, width-8, height-8-kButtonBottomOffset, 4)
 				end
