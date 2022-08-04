@@ -33,7 +33,7 @@ Playorama has two options available in the Playdate System Menu:
 * VCR effect: adds a VCR pause effect to the video when going fast forward, backward or frame by frame.
 * Log: show errors that occured while opening your own video and audio files. 
 
-### 2. Add videos
+## 2. Add videos
 
 1. Connect your Playdate to your computer in [Data Disk mode](https://help.play.date/games/sideloading/#data-disk-mode).
 2. In the main `Data` folder, locate or create the folder the app has access to. The folder shall be named either:
