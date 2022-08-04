@@ -6,9 +6,11 @@ import "CoreLibs/ui"
 import "CoreLibs/crank"
 import "Player"
 import "Menu"
+import "Log"
 
 -- Global variables
 gOptionVcrEffect = false
+gLog = Log()
 
 -- Define global font
 local kFontCuberickBold <const> = playdate.graphics.font.new("fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
@@ -17,6 +19,7 @@ playdate.graphics.setFont(kFontCuberickBold)
 -- App variables
 local kMenuState <const> = "Menu"
 local kPlayState <const> = "Play"
+local kLogState <const> = "Log"
 local state = kMenuState
 local menu = nil
 local player = nil
@@ -75,6 +78,24 @@ function initPlayState()
 
 end
 
+-- initLogState
+--
+function initLogState()
+
+	state = kLogState
+
+	local myInputHandlers = {
+		BButtonUp = function()
+			gLog:unload()
+			initMenuState()
+		end
+	}
+	playdate.inputHandlers.push(myInputHandlers, true)
+
+
+end
+
+
 -- initSystemMenu()
 --
 -- Add options in System menu.
@@ -87,6 +108,8 @@ local function initSystemMenu()
 	local checkmarkMenuItem, error = systemMenu:addCheckmarkMenuItem("VCR Effect", gOptionVcrEffect, function(value)
 		gOptionVcrEffect = value
 	end)
+	-- Add a menu item for log infos.
+	local logMenuItem, error = systemMenu:addMenuItem("Log", initLogState)
 
 end
 
@@ -102,6 +125,8 @@ function playdate.update()
 		menu:update()
 	elseif(state == kPlayState) then
 		player:update()
+	elseif(state == kLogState) then
+		gLog:update()
 	end
 end
 
