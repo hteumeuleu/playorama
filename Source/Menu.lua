@@ -152,11 +152,11 @@ function Menu:initGridView()
 		local cellText = that.items[column]:getDisplayName()
 		-- Black rectangle background.
 		playdate.graphics.setColor(playdate.graphics.kColorBlack)
-		playdate.graphics.fillRoundRect(x+9, y + textY - 1, font:getTextWidth(cellText) + 5, font:getHeight() + 2, 3)
+		playdate.graphics.fillRoundRect(x+9, y + textY - 1, math.min(font:getTextWidth(cellText) + 5, width - 18), font:getHeight() + 2, 3)
 		-- White text over it.
 		local previousDrawMode = playdate.graphics.getImageDrawMode()
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-		playdate.graphics.drawText(cellText, x+12, y + textY)
+		playdate.graphics.drawTextInRect(cellText, x+12, y + textY, width - 24, font:getHeight(), nil, "…")
 		playdate.graphics.setImageDrawMode(previousDrawMode)
 	end
 
