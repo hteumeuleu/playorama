@@ -82,6 +82,10 @@ end
 --
 function initLogState()
 
+	if state == kPlayState then
+		player:unload()
+		initMenuState()
+	end
 	state = kLogState
 
 	local myInputHandlers = {
