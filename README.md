@@ -2,13 +2,19 @@
 
 # A cranky video player for the Playdate
 
-Playorama is a _cranky_ video player for the Playdate. You can use the crank to fast forward and backward through a video.
+Playorama is a _cranky_ video player for the Playdate. You can use the crank to fast forward and backward or move frame by frame through a video.
 
 ## 1. How to use
 
 *Warning*: The process to get your own videos on the Playdate is a bit clunky. There’s a demo video included in the application if you’re not at ease with encoding video and audio.
 
-### 1.1. Controls
+### 1.1. Download and install
+
+1. Download the latest release at https://github.com/hteumeuleu/playorama/releases .
+2. Get the `Playorama.pdx` file.
+3. Sideload it to your Playdate device. (You can refer to the official [Sideloading Playdate games](https://help.play.date/games/sideloading/) documentation.)
+
+### 1.2. Controls
 
 While a video is playing, you can use the following controls.
 
@@ -18,27 +24,32 @@ While a video is playing, you can use the following controls.
 * `Left` and `Right`: toggle through different playback speed
 * `Crank`: change playback speed up to 4x 
 
-### 1.2. Download and install
+If the video is paused, using `Left` and `Right` or the `Crank` will move frame by frame.
 
-1. Download the latest release at https://github.com/hteumeuleu/playorama/releases .
-2. Get the `Playorama.pdx` file.
-3. Sideload it to your Playdate device. (You can refer to the official [Sideloading Playdate games](https://help.play.date/games/sideloading/) documentation.)
+### 1.3. Options
 
-### 1.3. Add videos
+Playorama has two options available in the Playdate System Menu:
+
+* VCR effect: adds a VCR pause effect to the video when going fast forward, backward or frame by frame.
+* Log: show errors that occured while opening your own video and audio files. 
+
+### 2. Add videos
 
 1. Connect your Playdate to your computer in [Data Disk mode](https://help.play.date/games/sideloading/#data-disk-mode).
-2. In the main `Data` folder, locate or create the folder the app has access to. The folder shall be named `com.hteumeuleu.playorama` if you sideloaded the app over a USB connection, or `user.xxxx.playorama` (where `xxxx` should be replaced by your user number used in other folder names) if you sideloaded the app through the Playdate website.
+2. In the main `Data` folder, locate or create the folder the app has access to. The folder shall be named either:
+	* `com.hteumeuleu.playorama` if you sideloaded the app over a USB connection, 
+	* `user.xxxx.playorama` if you sideloaded the app through the Playdate website (where `xxxx` should be replaced by your user number used in other folder names).
 3. Add your video and audio files inside. Both files should have the same base name (for example: `sample.pdv` and `sample.pda`).
 
-### 1.4. Sample videos
+### 2.1. Sample videos
 
 You can download the following videos to try it out.
 
 _(Coming soon!)_
 
-Download an archive and extract it in the application data folder (See `1.3.` above.).
+Download an archive and extract it in the application data folder (See `2.` above.).
 
-### 1.5. Encode your own videos
+### 2.2. Encode your own videos
 
 #### Using the online Playdate Video Encoder
 
@@ -52,7 +63,11 @@ Download an archive and extract it in the application data folder (See `1.3.` ab
 2. Use the app to encode your video. When done, you will get both a `.pdv` and a `.m4a` file. The Playdate can not read an `.m4a` from a data folder, so we need to encode the audio into `.pda`.
 3. Encode the audio into MP3. The Playdate SDK documentation provides indication into how to do this using either _Audacity_ or _ffmpeg_: [https://sdk.play.date/1.11.1/Inside%20Playdate.html#f-sound.getSampleRate](https://sdk.play.date/1.11.1/Inside%20Playdate.html#f-sound.getSampleRate).
 
-## 2. Source Code
+#### Using ffmpeg and a custom script
+
+[Crank Player](https://github.com/saagarjha/CrankPlayer) has a bash script that relies on ffmpeg and a custom Python script to convert a video into a `.pdv`.
+
+## 3. Source Code
 
 You can compile the code with the following command:
 
