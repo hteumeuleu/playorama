@@ -237,6 +237,9 @@ function Menu:reset()
 
 end
 
+-- getFilesRecursive(path)
+--
+-- Returns a list of available files recursively.
 local function getFilesRecursive(path)
 
 	local files = {}

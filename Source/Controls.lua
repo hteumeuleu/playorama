@@ -10,6 +10,9 @@ local kControlsFont <const> = playdate.graphics.getFont()
 
 class('Controls').extends(playdate.graphics.sprite)
 
+-- Menu
+--
+-- This class is for the controls UI displayed on top of a video playing.
 function Controls:init()
 
 	Controls.super.init(self)
@@ -226,6 +229,9 @@ function Controls:hide()
 
 end
 
+-- hideNow()
+--
+-- Instantly hides the Controls, without animation.
 function Controls:hideNow()
 
 	self.isVisible = false

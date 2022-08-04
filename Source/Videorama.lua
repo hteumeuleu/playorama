@@ -119,6 +119,10 @@ function Videorama:load()
 
 end
 
+-- unload()
+--
+-- Unload the video and audio files from memory by setting them to nil.
+-- Useful to free memory.
 function Videorama:unload()
 
 	if self.audio ~= nil then
@@ -182,6 +186,9 @@ function Videorama:update()
 
 end
 
+-- setFrame(frame)
+--
+-- Sets the video at the specified frame index and displays it.
 function Videorama:setFrame(frame)
 
 	if frame < 0 then
