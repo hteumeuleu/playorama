@@ -178,21 +178,8 @@ function Videorama:update()
 		end
 	end
 
-	if frame < 0 then
-		frame = self.video:getFrameCount()
-	end
+	self:setFrame(frame)
 
-	if frame > self.video:getFrameCount() then
-		frame = 0
-	end
-
-	if frame ~= self.lastFrame then
-		self.video:renderFrame(frame)
-		self.lastFrame = frame
-		playdate.resetElapsedTime()
-	end
-
-	self:draw()
 end
 
 function Videorama:setFrame(frame)
