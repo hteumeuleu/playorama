@@ -273,7 +273,9 @@ function Menu:getFiles()
 		local i = string.find(fileName .. '', '.pdv')
 		-- If it does, then it's a catch. We've got a video!
 		-- Now we'll see if there's a sound file as well.
-		if i ~= nil and i > 1 then
+		-- But we’re also excluding the sample video from here for now.
+		-- (We only want it to appear if there’s no user video.)
+		if i ~= nil and i > 1 and fileName ~= "assets/sample.pdv" then
 			local item = {}
 			item.videoPath = fileName
 			-- Isolate the video file base name.
