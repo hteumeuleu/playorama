@@ -59,7 +59,7 @@ Download an archive and extract it in the application data folder (See `2.` abov
 
 #### Using 1bitvideo on macOS
 
-1. Download `1bitvideo.app` the video encoder made by Panic’s Dave Hayden: [https://devforum.play.date/t/video-encoder-work-in-progress-mac-only/1390/6](https://devforum.play.date/t/video-encoder-work-in-progress-mac-only/1390/6). 
+1. Download `1bitvideo.app` the video encoder made by Panic’s Dave Hayden: [https://devforum.play.date/t/video-encoder-work-in-progress-mac-only/1390/23](https://devforum.play.date/t/video-encoder-work-in-progress-mac-only/1390/23). 
 2. Use the app to encode your video. When done, you will get both a `.pdv` and a `.m4a` file. The Playdate can not read an `.m4a` from a data folder, so we need to encode the audio into `.pda`.
 3. Encode the audio into MP3. The Playdate SDK documentation provides indication into how to do this using either _Audacity_ or _ffmpeg_: [https://sdk.play.date/1.11.1/Inside%20Playdate.html#f-sound.getSampleRate](https://sdk.play.date/1.11.1/Inside%20Playdate.html#f-sound.getSampleRate).
 
