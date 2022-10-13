@@ -30,6 +30,15 @@ function Videorama:init(videoPath, audioPath)
 		return self
 	end
 
+	-- Check the video size. We expect 400x240 resolution.
+	local w, h = self.video:getSize()
+	if w ~= 400 or h ~= 240 then
+		self.error = "Video at `".. videoPath .. "` must be 400x240. Currently is " .. w .. "x" .. h .. "."
+		print(self.error)
+		gLog:add(self.error)
+		return self
+	end
+
 	-- No nil up til here? Alright, let's do this!
 
 	-- Variables to keep track of the last frame played and the current playback rate
