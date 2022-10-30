@@ -1,5 +1,5 @@
-import "Videorama"
-import "Controls"
+import "Scripts/Videorama"
+import "Scripts/Controls"
 
 class('Player').extends()
 

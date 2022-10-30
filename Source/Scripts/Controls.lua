@@ -58,7 +58,7 @@ function Controls:getMuteIcon()
 	if self.muteIcon ~= nil then
 		return self.muteIcon
 	else
-		self.muteIcon = playdate.graphics.image.new("assets/mute")
+		self.muteIcon = playdate.graphics.image.new("Assets/mute")
 		return self.muteIcon
 	end
 

@@ -4,17 +4,21 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
-import "Player"
-import "Menu"
-import "Log"
+import "Scripts/globals.lua"
+import "Scripts/Player"
+-- import "Scripts/Menu"
+import "Scripts/Log"
+import "Scripts/Scene"
+import "Scripts/MenuScene"
 
 -- Global variables
 gOptionVcrEffect = false
 gLog = Log()
 
 -- Define global font
-local kFontCuberickBold <const> = playdate.graphics.font.new("fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
+kFontCuberickBold = playdate.graphics.font.new("Fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
 playdate.graphics.setFont(kFontCuberickBold)
+kFontChicaca = playdate.graphics.font.new("Fonts/chicaca")
 
 -- App variables
 local kMenuState <const> = "Menu"
@@ -34,12 +38,8 @@ function initMenuState()
 
 	-- If the Menu class hasn't been instanciated yet, we do it now.
 	if menu == nil then
-		menu = Menu()
+		menu = MenuScene()
 	end
-	-- We reset the menu drawing functions.
-	menu:reset()
-	-- We set the menu selection to the last played item.
-	menu:setSelection(lastPlayedItem)
 
 	local myInputHandlers = {
 		AButtonUp = function()
@@ -123,6 +123,7 @@ end
 -- Updates either the menu or player accordingly.
 function playdate.update()
 
+	playdate.graphics.sprite.update()
 	playdate.timer.updateTimers()
 
 	if(state == kMenuState) then
@@ -135,7 +136,7 @@ function playdate.update()
 end
 
 -- Startup initializations
-playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
+-- playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
 playdate.setCrankSoundsDisabled(true)
 initSystemMenu()
 initMenuState()

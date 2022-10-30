@@ -4,3 +4,4 @@ description=A cranky video player for the Playdate.
 bundleID=com.hteumeuleu.playorama
 version=1.0.1
 imagePath=SystemAssets
+buildNumber=3
