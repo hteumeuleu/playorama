@@ -5,6 +5,7 @@ import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
 import "Scripts/globals.lua"
+import "Scripts/Icon"
 import "Scripts/Player"
 -- import "Scripts/Menu"
 import "Scripts/Log"
@@ -136,7 +137,17 @@ function playdate.update()
 end
 
 -- Startup initializations
--- playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
+playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
 playdate.setCrankSoundsDisabled(true)
 initSystemMenu()
 initMenuState()
+
+playdate.graphics.sprite.setBackgroundDrawingCallback(
+	function(x, y, width, height)
+		playdate.graphics.setClipRect(x, y, width, height)
+			playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
+			playdate.graphics.setColor(playdate.graphics.kColorWhite)
+			playdate.graphics.fillRoundRect(0, 40, 400, 200, 8)
+		playdate.graphics.clearClipRect()
+	end
+)

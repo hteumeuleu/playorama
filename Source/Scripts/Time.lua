@@ -8,10 +8,22 @@ function Time:init()
 	local width = kFontCuberickBold:getTextWidth("00:00")
 	local height = kFontCuberickBold:getHeight()
 	self:setSize(width, height)
-	self:setCenter(0, 0)
-	self:moveTo(10, 10)
+	self:moveTo(10 + (width / 2), 20)
 	self:setZIndex(2)
 	self:initImage()
+	return self
+
+end
+
+-- update()
+--
+function Time:update()
+
+	Time.super.update(self)
+	local elapsedTime = playdate.getElapsedTime()
+	if elapsedTime >= 60 then
+		self:initImage()
+	end
 	return self
 
 end
@@ -20,6 +32,7 @@ end
 --
 function Time:initImage()
 
+	playdate.resetElapsedTime()
 	local img = playdate.graphics.image.new(self.width, self.height)
 	playdate.graphics.pushContext(img)
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
