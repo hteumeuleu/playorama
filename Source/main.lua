@@ -17,9 +17,9 @@ gOptionVcrEffect = false
 gLog = Log()
 
 -- Define global font
-kFontCuberickBold = playdate.graphics.font.new("Fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
+kFontCuberickBold = playdate.graphics.font.new("Fonts/Cuberick-Bold", playdate.graphics.font.kVariantBold)
+kFontCuberickBold24 = playdate.graphics.font.new("Fonts/Cuberick-Bold-24", playdate.graphics.font.kVariantBold)
 playdate.graphics.setFont(kFontCuberickBold)
-kFontChicaca = playdate.graphics.font.new("Fonts/chicaca")
 
 -- App variables
 local kMenuState <const> = "Menu"
@@ -124,8 +124,8 @@ end
 -- Updates either the menu or player accordingly.
 function playdate.update()
 
-	playdate.graphics.sprite.update()
 	playdate.timer.updateTimers()
+	playdate.graphics.sprite.update()
 
 	if(state == kMenuState) then
 		menu:update()
@@ -141,13 +141,3 @@ playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
 playdate.setCrankSoundsDisabled(true)
 initSystemMenu()
 initMenuState()
-
-playdate.graphics.sprite.setBackgroundDrawingCallback(
-	function(x, y, width, height)
-		playdate.graphics.setClipRect(x, y, width, height)
-			playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
-			playdate.graphics.setColor(playdate.graphics.kColorWhite)
-			playdate.graphics.fillRoundRect(0, 40, 400, 200, 8)
-		playdate.graphics.clearClipRect()
-	end
-)
