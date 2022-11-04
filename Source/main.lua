@@ -4,10 +4,12 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
+
+-- Custom Scripts
 import "Scripts/globals.lua"
 import "Scripts/Icon"
+import "Scripts/Library"
 import "Scripts/Player"
--- import "Scripts/Menu"
 import "Scripts/Log"
 import "Scripts/Scene"
 import "Scripts/MenuScene"
@@ -29,6 +31,7 @@ local state = kMenuState
 local menu = nil
 local player = nil
 local lastPlayedItem = 1
+local lib = Library()
 
 -- initMenuState()
 --
