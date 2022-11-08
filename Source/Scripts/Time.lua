@@ -15,24 +15,10 @@ function Time:init()
 
 end
 
--- update()
---
-function Time:update()
-
-	Time.super.update(self)
-	local elapsedTime = playdate.getElapsedTime()
-	if elapsedTime >= 60 then
-		self:initImage()
-	end
-	return self
-
-end
-
 -- initImage()
 --
 function Time:initImage()
 
-	playdate.resetElapsedTime()
 	local img = playdate.graphics.image.new(self.width, self.height)
 	playdate.graphics.pushContext(img)
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
@@ -43,5 +29,8 @@ function Time:initImage()
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
 	playdate.graphics.popContext()
 	self:setImage(img)
+	self.timer = playdate.timer.performAfterDelay(60000, function(timeObj)
+		timeObj:initImage()
+	end, self)
 
 end
