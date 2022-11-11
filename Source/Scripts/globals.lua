@@ -22,3 +22,15 @@ function padNumber(n)
 	end
 	return n
 end
+
+-- removeFormatting()
+--
+function removeFormatting(s)
+
+	if type(s) == "string" then
+		s = string.gsub(s, "*", "**")
+		s = string.gsub(s, "_", "__")
+	end
+	return s
+
+end

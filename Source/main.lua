@@ -12,7 +12,7 @@ import "Scripts/Library"
 import "Scripts/Player"
 import "Scripts/Log"
 import "Scripts/Scene"
-import "Scripts/MenuScene"
+import "Scripts/Menu"
 
 -- Global variables
 gOptionVcrEffect = false
@@ -31,7 +31,7 @@ local state = kMenuState
 local menu = nil
 local player = nil
 local lastPlayedItem = 1
-local lib = Library()
+lib = Library()
 
 -- initMenuState()
 --
@@ -42,15 +42,15 @@ function initMenuState()
 
 	-- If the Menu class hasn't been instanciated yet, we do it now.
 	if menu == nil then
-		menu = MenuScene()
+		menu = Menu()
 	end
 
-	local myInputHandlers = {
-		AButtonUp = function()
-			initPlayState()
-		end
-	}
-	playdate.inputHandlers.push(myInputHandlers)
+	-- local myInputHandlers = {
+	-- 	AButtonUp = function()
+	-- 		initPlayState()
+	-- 	end
+	-- }
+	-- playdate.inputHandlers.push(myInputHandlers)
 
 end
 
@@ -67,18 +67,18 @@ function initPlayState()
 	end
 	-- We keep track of the video that gets played
 	-- to scroll back to it when going back to the menu.
-	lastPlayedItem = menu:getSelectionIndex()
-	-- We load the video inside the player.
-	player:setVideorama(menu:getSelection())
-	player:setInputHandlers()
+	-- lastPlayedItem = menu:getSelectionIndex()
+	-- -- We load the video inside the player.
+	-- player:setVideorama(menu:getSelection())
+	-- player:setInputHandlers()
 
-	local myInputHandlers = {
-		BButtonUp = function()
-			player:unload()
-			initMenuState()
-		end
-	}
-	playdate.inputHandlers.push(myInputHandlers)
+	-- local myInputHandlers = {
+	-- 	BButtonUp = function()
+	-- 		player:unload()
+	-- 		initMenuState()
+	-- 	end
+	-- }
+	-- playdate.inputHandlers.push(myInputHandlers)
 
 end
 

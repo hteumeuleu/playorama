@@ -5,10 +5,10 @@ local arrowImage <const> = arrow:getImage()
 
 -- ListView
 --
-function ListView:init()
+function ListView:init(list)
 
 	ListView.super.init(self)
-	self.items = { "Music", "Videos", "Extras", "Settings", "Foo", "Bar", "Baz", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" }
+	self.items = list.items
 	self:setSize(400, 200)
 	self:setCenter(0, 0)
 	self:moveTo(0, 40)
@@ -84,7 +84,6 @@ function ListView:initGridView()
 		self.gridview:setNumberOfRows(#self.items)
 		self.gridview:setCellPadding(0, 0, 0, 0)
 		self.gridview:setContentInset(10, 10, 0, 0)
-		self.gridview:setSectionHeaderHeight(10)
 
 		local that = self
 
@@ -110,7 +109,7 @@ function ListView:initGridView()
 					local currentFont = playdate.graphics.getFont()
 					playdate.graphics.setFont(kFontCuberickBold24)
 					local fontHeight = kFontCuberickBold24:getHeight()
-					playdate.graphics.drawTextInRect(that.items[row], x + 10, y + ((height - fontHeight) / 2), width - 20, fontHeight, nil, "…")
+					playdate.graphics.drawTextInRect(that.items[row].name, x + 10, y + ((height - fontHeight) / 2), width - 20, fontHeight, nil, "…")
 					playdate.graphics.setFont(currentFont)
 				end
 
@@ -131,7 +130,7 @@ end
 --
 function ListView:needsDisplay()
 
-	return self.gridview.needsdisplay or self.isButtonPressed
+	return self.gridview.needsdisplay
 
 end
 
@@ -142,6 +141,7 @@ function ListView:up()
 
 	self.gridview:selectPreviousRow(true)
 	self:setSelection(self.gridview:getSelectedRow())
+	self:forceUpdate()
 
 end
 
@@ -152,6 +152,7 @@ function ListView:down()
 
 	self.gridview:selectNextRow(true)
 	self:setSelection(self.gridview:getSelectedRow())
+	self:forceUpdate()
 
 end
 
@@ -165,5 +166,23 @@ function ListView:setSelection(index)
 		self.gridview:setSelection(1, index, 1)
 		self.gridview:scrollToCell(1, index, 1, false)
 	end
+
+end
+
+-- getSelection()
+--
+-- Returns the `index` of the row currently selected.
+function ListView:getSelection()
+
+	return self.gridview:getSelectedRow()
+
+end
+
+-- doSelectionCallback()
+--
+-- Calls the currently selected row callback function.
+function ListView:doSelectionCallback()
+
+	self.items[self.gridview:getSelectedRow()].callback()
 
 end
