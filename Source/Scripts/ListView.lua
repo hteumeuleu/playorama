@@ -57,7 +57,13 @@ function ListView:drawStuff()
 	playdate.graphics.setColor(playdate.graphics.kColorWhite)
 	playdate.graphics.fillRoundRect(0, 0, self.width, self.height, 8)
 	-- GridView
-	self.gridview:drawInRect(0, 0, self.width, self.height)
+	local offset = 0
+	if self.gridview:getSelectedRow() == #self.items and #self.items > 5 then
+		-- If the selected item is the last one in a list longer than the screen
+		-- we offset the grid to create a margin below it
+		offset = 10
+	end
+	self.gridview:drawInRect(0, 0 - offset, self.width, self.height)
 
 end
 
@@ -84,6 +90,8 @@ function ListView:initGridView()
 		self.gridview:setNumberOfRows(#self.items)
 		self.gridview:setCellPadding(0, 0, 0, 0)
 		self.gridview:setContentInset(10, 10, 0, 0)
+		self.gridview:setSectionHeaderHeight(10)
+
 
 		local that = self
 
