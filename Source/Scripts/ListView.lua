@@ -25,12 +25,7 @@ function ListView:update()
 
 	ListView.super.update(self)
 	if self.gridview ~= nil and self:needsDisplay() then
-		playdate.graphics.pushContext(self.img)
-			playdate.graphics.setClipRect(0, 0, self.width, self.height)
-				self:drawStuff()
-			playdate.graphics.clearClipRect()
-		playdate.graphics.popContext()
-		self:setImage(self.img)
+		self:forceUpdate()
 	end
 
 end
@@ -41,22 +36,17 @@ function ListView:forceUpdate()
 
 	playdate.graphics.pushContext(self.img)
 		playdate.graphics.setClipRect(0, 0, self.width, self.height)
-			self:drawStuff()
+			self:drawGrid()
 		playdate.graphics.clearClipRect()
 	playdate.graphics.popContext()
 	self:setImage(self.img)
 
 end
 
--- drawStuff()
+-- drawGrid()
 --
-function ListView:drawStuff()
+function ListView:drawGrid()
 
-	playdate.graphics.clear(playdate.graphics.kColorClear)
-	-- Background
-	playdate.graphics.setColor(playdate.graphics.kColorWhite)
-	playdate.graphics.fillRoundRect(0, 0, self.width, self.height, 8)
-	-- GridView
 	self.gridview:drawInRect(0, 0, self.width, self.height)
 
 end
@@ -67,7 +57,7 @@ function ListView:initImage()
 
 	self.img = playdate.graphics.image.new(self.width, self.height, playdate.graphics.kColorClear)
 	playdate.graphics.pushContext(self.img)
-		self:drawStuff()
+		self:drawGrid()
 	playdate.graphics.popContext()
 	self:setImage(self.img)
 
@@ -87,6 +77,14 @@ function ListView:initGridView()
 		self.gridview:setHorizontalDividerHeight(10)
 		self.gridview:addHorizontalDividerAbove(1, 1)
 		self.gridview:addHorizontalDividerAbove(1, #self.items+1)
+
+		-- Background image
+		local bg = playdate.graphics.image.new(self.width, self.height, playdate.graphics.kColorClear)
+		playdate.graphics.pushContext(bg)
+			playdate.graphics.setColor(playdate.graphics.kColorWhite)
+			playdate.graphics.fillRoundRect(0, 0, self.width, self.height, 8)
+		playdate.graphics.popContext()
+		playdate.ui.gridview.backgroundImage = bg
 
 		local that = self
 
