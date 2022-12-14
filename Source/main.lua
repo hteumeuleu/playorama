@@ -13,6 +13,7 @@ import "Scripts/Player"
 import "Scripts/Log"
 import "Scripts/Scene"
 import "Scripts/Menu"
+import "Scripts/VideoPlayer"
 
 -- Global variables
 gOptionVcrEffect = false

@@ -1,3 +1,5 @@
+import "Item"
+
 class('Library').extends()
 
 -- Library
@@ -96,6 +98,7 @@ function Library:toList()
 	for _, item in ipairs(self.items) do
 		local listItem = ListItem(item.name, function()
 			print(item.name)
+			local vp = VideoPlayer(item.videoPath)
 		end)
 		table.insert(libraryList, listItem)
 	end

@@ -36,9 +36,9 @@ function Menu:init(list)
 			ListItem("Foo", function() self:goTo(5) end),
 			ListItem("Bar", function() self:goTo(6) end),
 			ListItem("Baz", function() self:goTo(7) end),
-			ListItem("Bim", function() self:goTo(7) end),
-			ListItem("Bam", function() self:goTo(7) end),
-			ListItem("Boom", function() self:goTo(7) end),
+			ListItem("Bim", function() self:goTo(8) end),
+			ListItem("Bam", function() self:goTo(9) end),
+			ListItem("Boom", function() self:goTo(10) end),
 		}
 		list = List(homeList)
 	end
