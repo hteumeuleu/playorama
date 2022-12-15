@@ -2,7 +2,7 @@ local kMinPlaybackRate <const> = -4
 local kMaxPlaybackRate <const> = 4
 local kPlaybackRateStep <const> = 0.1
 
-class('Videorama').extends(playdate.graphics.sprite)
+class('Videorama').extends()
 
 -- Videorama class
 --
@@ -62,7 +62,6 @@ function Videorama:init(videoPath, audioPath)
 	playdate.graphics.popContext()
 	self.context:setMaskImage(mask)
 
-	self:setImage(self.context)
 	self:unload()
 
 	return self
@@ -149,9 +148,9 @@ function Videorama:unload()
 end
 
 
--- customDraw()
+-- draw()
 --
-function Videorama:customDraw()
+function Videorama:draw()
 
 	if self:isFFing() and gOptionVcrEffect then
 		local contextWithVCRFilter = self.context:vcrPauseFilterImage()
@@ -162,10 +161,10 @@ function Videorama:customDraw()
 
 end
 
--- customUpdate()
+-- update()
 --
 -- Update and renders the frame to show.
-function Videorama:customUpdate()
+function Videorama:update()
 
 	local frame = self.lastFrame
 

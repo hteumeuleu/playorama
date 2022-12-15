@@ -4,14 +4,31 @@ class('VideoPlayer').extends('Scene')
 
 -- VideoPlayer
 --
-function VideoPlayer:init(videoPath)
+function VideoPlayer:init(libraryItem)
 
 	VideoPlayer.super.init(self)
-	print(videoPath)
+	self.libraryItem = libraryItem
 	self:setInputHandlers()
 	self:setImage(playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack))
 	self:setZIndex(20)
+	self:addSprite(self.libraryItem.objectorama)
 	self:add()
+	return self
+
+end
+
+-- update()
+--
+function VideoPlayer:update()
+
+	VideoPlayer.super.update(self)
+	if self.libraryItem ~= nil and self.libraryItem.objectorama ~= nil then
+		if self.libraryItem.objectorama:isPlaying() or self.isBackgroundDrawing then
+			self.libraryItem.objectorama:update()
+		end
+		-- self:setCurrentTimeText()
+		-- self.controls:update()
+	end
 	return self
 
 end
