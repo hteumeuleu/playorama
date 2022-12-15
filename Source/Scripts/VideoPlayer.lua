@@ -9,6 +9,9 @@ function VideoPlayer:init(videoPath)
 	VideoPlayer.super.init(self)
 	print(videoPath)
 	self:setInputHandlers()
+	self:setImage(playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack))
+	self:setZIndex(20)
+	self:add()
 	return self
 
 end

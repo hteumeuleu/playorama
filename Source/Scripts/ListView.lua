@@ -12,7 +12,7 @@ function ListView:init(list)
 	self:setSize(400, 200)
 	self:setCenter(0, 0)
 	self:moveTo(0, 40)
-	self:setZIndex(9999)
+	self:setZIndex(10)
 	self:initGridView()
 	self:initImage()
 	return self
