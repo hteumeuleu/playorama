@@ -34,12 +34,14 @@ end
 --
 function ListView:forceUpdate()
 
-	playdate.graphics.pushContext(self.img)
-		playdate.graphics.setClipRect(0, 0, self.width, self.height)
-			self:drawGrid()
-		playdate.graphics.clearClipRect()
-	playdate.graphics.popContext()
-	self:setImage(self.img)
+	if self.gridview then
+		playdate.graphics.pushContext(self.img)
+			playdate.graphics.setClipRect(0, 0, self.width, self.height)
+				self:drawGrid()
+			playdate.graphics.clearClipRect()
+		playdate.graphics.popContext()
+		self:setImage(self.img)
+	end
 
 end
 
@@ -57,9 +59,42 @@ function ListView:initImage()
 
 	self.img = playdate.graphics.image.new(self.width, self.height, playdate.graphics.kColorClear)
 	playdate.graphics.pushContext(self.img)
-		self:drawGrid()
+		if self.gridview then
+			self:drawGrid()
+		else
+			self:drawEmptyImage()
+		end
 	playdate.graphics.popContext()
 	self:setImage(self.img)
+
+end
+
+-- drawEmptyImage()
+--
+function ListView:drawEmptyImage()
+
+	-- Background
+	local bg = self:getBackgroundImage()
+	bg:draw(0,0)
+	-- Text
+	local currentFont = playdate.graphics.getFont()
+	playdate.graphics.setFont(kFontCuberickBold)
+	local fontHeight = kFontCuberickBold:getHeight()
+	playdate.graphics.drawTextInRect("Your library is empty :(", 10, (self.height - fontHeight - 20) / 2, self.width - 20, fontHeight, nil, nil, kTextAlignment.center)
+	playdate.graphics.setFont(currentFont)
+
+end
+
+-- getBackgroundImage()
+--
+function ListView:getBackgroundImage()
+
+	local bg = playdate.graphics.image.new(self.width, self.height, playdate.graphics.kColorClear)
+	playdate.graphics.pushContext(bg)
+		playdate.graphics.setColor(playdate.graphics.kColorWhite)
+		playdate.graphics.fillRoundRect(0, 0, self.width, self.height, 8)
+	playdate.graphics.popContext()
+	return bg
 
 end
 
@@ -67,7 +102,7 @@ end
 --
 function ListView:initGridView()
 
-	if not self.gridview then
+	if not self.gridview and #self.items > 0 then
 		self.gridview = playdate.ui.gridview.new(0, 32)
 		self.gridview:setNumberOfSections(1)
 		self.gridview:setNumberOfColumns(1)
@@ -77,14 +112,7 @@ function ListView:initGridView()
 		self.gridview:setHorizontalDividerHeight(10)
 		self.gridview:addHorizontalDividerAbove(1, 1)
 		self.gridview:addHorizontalDividerAbove(1, #self.items+1)
-
-		-- Background image
-		local bg = playdate.graphics.image.new(self.width, self.height, playdate.graphics.kColorClear)
-		playdate.graphics.pushContext(bg)
-			playdate.graphics.setColor(playdate.graphics.kColorWhite)
-			playdate.graphics.fillRoundRect(0, 0, self.width, self.height, 8)
-		playdate.graphics.popContext()
-		playdate.ui.gridview.backgroundImage = bg
+		self.gridview.backgroundImage = self:getBackgroundImage()
 
 		local that = self
 
@@ -136,9 +164,11 @@ end
 -- Moves the selection up one item in the list.
 function ListView:up()
 
-	self.gridview:selectPreviousRow(true)
-	self:setSelection(self.gridview:getSelectedRow())
-	self:forceUpdate()
+	if #self.items > 0 then
+		self.gridview:selectPreviousRow(true)
+		self:setSelection(self.gridview:getSelectedRow())
+		self:forceUpdate()
+	end
 
 end
 
@@ -147,9 +177,11 @@ end
 -- Moves the selection down one item in the list.
 function ListView:down()
 
-	self.gridview:selectNextRow(true)
-	self:setSelection(self.gridview:getSelectedRow())
-	self:forceUpdate()
+	if #self.items > 0 then
+		self.gridview:selectNextRow(true)
+		self:setSelection(self.gridview:getSelectedRow())
+		self:forceUpdate()
+	end
 
 end
 
@@ -180,6 +212,8 @@ end
 -- Calls the currently selected row callback function.
 function ListView:doSelectionCallback()
 
-	self.items[self.gridview:getSelectedRow()].callback()
+	if #self.items > 0 then
+		self.items[self.gridview:getSelectedRow()].callback()
+	end
 
 end

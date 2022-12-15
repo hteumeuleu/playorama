@@ -57,6 +57,7 @@ function Library:build()
 			-- Create a Videorama and add it to the available files array.
 			local videorama, verror = createVideorama(item.videoPath, item.audioPath)
 			if videorama ~= nil and verror == nil then
+				item.objectorama = videorama
 				table.insert(self.items, item)
 			end
 		end
@@ -92,15 +93,16 @@ end
 -- toList()
 --
 -- Returns the library as a List object.
-function Library:toList()
+function Library:toList(type)
 
 	local libraryList = {}
 	for _, item in ipairs(self.items) do
-		local listItem = ListItem(item.name, function()
-			print(item.name)
-			local vp = VideoPlayer(item.videoPath)
-		end)
-		table.insert(libraryList, listItem)
+		if type == nil or (item.type ~= nil and item.type == type) then
+			local listItem = ListItem(item.name, function()
+				local vp = VideoPlayer(item)
+			end)
+			table.insert(libraryList, listItem)
+		end
 	end
 	return List(libraryList)
 

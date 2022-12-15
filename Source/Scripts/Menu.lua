@@ -14,9 +14,11 @@ function Menu:init(list)
 	self.header = Header()
 	if list == nil or list.className ~= "List" then
 		local homeList = {
-			ListItem("Music", function() self:goTo(1) end),
+			ListItem("Music", function()
+				self:push(ListView(getListFromLibrary("audio")))
+			end),
 			ListItem("Videos", function()
-				self:push(ListView(lib:toList()))
+				self:push(ListView(getListFromLibrary("video")))
 			end),
 			ListItem("Extras", function() self:goTo(3) end),
 			ListItem("Settings", function()

@@ -18,6 +18,11 @@ import "Scripts/VideoPlayer"
 -- Global variables
 gOptionVcrEffect = false
 gLog = Log()
+local lib <const> = Library()
+
+function getListFromLibrary(type)
+	return lib:toList(type)
+end
 
 -- Define global font
 kFontCuberickBold = playdate.graphics.font.new("Fonts/Cuberick-Bold", playdate.graphics.font.kVariantBold)
@@ -32,7 +37,6 @@ local state = kMenuState
 local menu = nil
 local player = nil
 local lastPlayedItem = 1
-lib = Library()
 
 -- initMenuState()
 --
