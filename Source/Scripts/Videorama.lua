@@ -50,7 +50,7 @@ function Videorama:init(videoPath, audioPath)
 
 	-- Creates the graphical context to render the video
 	-- I use a custom context instead of `useScreenContext` to apply a mask later on.
-	self.context = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+	self.context = playdate.graphics.image.new(400, 240, playdate.graphics.kColorClear)
 	self.video:setContext(self.context)
 
 	-- See, there it is. (The mask.)
@@ -62,7 +62,10 @@ function Videorama:init(videoPath, audioPath)
 	playdate.graphics.popContext()
 	self.context:setMaskImage(mask)
 
-	self:setImage(self.context)
+	self:setCenter(0,0)
+	self:moveTo(0,0)
+	local img = playdate.graphics.image.new(400, 240, playdate.graphics.kColorClear)
+	self:setImage(img)
 	self:unload()
 
 	return self
@@ -148,17 +151,19 @@ function Videorama:unload()
 
 end
 
-
 -- customDraw()
 --
 function Videorama:customDraw()
 
-	if self:isFFing() and gOptionVcrEffect then
-		local contextWithVCRFilter = self.context:vcrPauseFilterImage()
-		contextWithVCRFilter:draw(0,0)
-	else
-		self.context:draw(0,0)
-	end
+	local image = self:getImage()
+	playdate.graphics.pushContext(image)
+		if self:isFFing() and gOptionVcrEffect then
+			local contextWithVCRFilter = self.context:vcrPauseFilterImage()
+			contextWithVCRFilter:draw(0,0)
+		else
+			self.context:draw(0,0)
+		end
+	playdate.graphics.popContext()
 
 end
 
@@ -201,6 +206,34 @@ function Videorama:customUpdate()
 
 end
 
+function Videorama:update()
+
+	Videorama.super.update(self)
+	if self.customUpdate and self.customDraw then
+		if not self.video then
+			self:load()
+		end
+		self:customUpdate()
+	end
+
+end
+
+function Videorama:add()
+
+	Videorama.super.add(self)
+	if not self:isPlaying() then
+		self:play()
+	end
+
+end
+
+function Videorama:remove()
+
+	Videorama.super.remove(self)
+	self:unload()
+
+end
+
 -- setFrame(frame)
 --
 -- Sets the video at the specified frame index and displays it.
@@ -220,7 +253,7 @@ function Videorama:setFrame(frame)
 		playdate.resetElapsedTime()
 	end
 
-	self:draw()
+	self:customDraw()
 
 end
 

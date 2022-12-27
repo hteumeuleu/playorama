@@ -11,7 +11,8 @@ function VideoPlayer:init(libraryItem)
 	self:setInputHandlers()
 	self:setImage(playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack))
 	self:setZIndex(20)
-	self:addSprite(self.libraryItem.objectorama)
+	self.videorama = self.libraryItem.objectorama
+	self:addSprite(self.videorama)
 	self:add()
 	return self
 
