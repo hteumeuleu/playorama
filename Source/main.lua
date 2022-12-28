@@ -4,6 +4,8 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
+import "CoreLibs/animator"
+import "CoreLibs/easing"
 
 -- Custom Scripts
 import "Scripts/globals.lua"
