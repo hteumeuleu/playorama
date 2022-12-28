@@ -78,8 +78,8 @@ function ListView:drawEmptyImage()
 	bg:draw(0,0)
 	-- Text
 	local currentFont = playdate.graphics.getFont()
-	playdate.graphics.setFont(kFontCuberickBold)
-	local fontHeight = kFontCuberickBold:getHeight()
+	playdate.graphics.setFont(kFontCuberickBold24)
+	local fontHeight = kFontCuberickBold24:getHeight()
 	playdate.graphics.drawTextInRect("Your library is empty :(", 10, (self.height - fontHeight - 20) / 2, self.width - 20, fontHeight, nil, nil, kTextAlignment.center)
 	playdate.graphics.setFont(currentFont)
 
