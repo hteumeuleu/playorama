@@ -55,8 +55,10 @@ function Videorama:init(videoPath, audioPath)
 
 	-- See, there it is. (The mask.)
 	-- Basically a round rectangle for a little retro style.
-	local mask = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+	local mask = playdate.graphics.image.new(400, 240, playdate.graphics.kColorClear)
 	playdate.graphics.pushContext(mask)
+		playdate.graphics.setColor(playdate.graphics.kColorBlack)
+		playdate.graphics.fillRect(0, 0, 400, 240)
 		playdate.graphics.setColor(playdate.graphics.kColorWhite)
 		playdate.graphics.fillRoundRect(0, 0, 400, 240, 16)
 	playdate.graphics.popContext()
@@ -64,7 +66,7 @@ function Videorama:init(videoPath, audioPath)
 
 	self:setCenter(0,0)
 	self:moveTo(0,0)
-	local img = playdate.graphics.image.new(400, 240, playdate.graphics.kColorClear)
+	local img = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
 	self:setImage(img)
 	self:unload()
 
@@ -435,7 +437,11 @@ end
 -- Returns the total duration, in seconds.
 function Videorama:getTotalTime()
 
-	return (self.video:getFrameCount() / self.video:getFrameRate())
+	if self.video ~= nil then
+		return (self.video:getFrameCount() / self.video:getFrameRate())
+	else
+		return 0
+	end
 
 end
 
@@ -444,7 +450,11 @@ end
 -- Returns the current play time, in seconds.
 function Videorama:getCurrentTime()
 
-	return (self.lastFrame / self.video:getFrameRate())
+	if self.video ~= nil then
+		return (self.lastFrame / self.video:getFrameRate())
+	else
+		return 0
+	end
 
 end
 

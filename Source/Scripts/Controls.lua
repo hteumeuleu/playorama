@@ -10,7 +10,7 @@ local kControlsFont <const> = playdate.graphics.getFont()
 
 class('Controls').extends(playdate.graphics.sprite)
 
--- Menu
+-- Controls
 --
 -- This class is for the controls UI displayed on top of a video playing.
 function Controls:init()
@@ -18,12 +18,12 @@ function Controls:init()
 	Controls.super.init(self)
 	self.currentTime = 0
 	self.totalTime = 0
-	self.isVisible = false
-	self.y = 240
-	self.x = 0
+	self:setCenter(0,0)
+	self:setVisible(false)
+	self:moveTo(kControlsMargin,240)
+	self:setImage(playdate.graphics.image.new(kControlsWidth, kControlsHeight, playdate.graphics.kColorClear))
 	self.rate = "1.0x"
 	self.hasSound = true
-
 	return self
 
 end
@@ -32,21 +32,9 @@ end
 --
 function Controls:update()
 
-	if self.isVisible then
-		self:draw()
-	end
-
-end
-
--- getImage()
---
-function Controls:getImage()
-
-	if self.img ~= nil then
-		return self.img
-	else
-		self.img = playdate.graphics.image.new(kControlsWidth, kControlsHeight + kExtraHeightForBounce)
-		return self.img
+	Controls.super.update(self)
+	if self:isVisible() and self.customDraw ~= nil then
+		self:customDraw()
 	end
 
 end
@@ -171,9 +159,9 @@ function Controls:drawScrobbleBar()
 
 end
 
--- draw()
+-- customDraw()
 --
-function Controls:draw()
+function Controls:customDraw()
 
 	local controlsImage = self:getImage()
 	playdate.graphics.pushContext(controlsImage)
@@ -193,7 +181,7 @@ function Controls:draw()
 
 	-- Pop context and draw
 	playdate.graphics.popContext() -- controlsImage
-	controlsImage:draw(kControlsMargin, self.y)
+	self:setImage(controlsImage)
 
 end
 
@@ -201,7 +189,7 @@ end
 --
 function Controls:toggle()
 
-	if self.isVisible then
+	if self:isVisible() then
 		self:hide()
 	else
 		self:show()
@@ -216,13 +204,10 @@ function Controls:hide()
 	if self.timer == nil then
 		self.timer = playdate.timer.new(300, self.y, 260, playdate.easingFunctions.outBounce)
 		self.timer.updateCallback = function(timer)
-			self.y = timer.value
-			if type(self.timerUpdateCallback) == "function" then
-				self.timerUpdateCallback(0, kControlsTop, 400, 240 - kControlsTop)
-			end
+			self:moveTo(self.x, timer.value)
 		end
 		self.timer.timerEndedCallback = function(timer)
-			self.isVisible = false
+			self:setVisible(false)
 			self.timer = nil
 		end
 	end
@@ -234,7 +219,7 @@ end
 -- Instantly hides the Controls, without animation.
 function Controls:hideNow()
 
-	self.isVisible = false
+	self:setVisible(false)
 	self.y = 240
 
 end
@@ -243,36 +228,16 @@ end
 --
 function Controls:show()
 
-	self.isVisible = true
+	self:setVisible(true)
 	if self.timer == nil then
 		self.timer = playdate.timer.new(500, self.y, kControlsTop, playdate.easingFunctions.outElastic)
 		self.timer.updateCallback = function(timer)
-			local lastY = self.y
-			self.y = timer.value
-			if type(self.timerUpdateCallback) == "function" then
-				self.timerUpdateCallback(0, lastY, 400, 240 - lastY)
-			end
+			self:moveTo(self.x, timer.value)
 		end
 		self.timer.timerEndedCallback = function(timer)
 			self.timer = nil
 		end
 	end
-
-end
-
--- setTimerUpdateCallback()
---
-function Controls:setTimerUpdateCallback(callback)
-
-	self.timerUpdateCallback = callback
-
-end
-
--- setY()
---
-function Controls:setY(y)
-
-	self.y = y
 
 end
 

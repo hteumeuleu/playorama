@@ -165,7 +165,7 @@ function Player:setRateText()
 
 end
 
--- setRateText()
+-- setMutedIcon()
 --
 -- Helper method to set a boolean that determines if the “no audio available” icon should display inside the controls.
 function Player:setMutedIcon()
