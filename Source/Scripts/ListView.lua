@@ -30,6 +30,30 @@ function ListView:update()
 
 end
 
+-- add()
+--
+function ListView:add()
+
+	ListView.super.add(self)
+	if self.selected ~= nil then
+		self.selected:add()
+	end
+	return self
+
+end
+
+-- remove()
+--
+function ListView:remove()
+
+	ListView.super.remove(self)
+	if self.selected ~= nil then
+		self.selected:remove()
+	end
+	return self
+
+end
+
 -- forceUpdate()
 --
 function ListView:forceUpdate()
@@ -116,17 +140,35 @@ function ListView:initGridView()
 
 		local that = self
 
+		if self.selected == nil then
+			self.selected = playdate.graphics.sprite.new(playdate.graphics.image.new(self.width-20, 32, playdate.graphics.kColorClear))
+			playdate.graphics.pushContext(self.selected:getImage())
+				playdate.graphics.setColor(playdate.graphics.kColorBlack)
+				playdate.graphics.fillRoundRect(0, 0, self.width-20, 32, 4)
+			playdate.graphics.popContext()
+			self.selected:setCenter(0,0)
+			self.selected:moveTo(10, self.y + 10)
+			self.selected:setZIndex(11)
+			self.selected:setImageDrawMode(playdate.graphics.kDrawModeNXOR)
+			self.selected:add()
+		end
+
 		function self.gridview:drawHorizontalDivider(section, x, y, width, height)
 		end
 
 		function self.gridview:drawCell(section, row, column, selected, x, y, width, height)
 
 			if section == 1 then
-				-- Draw selected background
+				-- Move selected sprite
 				if selected then
-					playdate.graphics.setColor(playdate.graphics.kColorBlack)
-					playdate.graphics.fillRoundRect(x, y, width, height, 4)
-					playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+					local startValue = playdate.geometry.point.new(that.selected.x, that.selected.y)
+					local endValue = playdate.geometry.point.new(x + that.x, y + that.y)
+					local easingFunction =  playdate.easingFunctions.outElastic
+					local startTimeOffset = 0
+					local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction, startTimeOffset)
+					animator.easingAmplitude = 0.5
+					animator.easingPeriod = 0.2
+					that.selected:setAnimator(animator)
 				end
 
 				-- Draw text
@@ -140,11 +182,6 @@ function ListView:initGridView()
 
 				-- Draw arrow
 				arrowImage:draw(width - 11, y + 5)
-
-				-- Reinit DrawMode if selected
-				if selected then
-					playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeCopy)
-				end
 			end
 
 		end
@@ -165,8 +202,30 @@ end
 function ListView:up()
 
 	if #self.items > 0 then
-		self.gridview:selectPreviousRow(true)
-		self:setSelection(self.gridview:getSelectedRow())
+		if self:getSelection() == 1 then
+			local startValue, endValue = 0,0
+			if self.y == 0 then
+				self:setSize(400,200)
+				startValue = playdate.geometry.point.new(0, 0)
+				endValue = playdate.geometry.point.new(0, 40)
+			else
+				self:setSize(400,240)
+				startValue = playdate.geometry.point.new(0, 40)
+				endValue = playdate.geometry.point.new(0, 0)
+			end
+			local easingFunction =  playdate.easingFunctions.outElastic
+			local startTimeOffset = 0
+			local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction, startTimeOffset)
+			animator.easingAmplitude = 0.5
+			animator.easingPeriod = 0.2
+			self:setAnimator(animator)
+			self:setZIndex(10)
+			self:initImage()
+			self.gridview.backgroundImage = self:getBackgroundImage()
+		else
+			self.gridview:selectPreviousRow(false)
+			self:setSelection(self.gridview:getSelectedRow())
+		end
 		self:forceUpdate()
 	end
 
@@ -178,7 +237,7 @@ end
 function ListView:down()
 
 	if #self.items > 0 then
-		self.gridview:selectNextRow(true)
+		self.gridview:selectNextRow(false)
 		self:setSelection(self.gridview:getSelectedRow())
 		self:forceUpdate()
 	end
