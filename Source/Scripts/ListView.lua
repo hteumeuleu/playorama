@@ -24,6 +24,9 @@ end
 function ListView:update()
 
 	ListView.super.update(self)
+	if self.updateAnimator ~= nil then
+		self:updateAnimator()
+	end
 	if self.gridview ~= nil and self:needsDisplay() then
 		self:forceUpdate()
 	end
@@ -163,12 +166,16 @@ function ListView:initGridView()
 				if selected then
 					local startValue = playdate.geometry.point.new(that.selected.x, that.selected.y)
 					local endValue = playdate.geometry.point.new(x + that.x, y + that.y)
-					local easingFunction =  playdate.easingFunctions.outElastic
-					local startTimeOffset = 0
-					local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction, startTimeOffset)
-					animator.easingAmplitude = 0.5
-					animator.easingPeriod = 0.2
-					that.selected:setAnimator(animator)
+					if that._animator ~= nil then
+						that.selected:moveTo(that.selected.x, endValue.y)
+					else
+						local easingFunction =  playdate.easingFunctions.outElastic
+						local startTimeOffset = 0
+						local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction, startTimeOffset)
+						animator.easingAmplitude = 0.5
+						animator.easingPeriod = 0.2
+						that.selected:setAnimator(animator)
+					end
 				end
 
 				-- Draw text
@@ -203,29 +210,11 @@ function ListView:up()
 
 	if #self.items > 0 then
 		if self:getSelection() == 1 then
-			local startValue, endValue = 0,0
-			if self.y == 0 then
-				self:setSize(400,200)
-				startValue = playdate.geometry.point.new(0, 0)
-				endValue = playdate.geometry.point.new(0, 40)
-			else
-				self:setSize(400,240)
-				startValue = playdate.geometry.point.new(0, 40)
-				endValue = playdate.geometry.point.new(0, 0)
-			end
-			local easingFunction =  playdate.easingFunctions.outElastic
-			local startTimeOffset = 0
-			local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction, startTimeOffset)
-			animator.easingAmplitude = 0.5
-			animator.easingPeriod = 0.2
-			self:setAnimator(animator)
-			self:setZIndex(10)
-			self:initImage()
-			self.gridview.backgroundImage = self:getBackgroundImage()
+			self:toggleFullScreen()
 		else
 			self.gridview:selectPreviousRow(false)
-			self:setSelection(self.gridview:getSelectedRow())
 		end
+		self:setSelection(self:getSelection())
 		self:forceUpdate()
 	end
 
@@ -237,7 +226,7 @@ end
 function ListView:down()
 
 	if #self.items > 0 then
-		self.gridview:selectNextRow(false)
+		self.gridview:selectNextRow(true)
 		self:setSelection(self.gridview:getSelectedRow())
 		self:forceUpdate()
 	end
@@ -273,6 +262,64 @@ function ListView:doSelectionCallback()
 
 	if #self.items > 0 then
 		self.items[self.gridview:getSelectedRow()].callback()
+	end
+
+end
+
+-- toggleFullScreen()
+--
+function ListView:toggleFullScreen()
+
+	if self.y == 0 then
+		self:leaveFullScreen()
+	elseif self.y == 40 then
+		self:enterFullScreen()
+	end
+
+end
+
+-- enterFullScreen()
+--
+function ListView:enterFullScreen()
+
+	local startValue = playdate.geometry.point.new(0, 40)
+	local endValue = playdate.geometry.point.new(0, 0)
+	local easingFunction =  playdate.easingFunctions.outElastic
+	local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction)
+	animator.easingAmplitude = 0.5
+	animator.easingPeriod = 0.2
+	self:setAnimator(animator)
+
+end
+
+-- leaveFullScreen()
+--
+function ListView:leaveFullScreen()
+
+	local startValue = playdate.geometry.point.new(0, 0)
+	local endValue = playdate.geometry.point.new(0, 40)
+	local easingFunction =  playdate.easingFunctions.outElastic
+	local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction)
+	animator.easingAmplitude = 0.5
+	animator.easingPeriod = 0.2
+	self:setAnimator(animator)
+
+end
+
+-- updateAnimator()
+--
+function ListView:updateAnimator()
+
+	if self._animator ~= nil then
+		local currentValue = self._animator:currentValue()
+		local height = 240 - math.ceil(currentValue.y)
+		if self._animator.startValue.y > self._animator.endValue.y then
+			height = 240 - math.floor(currentValue.y)
+		end
+		self:setSize(self.width, height)
+		self.gridview.backgroundImage = self:getBackgroundImage()
+		self:initImage()
+		self:setZIndex(10)
 	end
 
 end
