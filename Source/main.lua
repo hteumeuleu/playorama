@@ -130,19 +130,11 @@ end
 -- playdate.update()
 --
 -- Main cycle routine.
--- Updates either the menu or player accordingly.
 function playdate.update()
 
 	playdate.timer.updateTimers()
 	playdate.graphics.sprite.update()
 
-	if(state == kMenuState) then
-		menu:update()
-	elseif(state == kPlayState) then
-		player:update()
-	elseif(state == kLogState) then
-		gLog:update()
-	end
 end
 
 -- Startup initializations
