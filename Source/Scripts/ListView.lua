@@ -312,10 +312,7 @@ function ListView:updateAnimator()
 
 	if self._animator ~= nil then
 		local currentValue = self._animator:currentValue()
-		local height = 240 - math.ceil(currentValue.y)
-		if self._animator.startValue.y > self._animator.endValue.y then
-			height = 240 - math.floor(currentValue.y)
-		end
+		local height = math.floor(240 - currentValue.y + 0.5)
 		self:setSize(self.width, height)
 		self.gridview.backgroundImage = self:getBackgroundImage()
 		self:initImage()
