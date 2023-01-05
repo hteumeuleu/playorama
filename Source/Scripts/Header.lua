@@ -14,9 +14,9 @@ function Header:init()
 	self.time = Time()
 	self.logo = Logo()
 	self.battery = Battery()
-	self:addSprite(self.battery)
-	self:addSprite(self.time)
-	self:addSprite(self.logo)
+	self:attachSprite(self.battery)
+	self:attachSprite(self.time)
+	self:attachSprite(self.logo)
 	return self
 
 end

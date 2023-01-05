@@ -46,8 +46,8 @@ function Menu:init(list)
 	end
 	self.listview = ListView(list)
 	self.history = {}
-	self:addSprite(self.header)
-	self:addSprite(self.listview)
+	self:attachSprite(self.header)
+	self:attachSprite(self.listview)
 	self:setInputHandlers()
 	return self
 
@@ -59,8 +59,7 @@ function Menu:setInputHandlers()
 
 	local myInputHandlers = {
 		AButtonUp = function()
-			self.listview:doSelectionCallback()
-		end,
+			self.listview:doSelectionCallback()		end,
 		BButtonUp = function()
 			self:pop()
 		end,
@@ -88,9 +87,9 @@ end
 function Menu:push(newListView)
 
 	table.insert(self.history, self.listview)
-	self:removeSprite(self.listview)
+	self:detachSprite(self.listview)
 	self.listview = newListView
-	self:addSprite(self.listview)
+	self:attachSprite(self.listview)
 
 end
 
@@ -100,9 +99,9 @@ function Menu:pop()
 
 	if #self.history > 0 then
 		local newListView = table.remove(self.history)
-		self:removeSprite(self.listview)
+		self:detachSprite(self.listview)
 		self.listview = newListView
-		self:addSprite(self.listview)
+		self:attachSprite(self.listview)
 	end
 
 end

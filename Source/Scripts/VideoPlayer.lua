@@ -14,10 +14,10 @@ function VideoPlayer:init(libraryItem)
 	self:setImage(playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack))
 	self:setZIndex(20)
 	self.videorama = self.libraryItem.objectorama
-	self:addSprite(self.videorama)
+	self:attachSprite(self.videorama)
 	-- Controls
 	self.controls = Controls()
-	self:addSprite(self.controls)
+	self:attachSprite(self.controls)
 	self:setMutedIcon()
 	self:setTotalTimeText()
 	self:setRateText()

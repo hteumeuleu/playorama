@@ -38,27 +38,31 @@ function Scene:remove()
 
 end
 
--- addSprite()
+-- attachSprite()
 --
 -- Attach sprite to the scene.
-function Scene:addSprite(sprite)
+function Scene:attachSprite(sprite)
 
+	local isInTable = false
 	for key, value in ipairs(self.attachedSprites) do
-		-- `sprite` is already there. We just return it.
 		if value == sprite then
-			return sprite
+			isInTable = true
+			break
 		end
 	end
-	table.insert(self.attachedSprites, sprite)
+	if not isInTable then
+		table.insert(self.attachedSprites, sprite)
+	end
 	sprite:setZIndex(self:getZIndex()+1)
 	sprite:add()
+	return sprite
 
 end
 
--- removeSprite()
+-- detachSprite()
 --
 -- Remove sprite from the scene.
-function Scene:removeSprite(sprite)
+function Scene:detachSprite(sprite)
 
 	for key, value in ipairs(self.attachedSprites) do
 		if value == sprite then
