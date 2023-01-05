@@ -59,7 +59,8 @@ function Menu:setInputHandlers()
 
 	local myInputHandlers = {
 		AButtonUp = function()
-			self.listview:doSelectionCallback()		end,
+			self.listview:doSelectionCallback()
+		end,
 		BButtonUp = function()
 			self:pop()
 		end,
