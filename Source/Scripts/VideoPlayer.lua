@@ -12,7 +12,7 @@ function VideoPlayer:init(libraryItem)
 	self.libraryItem = libraryItem
 	self:setInputHandlers()
 	self:setImage(playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack))
-	self:setZIndex(20)
+	self:setZIndex(200)
 	self.videorama = self.libraryItem.objectorama
 	self:attachSprite(self.videorama)
 	-- Controls

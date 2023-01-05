@@ -19,7 +19,9 @@ function Scene:add()
 
 	Scene.super.add(self)
 	for key, value in ipairs(self.attachedSprites) do
-		value:setZIndex(self:getZIndex()+1)
+		if self:getZIndex() ~= 0 then
+			value:setZIndex(self:getZIndex()+1)
+		end
 		value:add()
 	end
 	return self
@@ -53,7 +55,9 @@ function Scene:attachSprite(sprite)
 	if not isInTable then
 		table.insert(self.attachedSprites, sprite)
 	end
-	sprite:setZIndex(self:getZIndex()+1)
+	if self:getZIndex() ~= 0 then
+		sprite:setZIndex(self:getZIndex()+1)
+	end
 	sprite:add()
 	return sprite
 
