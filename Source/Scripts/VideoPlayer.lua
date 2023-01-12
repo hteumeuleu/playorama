@@ -13,11 +13,15 @@ function VideoPlayer:init(libraryItem)
 	self:setInputHandlers()
 	self:setImage(playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack))
 	self:setZIndex(200)
+	self:add()
+	-- Video
 	self.videorama = self.libraryItem.objectorama
 	self:attachSprite(self.videorama)
+	self.videorama:setZIndex(202)
 	-- Controls
 	self.controls = Controls()
 	self:attachSprite(self.controls)
+	self.controls:setZIndex(201)
 	self:setMutedIcon()
 	self:setTotalTimeText()
 	self:setRateText()
@@ -32,6 +36,9 @@ function VideoPlayer:update()
 	VideoPlayer.super.update(self)
 	if self.videorama ~= nil and self.videorama:isPlaying() then
 		self:setCurrentTimeText()
+		self:setMutedIcon()
+		self:setTotalTimeText()
+		self:setRateText()
 	end
 
 end
@@ -56,7 +63,18 @@ function VideoPlayer:setInputHandlers()
 			self:close()
 		end,
 		upButtonDown = function()
-			self.controls:toggle()
+			if self.videorama._animator == nil then
+				local endValueY = 0
+				if self.videorama.y == 0 then
+					endValueY = -40
+				end
+				local startValue = playdate.geometry.point.new(self.videorama.x, self.videorama.y)
+				local endValue = playdate.geometry.point.new(self.videorama.x, endValueY)
+				local easingFunction =  playdate.easingFunctions.outElastic
+				local startTimeOffset = 0
+				local animator = playdate.graphics.animator.new(500, startValue, endValue, easingFunction, startTimeOffset)
+				self.videorama:setAnimator(animator)
+			end
 		end,
 		leftButtonDown = function()
 			if self.videorama:isPlaying() then
@@ -139,6 +157,7 @@ end
 -- Helper method to set a boolean that determines if the “no audio available” icon should display inside the controls.
 function VideoPlayer:setMutedIcon()
 
+	print("setMutedIcon", self.videorama:hasAudio())
 	self.controls:setHasSound(self.videorama:hasAudio())
 
 end

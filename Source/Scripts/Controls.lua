@@ -1,11 +1,10 @@
-local kControlsMargin <const> = 8
+local kControlsMargin <const> = 0
 local kControlsPadding <const> = 8
 local kControlsWidth <const> = 400 - (kControlsMargin * 2)
 local kControlsHeight <const> = 40
 local kControlsBorderWidth <const> = 0
 local kControlsBorderRadius <const> = 8
 local kControlsTop <const> = 240 - kControlsHeight - kControlsMargin
-local kExtraHeightForBounce <const> = 0
 local kControlsFont <const> = playdate.graphics.getFont()
 
 class('Controls').extends(playdate.graphics.sprite)
@@ -19,8 +18,8 @@ function Controls:init()
 	self.currentTime = 0
 	self.totalTime = 0
 	self:setCenter(0,0)
-	self:setVisible(false)
-	self:moveTo(kControlsMargin,240)
+	self:setVisible(true)
+	self:moveTo(kControlsMargin,kControlsTop)
 	self:setImage(playdate.graphics.image.new(kControlsWidth, kControlsHeight, playdate.graphics.kColorClear))
 	self.rate = "1.0x"
 	self.hasSound = true
@@ -58,7 +57,7 @@ end
 function Controls:drawBackgroundImage()
 
 	playdate.graphics.setColor(playdate.graphics.kColorBlack)
-	playdate.graphics.fillRoundRect(0, 0, kControlsWidth, kControlsHeight + kExtraHeightForBounce, kControlsBorderRadius)
+	playdate.graphics.fillRoundRect(0, 0, kControlsWidth, kControlsHeight, kControlsBorderRadius)
 
 end
 
@@ -79,7 +78,7 @@ end
 function Controls:drawPauseButton()
 	local width <const> = 40
 	local height <const> = 28
-	local x = 400 - width - (kControlsPadding * 2) - kControlsMargin
+	local x = 400 - width - kControlsPadding - kControlsMargin
 	local y = 6
 	local iconWidth = 9
 	local iconHeight = 12
@@ -104,7 +103,7 @@ function Controls:drawRateButton()
 	local buttonWidth <const> = 40
 	local buttonHeight <const> = 28
 	local offset <const> = math.floor((kControlsHeight - buttonHeight) / 2)
-	local x <const> = 400 - buttonWidth - (kControlsPadding * 2) - kControlsMargin
+	local x <const> = 400 - buttonWidth - kControlsPadding - kControlsMargin
 	local y <const> = offset
 	local textY = y + 3 + math.floor((buttonHeight - kControlsFont:getHeight()) / 2)
 	local text = self.rate
@@ -145,7 +144,7 @@ end
 --
 function Controls:drawScrobbleBar()
 
-	local scrobbleBarWidth <const> = kControlsWidth - (4 * kControlsPadding) - 40 - 38 - self.currentOffset --204
+	local scrobbleBarWidth <const> = kControlsWidth - (5 * kControlsPadding) - 40 - 28 - self.currentOffset
 	local x <const> = self.currentOffset + kControlsPadding
 	local y <const> = 18
 	playdate.graphics.setLineWidth(0)
@@ -201,16 +200,7 @@ end
 --
 function Controls:hide()
 
-	if self.timer == nil then
-		self.timer = playdate.timer.new(300, self.y, 260, playdate.easingFunctions.outBounce)
-		self.timer.updateCallback = function(timer)
-			self:moveTo(self.x, timer.value)
-		end
-		self.timer.timerEndedCallback = function(timer)
-			self:setVisible(false)
-			self.timer = nil
-		end
-	end
+	self:setVisible(false)
 
 end
 
@@ -229,15 +219,6 @@ end
 function Controls:show()
 
 	self:setVisible(true)
-	if self.timer == nil then
-		self.timer = playdate.timer.new(500, self.y, kControlsTop, playdate.easingFunctions.outElastic)
-		self.timer.updateCallback = function(timer)
-			self:moveTo(self.x, timer.value)
-		end
-		self.timer.timerEndedCallback = function(timer)
-			self.timer = nil
-		end
-	end
 
 end
 
