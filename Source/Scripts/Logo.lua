@@ -13,11 +13,20 @@ function Logo:init()
 
 end
 
+function Logo:remove()
+
+	Logo.super.remove(self)
+	if self.shadow ~= nil then
+		self.shadow:remove()
+	end
+
+end
+
 function Logo:animate()
 
-	local shadow = self:copy()
-	shadow:setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-	shadow:add()
+	self.shadow = self:copy()
+	self.shadow:setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
+	self.shadow:add()
 	local startValue = playdate.geometry.point.new(self.x, self.y)
 	local endValue = startValue:offsetBy(4, -6)
 	local easingFunction =  playdate.easingFunctions.inCubic

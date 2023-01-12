@@ -55,19 +55,17 @@ function Videorama:init(videoPath, audioPath)
 
 	-- See, there it is. (The mask.)
 	-- Basically a round rectangle for a little retro style.
-	local mask = playdate.graphics.image.new(400, 240, playdate.graphics.kColorClear)
+	local mask = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
 	playdate.graphics.pushContext(mask)
-		playdate.graphics.setColor(playdate.graphics.kColorBlack)
-		playdate.graphics.fillRect(0, 0, 400, 240)
 		playdate.graphics.setColor(playdate.graphics.kColorWhite)
-		playdate.graphics.fillRoundRect(0, 0, 400, 240, 16)
+		playdate.graphics.fillRoundRect(0, 0, 400, 240, 8)
 	playdate.graphics.popContext()
 	self.context:setMaskImage(mask)
 
 	self:setCenter(0,0)
 	self:moveTo(0,0)
-	local img = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-	self:setImage(img)
+	-- local img = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
+	self:setImage(self.context)
 	self:unload()
 
 	return self
@@ -166,6 +164,7 @@ function Videorama:customDraw()
 			self.context:draw(0,0)
 		end
 	playdate.graphics.popContext()
+	self:setImage(image)
 
 end
 
@@ -211,12 +210,10 @@ end
 function Videorama:update()
 
 	Videorama.super.update(self)
-	if self.customUpdate and self.customDraw then
-		if not self.video then
-			self:load()
-		end
-		self:customUpdate()
+	if not self.video then
+		self:load()
 	end
+	self:customUpdate()
 
 end
 
@@ -253,9 +250,8 @@ function Videorama:setFrame(frame)
 		self.video:renderFrame(frame)
 		self.lastFrame = frame
 		playdate.resetElapsedTime()
+		self:customDraw()
 	end
-
-	self:customDraw()
 
 end
 

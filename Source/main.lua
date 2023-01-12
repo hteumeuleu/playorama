@@ -35,80 +35,13 @@ local kMenuState <const> = "Menu"
 local kPlayState <const> = "Play"
 local kLogState <const> = "Log"
 local state = kMenuState
-local menu = nil
+local menu = Menu()
 local player = nil
 local lastPlayedItem = 1
 
--- initMenuState()
---
--- Sets the current state of the app to the Menu.
-function initMenuState()
-
-	state = kMenuState
-
-	-- If the Menu class hasn't been instanciated yet, we do it now.
-	if menu == nil then
-		menu = Menu()
-	end
-
-	-- local myInputHandlers = {
-	-- 	AButtonUp = function()
-	-- 		initPlayState()
-	-- 	end
-	-- }
-	-- playdate.inputHandlers.push(myInputHandlers)
-
+function getMenu()
+	return menu
 end
-
--- initPlayState()
---
--- Sets the current state of the app to the Player.
-function initPlayState()
-
-	state = kPlayState
-
-	-- If the Player class hasn't been instanciated yet, we do it now.
-	if player == nil then
-		player = Player()
-	end
-	-- We keep track of the video that gets played
-	-- to scroll back to it when going back to the menu.
-	-- lastPlayedItem = menu:getSelectionIndex()
-	-- -- We load the video inside the player.
-	-- player:setVideorama(menu:getSelection())
-	-- player:setInputHandlers()
-
-	-- local myInputHandlers = {
-	-- 	BButtonUp = function()
-	-- 		player:unload()
-	-- 		initMenuState()
-	-- 	end
-	-- }
-	-- playdate.inputHandlers.push(myInputHandlers)
-
-end
-
--- initLogState
---
-function initLogState()
-
-	if state == kPlayState then
-		player:unload()
-		initMenuState()
-	end
-	state = kLogState
-
-	local myInputHandlers = {
-		BButtonUp = function()
-			gLog:unload()
-			initMenuState()
-		end
-	}
-	playdate.inputHandlers.push(myInputHandlers, true)
-
-
-end
-
 
 -- initSystemMenu()
 --
@@ -141,4 +74,3 @@ end
 playdate.graphics.setBackgroundColor(playdate.graphics.kColorBlack)
 playdate.setCrankSoundsDisabled(true)
 initSystemMenu()
-initMenuState()

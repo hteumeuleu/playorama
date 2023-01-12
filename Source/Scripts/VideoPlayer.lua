@@ -102,6 +102,8 @@ function VideoPlayer:close()
 
 	self:remove()
 	playdate.inputHandlers.pop()
+	local menu = getMenu()
+	menu:add()
 
 end
 

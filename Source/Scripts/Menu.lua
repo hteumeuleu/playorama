@@ -14,9 +14,9 @@ function Menu:init(list)
 	self.header = Header()
 	if list == nil or list.className ~= "List" then
 		local homeList = {
-			ListItem("Music", function()
-				self:push(ListView(getListFromLibrary("audio")))
-			end),
+			-- ListItem("Music", function()
+			-- 	self:push(ListView(getListFromLibrary("audio")))
+			-- end),
 			ListItem("Videos", function()
 				self:push(ListView(getListFromLibrary("video")))
 			end),
@@ -88,7 +88,6 @@ end
 function Menu:push(newListView)
 
 	local wasFullScreen = self.listview:isFullScreen()
-	print("push", wasFullScreen)
 	table.insert(self.history, self.listview)
 	self:detachSprite(self.listview)
 	self.listview = newListView
@@ -103,7 +102,6 @@ function Menu:pop()
 
 	if #self.history > 0 then
 		local wasFullScreen = self.listview:isFullScreen()
-		print("pop", wasFullScreen)
 		local newListView = table.remove(self.history)
 		self:detachSprite(self.listview)
 		self.listview = newListView
