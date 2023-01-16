@@ -1,7 +1,8 @@
-import "Scene"
-import "Time"
-import "Logo"
-import "Battery"
+import "Scripts/Scenes/Scene"
+import "Scripts/Common/Icon"
+import "Scripts/Widgets/Header/Time"
+import "Scripts/Widgets/Header/Logo"
+import "Scripts/Widgets/Header/Battery"
 
 class('Header').extends('Scene')
 

@@ -1,4 +1,4 @@
-import "Item"
+import "Scripts/Common/Item"
 
 class('Library').extends()
 

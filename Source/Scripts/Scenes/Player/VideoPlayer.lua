@@ -1,6 +1,5 @@
-import "Scripts/Scene"
-import "Scripts/Videorama"
-import "Scripts/Controls"
+import "Scripts/Scenes/Scene"
+import "Scripts/Scenes/Player/Videorama"
 
 class('VideoPlayer').extends('Scene')
 
@@ -18,13 +17,6 @@ function VideoPlayer:init(libraryItem)
 	self.videorama = self.libraryItem.objectorama
 	self:attachSprite(self.videorama)
 	self.videorama:setZIndex(202)
-	-- Controls
-	self.controls = Controls()
-	self:attachSprite(self.controls)
-	self.controls:setZIndex(201)
-	self:setMutedIcon()
-	self:setTotalTimeText()
-	self:setRateText()
 	return self
 
 end
@@ -51,11 +43,8 @@ function VideoPlayer:setInputHandlers()
 		AButtonDown = function()
 			self.videorama:togglePause()
 			if self.videorama:isPlaying() then
-				self.controls:setPaused(false)
-				self:setRateText()
 				self.videorama:unmute()
 			else
-				self.controls:setPaused(true)
 				self.videorama:mute()
 			end
 		end,
@@ -122,42 +111,5 @@ function VideoPlayer:close()
 	playdate.inputHandlers.pop()
 	local menu = getMenu()
 	menu:add()
-
-end
-
--- setCurrentTimeText()
---
--- Helper method to set the current time to display inside the controls.
-function VideoPlayer:setCurrentTimeText()
-
-	self.controls:setCurrentTime(self.videorama:getCurrentTime())
-
-end
-
--- setTotalTimeText()
---
--- Helper method to set the total time to display inside the controls.
-function VideoPlayer:setTotalTimeText()
-
-	self.controls:setTotalTime(self.videorama:getTotalTime())
-
-end
-
--- setRateText()
---
--- Helper method to set the rate playback to display inside the controls.
-function VideoPlayer:setRateText()
-
-	self.controls:setRate(self.videorama:getDisplayRate())
-
-end
-
--- setMutedIcon()
---
--- Helper method to set a boolean that determines if the “no audio available” icon should display inside the controls.
-function VideoPlayer:setMutedIcon()
-
-	print("setMutedIcon", self.videorama:hasAudio())
-	self.controls:setHasSound(self.videorama:hasAudio())
 
 end

@@ -1,3 +1,24 @@
+-- -- library (TODO: move to app class)
+-- local lib <const> = Library()
+
+-- function getListFromLibrary(type)
+-- 	return lib:toList(type)
+-- end
+
+-- -- menu (TODO: move to app class)
+-- local menu = Menu()
+
+-- function getMenu()
+-- 	return menu
+-- end
+
+-- fonts
+--
+kFontCuberickBold = playdate.graphics.font.new("Fonts/Cuberick-Bold", playdate.graphics.font.kVariantBold)
+kFontCuberickBold24 = playdate.graphics.font.new("Fonts/Cuberick-Bold-24", playdate.graphics.font.kVariantBold)
+playdate.graphics.setFont(kFontCuberickBold)
+
+
 -- map(value, min1, max1, min2, max2)
 --
 function map(value, min1, max1, min2, max2)

@@ -1,3 +1,5 @@
+import "Scripts/Common/Icon"
+
 class('ListView').extends(playdate.graphics.sprite)
 
 local arrow <const> = Icon(0, 0, IconChevronRight)
