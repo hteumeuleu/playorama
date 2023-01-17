@@ -8,6 +8,8 @@ function Playorama:init()
 	-- Init app settings for the Playdate
 	self:initBackgroundDrawingCallback()
 	playdate.setCrankSoundsDisabled(true)
+	-- Init mask
+	self:initMask()
 	-- Init widgets
 	self:initWidgets()
 	-- Init library
@@ -15,6 +17,26 @@ function Playorama:init()
 	-- Init menu
 	self:initMenu()
 	return self
+
+end
+
+-- initMask()
+--
+function Playorama:initMask()
+
+	local img = playdate.graphics.image.new(400, 240, playdate.graphics.kColorClear)
+	playdate.graphics.pushContext(img)
+		playdate.graphics.setColor(playdate.graphics.kColorBlack)
+		playdate.graphics.fillRect(0, 0, 400, 240)
+		playdate.graphics.setColor(playdate.graphics.kColorClear)
+		playdate.graphics.fillRoundRect(0, 0, 400, 240, 8)
+	playdate.graphics.popContext()
+	self.mask = playdate.graphics.sprite.new(img)
+	self.mask:setCenter(0, 0)
+	self.mask:moveTo(0, 0)
+	self.mask:setZIndex(999)
+	self.mask:setUpdatesEnabled(false)
+	self.mask:add()
 
 end
 
