@@ -26,7 +26,6 @@ function Videorama:init(videoPath, audioPath)
 	if videoerr ~= nil then
 		self.error = "Cannot open video at `".. videoPath .. "`: [" .. videoerr .. "]"
 		print(self.error)
-		gLog:add(self.error)
 		return self
 	end
 
@@ -35,7 +34,6 @@ function Videorama:init(videoPath, audioPath)
 	if w ~= 400 or h ~= 240 then
 		self.error = "Video at `".. videoPath .. "` must be 400x240. Currently is " .. w .. "x" .. h .. "."
 		print(self.error)
-		gLog:add(self.error)
 		return self
 	end
 
@@ -96,7 +94,6 @@ function Videorama:load()
 	if videoerr ~= nil then
 		self.error = "Cannot open video at `".. self.videoPath .. "`: [" .. videoerr .. "]"
 		print(self.error)
-		gLog:add(self.error)
 		return false, self.error
 	end
 
@@ -119,7 +116,6 @@ function Videorama:load()
 			end
 		else
 			local errormsg = "Cannot open audio at `".. self.audioPath .. "` as a sampleplayer: [" .. audioerr .. "]"
-			gLog:add(errormsg)
 			audioerr = nil
 			self.audio, audioerr = playdate.sound.fileplayer.new(self.audioPath)
 			self.isFilePlayer = true
@@ -129,7 +125,6 @@ function Videorama:load()
 		if audioerr ~= nil then
 			self.error = "Cannot open audio at `".. self.audioPath .. "` as a fileplayer: [" .. audioerr .. "]"
 			print(self.error)
-			gLog:add(self.error)
 			return false, self.error
 		end
 	end
