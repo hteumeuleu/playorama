@@ -20,6 +20,23 @@ function Playorama:init()
 
 end
 
+function Playorama:update()
+
+	local current, pressed, released = playdate.getButtonState()
+	if released == playdate.kButtonA|playdate.kButtonUp then
+		print("A+Up")
+	elseif released == playdate.kButtonUp then
+		print("Up")
+	elseif released == playdate.kButtonDown then
+		print("Down")
+	elseif released == playdate.kButtonA then
+		print("A")
+	elseif released == playdate.kButtonB then
+		print("B")
+	end
+
+end
+
 -- initMask()
 --
 function Playorama:initMask()
@@ -86,6 +103,12 @@ function Playorama:initMenu()
 	}
 	local list <const> = List(homeList)
 	self.menu = Menu(list)
+
+end
+
+function Playorama:getMenu()
+
+	return self.menu
 
 end
 

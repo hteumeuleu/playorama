@@ -9,13 +9,19 @@ import "CoreLibs/easing"
 
 -- Custom Scripts
 import "Scripts/globals.lua"
-import "Scripts/Scenes/Player/Videorama.lua"
+import "Scripts/Scenes/Player/VideoPlayer.lua"
 import "Scripts/Common/Library.lua"
 import "Scripts/Scenes/Menu/Menu.lua"
 import "Scripts/Playorama.lua"
 
 -- Init app
 local p <const> = Playorama()
+
+function getMenu()
+
+	return p:getMenu()
+
+end
 
 -- playdate.update()
 --
@@ -24,5 +30,6 @@ function playdate.update()
 
 	playdate.timer.updateTimers()
 	playdate.graphics.sprite.update()
+	p:update()
 
 end

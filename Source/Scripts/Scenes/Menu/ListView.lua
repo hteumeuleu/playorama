@@ -14,13 +14,8 @@ function ListView:init(list)
 	self.fullScreen = false
 	self:setCenter(0, 0)
 	self:setZIndex(100)
-	if self.fullScreen then
-		self:setSize(400, 240)
-		self:moveTo(0, 0)
-	else
-		self:setSize(400, 200)
-		self:moveTo(0, 40)
-	end
+	self:setSize(400, 240)
+	self:moveTo(0, 0)
 	self:initGridView()
 	self:initImage()
 	return self
@@ -32,9 +27,6 @@ end
 function ListView:update()
 
 	ListView.super.update(self)
-	if self.updateAnimator ~= nil then
-		self:updateAnimator()
-	end
 	if self.gridview ~= nil and self:needsDisplay() then
 		self:forceUpdate()
 	end
@@ -215,11 +207,7 @@ end
 function ListView:up()
 
 	if #self.items > 0 then
-		if self:getSelection() == 1 then
-			self:toggleFullScreen()
-		else
-			self.gridview:selectPreviousRow(false)
-		end
+		self.gridview:selectPreviousRow(true)
 		self:setSelection(self:getSelection())
 		self:forceUpdate()
 	end
@@ -233,7 +221,7 @@ function ListView:down()
 
 	if #self.items > 0 then
 		self.gridview:selectNextRow(true)
-		self:setSelection(self.gridview:getSelectedRow())
+		self:setSelection(self:getSelection())
 		self:forceUpdate()
 	end
 
@@ -268,108 +256,6 @@ function ListView:doSelectionCallback()
 
 	if #self.items > 0 then
 		self.items[self.gridview:getSelectedRow()].callback()
-	end
-
-end
-
--- toggleFullScreen()
---
-function ListView:toggleFullScreen()
-
-	if self:isFullScreen() then
-		self:leaveFullScreen()
-	else
-		self:enterFullScreen()
-	end
-
-end
-
--- setFullScreen()
---
-function ListView:setFullScreen(value)
-
-	self.fullScreen = value
-	-- Update ListView size
-	local height = 200
-	if self.fullScreen then
-		height = 240
-	end
-	self:moveTo(self.x, 240 - height)
-	self:setSize(self.width, height)
-	-- Update gridview background and sprite image
-	if self.gridview ~= nil then
-		self.gridview.backgroundImage = self:getBackgroundImage()
-	end
-	self:initImage()
-	-- Redraw grid
-	if self.gridview ~= nil then
-		self:drawGrid()
-	end
-	-- Move selected sprite
-	if self.selected ~= nil then
-		self.selected:removeAnimator()
-		self.selected:moveTo(self.selected.x, 240 - height + 10)
-	end
-
-end
-
--- isFullScreen()
---
-function ListView:isFullScreen()
-
-	return self.fullScreen
-
-end
-
--- enterFullScreen()
---
-function ListView:enterFullScreen()
-
-	self.fullScreen = true
-	local startValue = playdate.geometry.point.new(0, 40)
-	local endValue = playdate.geometry.point.new(0, 0)
-	local easingFunction =  playdate.easingFunctions.outElastic
-	local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction)
-	animator.easingAmplitude = 0.5
-	animator.easingPeriod = 0.2
-	self:setAnimator(animator)
-
-end
-
--- leaveFullScreen()
---
-function ListView:leaveFullScreen()
-
-	self.fullScreen = false
-	local startValue = playdate.geometry.point.new(0, 0)
-	local endValue = playdate.geometry.point.new(0, 40)
-	local easingFunction =  playdate.easingFunctions.outElastic
-	local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction)
-	animator.easingAmplitude = 0.5
-	animator.easingPeriod = 0.2
-	self:setAnimator(animator)
-
-end
-
--- updateAnimator()
---
-function ListView:updateAnimator()
-
-	if self._animator ~= nil then
-		-- Update ListView size
-		local currentPoint = self._animator:currentValue()
-		local height = math.floor(240 - currentPoint.y + 0.5)
-		self:setSize(self.width, height)
-		-- Update gridview background and sprite image
-		if self.gridview ~= nil then
-			self.gridview.backgroundImage = self:getBackgroundImage()
-		end
-		self:initImage()
-		-- Move selected sprite
-		if self.selected ~= nil then
-			self.selected:removeAnimator()
-			self.selected:moveTo(self.selected.x, currentPoint.y + 10)
-		end
 	end
 
 end
