@@ -10,6 +10,8 @@ class('Menu').extends()
 function Menu:init()
 
 	Menu.super.init(self)
+	-- The logo image displayed at the top of the screen.
+	self.logo = playdate.graphics.image.new("Assets/logo.png")
 	-- Get all playable files from the System.
 	self.items = self:getFiles()
 	-- Get all the thumbnail images from the above items.
@@ -27,8 +29,6 @@ function Menu:init()
 	if #self.items == 1 then
 		self.cellWidth = 390
 	end
-	-- The logo image displayed at the top of the screen.
-	self.logo = playdate.graphics.image.new("assets/logo")
 	-- Creates the grid view.
 	self:initGridView()
 	-- Creates the reel sprite visible in the `O` of the logo.
@@ -400,6 +400,8 @@ end
 -- centered within a 400x60 rectangle.
 function Menu:drawLogo()
 
-	self.logo:drawCentered(200, 30)
+	if self.logo ~= nil then
+		self.logo:drawCentered(200, 30)
+	end
 
 end

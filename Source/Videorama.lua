@@ -387,11 +387,13 @@ end
 function Videorama:getThumbnail()
 
 	local thumbnail = playdate.graphics.image.new(400, 240, playdate.graphics.kColorBlack)
-	local video = playdate.graphics.video.new(self.videoPath)
-	video:setContext(thumbnail)
-	local frame = math.floor(video:getFrameCount() / 4)
-	video:renderFrame(frame)
-	video = nil
+	local video, videoerr = playdate.graphics.video.new(self.videoPath)
+	if video ~= nil then
+		video:setContext(thumbnail)
+		local frame = math.floor(video:getFrameCount() / 4)
+		video:renderFrame(frame)
+		video = nil
+	end
 	return thumbnail
 
 end
