@@ -30,6 +30,8 @@ local lastPlayedItem = 1
 -- Sets the current state of the app to the Menu.
 function initMenuState()
 
+	playdate.setAutoLockDisabled(false)
+
 	state = kMenuState
 
 	-- If the Menu class hasn't been instanciated yet, we do it now.
@@ -54,6 +56,8 @@ end
 --
 -- Sets the current state of the app to the Player.
 function initPlayState()
+
+	playdate.setAutoLockDisabled(true)
 
 	state = kPlayState
 
