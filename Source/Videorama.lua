@@ -144,6 +144,7 @@ function Videorama:unload()
 	end
 	self.audio = nil
 	self.video = nil
+	collectgarbage("collect")
 
 end
 

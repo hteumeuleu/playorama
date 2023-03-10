@@ -331,9 +331,12 @@ end
 function Menu:getThumbnails()
 
 	local thumbs = {}
-	for _, videorama in ipairs(self.items) do
+	for i, videorama in ipairs(self.items) do
 		local thumbnail = videorama:getThumbnail()
 		table.insert(thumbs, thumbnail)
+		if (i%64 == 0) or (i==#self.items) then
+			collectgarbage("collect")
+		end
 	end
 	return thumbs
 
