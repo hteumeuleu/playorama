@@ -143,6 +143,7 @@ function Videorama:unload()
 	end
 	self.audio = nil
 	self.video = nil
+	collectgarbage("collect")
 
 end
 
@@ -419,6 +420,7 @@ function Videorama:getThumbnail()
 	local frame = math.floor(video:getFrameCount() / 4)
 	video:renderFrame(frame)
 	video = nil
+	collectgarbage("collect")
 	return thumbnail
 
 end
