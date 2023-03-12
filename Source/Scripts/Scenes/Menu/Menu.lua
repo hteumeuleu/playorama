@@ -36,7 +36,7 @@ function Menu:setInputHandlers()
 			self.listview:down()
 		end,
 	}
-	playdate.inputHandlers.push(myInputHandlers, true)
+	playdate.inputHandlers.push(myInputHandlers)
 
 end
 

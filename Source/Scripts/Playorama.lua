@@ -45,6 +45,7 @@ end
 function Playorama:initWidgets()
 
 	-- TODO
+	h = Header()
 
 end
 

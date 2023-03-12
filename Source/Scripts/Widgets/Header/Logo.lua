@@ -31,8 +31,8 @@ function Logo:animate()
 	local endValue = startValue:offsetBy(4, -6)
 	local easingFunction =  playdate.easingFunctions.inCubic
 	local startTimeOffset = 100
-	local animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction, startTimeOffset)
-	animator.reverses = true
-	self:setAnimator(animator)
+	self.animator = playdate.graphics.animator.new(300, startValue, endValue, easingFunction, startTimeOffset)
+	self.animator.reverses = true
+	self:setAnimator(self.animator)
 
 end
