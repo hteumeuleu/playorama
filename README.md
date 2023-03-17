@@ -38,7 +38,8 @@ Playorama has two options available in the Playdate System Menu:
 1. Connect your Playdate to your computer in [Data Disk mode](https://help.play.date/games/sideloading/#data-disk-mode).
 2. In the main `Data` folder, locate or create the folder the app has access to. The folder shall be named either:
 	* `com.hteumeuleu.playorama` if you sideloaded the app over a USB connection, 
-	* `user.xxxx.playorama` if you sideloaded the app through the Playdate website (where `xxxx` should be replaced by your user number used in other folder names).
+	* `user.xxxx.playorama` if you sideloaded the app through the Playdate website **before february 2023** (where `xxxx` should be replaced by your user number used in other folder names),
+	* `user.xxxx.com.hteumeuleu.playorama` if you sideloaded the app through the Playdate website **after february 2023** and Playdate OS update 1.12.
 3. Add your video and audio files inside. Both files should have the same base name (for example: `sample.pdv` and `sample.pda`).
 
 ### 2.1. Sample videos
