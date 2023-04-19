@@ -62,9 +62,6 @@ end
 function Playorama:initMenu()
 
 	local homeList <const> = {
-		ListItem("Music", function()
-			self.menu:push(ListView(self.library:toList("audio")))
-		end),
 		ListItem("Videos", function()
 			self.menu:push(ListView(self.library:toList("video")))
 		end),

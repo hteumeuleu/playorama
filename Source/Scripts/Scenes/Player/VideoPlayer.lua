@@ -27,10 +27,10 @@ function VideoPlayer:update()
 
 	VideoPlayer.super.update(self)
 	if self.videorama ~= nil and self.videorama:isPlaying() then
-		self:setCurrentTimeText()
-		self:setMutedIcon()
-		self:setTotalTimeText()
-		self:setRateText()
+		-- self:setCurrentTimeText()
+		-- self:setMutedIcon()
+		-- self:setTotalTimeText()
+		-- self:setRateText()
 	end
 
 end
@@ -68,7 +68,7 @@ function VideoPlayer:setInputHandlers()
 		leftButtonDown = function()
 			if self.videorama:isPlaying() then
 				self.videorama:toggleRate(-1)
-				self:setRateText()
+				-- self:setRateText()
 			else
 				local n = self.videorama.lastFrame - 1
 				self.videorama:setFrame(n)
@@ -77,7 +77,7 @@ function VideoPlayer:setInputHandlers()
 		rightButtonDown = function()
 			if self.videorama:isPlaying() then
 				self.videorama:toggleRate(1)
-				self:setRateText()
+				-- self:setRateText()
 			else
 				local n = self.videorama.lastFrame + 1
 				self.videorama:setFrame(n)
@@ -92,7 +92,7 @@ function VideoPlayer:setInputHandlers()
 				elseif tick == -1 then
 					self.videorama:decreaseRate()
 				end
-				self:setRateText()
+				-- self:setRateText()
 			else
 				local n = self.videorama.lastFrame + tick
 				self.videorama:setFrame(n)
@@ -109,7 +109,6 @@ function VideoPlayer:close()
 
 	self:remove()
 	playdate.inputHandlers.pop()
-	local menu = getMenu()
-	menu:add()
+	app.menu:add()
 
 end

@@ -100,8 +100,7 @@ function Library:toList(type)
 		if type == nil or (item.type ~= nil and item.type == type) then
 			local listItem = ListItem(item.name, function()
 				local vp = VideoPlayer(item)
-				local menu = getMenu()
-				menu:remove()
+				app.menu:remove()
 			end)
 			table.insert(libraryList, listItem)
 		end
