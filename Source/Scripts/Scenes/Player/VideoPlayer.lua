@@ -65,13 +65,39 @@ function VideoPlayer:setInputHandlers()
 				self.videorama:setAnimator(animator)
 			end
 		end,
+		downButtonDown = function()
+			if self.videorama._animator == nil then
+				local endValueY = 0
+				if self.videorama.y == 0 then
+					endValueY = 40
+				end
+				local startValue = playdate.geometry.point.new(self.videorama.x, self.videorama.y)
+				local endValue = playdate.geometry.point.new(self.videorama.x, endValueY)
+				local easingFunction =  playdate.easingFunctions.outElastic
+				local startTimeOffset = 0
+				local animator = playdate.graphics.animator.new(500, startValue, endValue, easingFunction, startTimeOffset)
+				self.videorama:setAnimator(animator)
+			end
+		end,
 		leftButtonDown = function()
-			if self.videorama:isPlaying() then
-				self.videorama:toggleRate(-1)
-				-- self:setRateText()
-			else
-				local n = self.videorama.lastFrame - 1
-				self.videorama:setFrame(n)
+			-- if self.videorama:isPlaying() then
+			-- 	self.videorama:toggleRate(-1)
+			-- 	-- self:setRateText()
+			-- else
+			-- 	local n = self.videorama.lastFrame - 1
+			-- 	self.videorama:setFrame(n)
+			-- end
+			if self.videorama._animator == nil then
+				local endValueX = 0
+				if self.videorama.x == 0 then
+					endValueX = 40
+				end
+				local startValue = playdate.geometry.point.new(self.videorama.x, self.videorama.y)
+				local endValue = playdate.geometry.point.new(endValueX, self.videorama.y)
+				local easingFunction =  playdate.easingFunctions.outElastic
+				local startTimeOffset = 0
+				local animator = playdate.graphics.animator.new(500, startValue, endValue, easingFunction, startTimeOffset)
+				self.videorama:setAnimator(animator)
 			end
 		end,
 		rightButtonDown = function()
