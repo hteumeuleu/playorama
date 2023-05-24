@@ -31,11 +31,15 @@ function Menu:setInputHandlers()
 		end,
 		upButtonUp = function()
 			self.listview:up()
-			app.header.reel:next()
+			if app.header.reel then
+				app.header.reel:next()
+			end
 		end,
 		downButtonUp = function()
 			self.listview:down()
-			app.header.reel:previous()
+			if app.header.reel then
+				app.header.reel:previous()
+			end
 		end,
 	}
 	playdate.inputHandlers.push(myInputHandlers)
