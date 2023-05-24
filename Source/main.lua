@@ -17,6 +17,7 @@ import "Scripts/Widgets/Header/Header"
 import "Scripts/Playorama"
 
 -- Init app
+NotificationCenter = Signal()
 app = Playorama()
 
 -- playdate.update()
