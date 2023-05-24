@@ -9,11 +9,12 @@ import "CoreLibs/easing"
 
 -- Custom Scripts
 import "Scripts/globals.lua"
-import "Scripts/Scenes/Player/VideoPlayer.lua"
-import "Scripts/Common/Library.lua"
-import "Scripts/Scenes/Menu/Menu.lua"
-import "Scripts/Widgets/Header/Header.lua"
-import "Scripts/Playorama.lua"
+import "Scripts/Libs/Signal"
+import "Scripts/Scenes/Player/VideoPlayer"
+import "Scripts/Common/Library"
+import "Scripts/Scenes/Menu/Menu"
+import "Scripts/Widgets/Header/Header"
+import "Scripts/Playorama"
 
 -- Init app
 app = Playorama()
