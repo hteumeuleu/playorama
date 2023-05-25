@@ -108,3 +108,21 @@ function Library:toList(type)
 	return List(libraryList)
 
 end
+
+-- add()
+--
+-- Add an item to the Library from the path parameter.
+function Library:add(path)
+
+	local item = {}
+	item.uuid = playdate.string.UUID(16)
+	item.type = "video"
+	item.videoPath = path
+	-- Create a Videorama and add it to the available files array.
+	local videorama, verror = createVideorama(item.videoPath, item.audioPath)
+	if videorama ~= nil and verror == nil then
+		item.objectorama = videorama
+		table.insert(self.items, item)
+	end
+
+end

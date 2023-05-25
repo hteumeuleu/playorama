@@ -80,7 +80,24 @@ function Playorama:initMenu()
 			}
 			self.menu:push(ListView(List(settingsListArray)))
 		end),
-		ListItem("Sync", function() self.menu:goTo(5) end),
+		ListItem("Sync", function()
+			self.menu:goTo(5)
+			if playdate.simulator then
+				-- Make request
+				local url = "https://www.hteumeuleu.fr/wp-content/uploads/2023/05/kids.pdv"
+				local urlContent = playdate.simulator.getURL(url)
+				-- Write file locally
+				local fileName = split(url, "/")
+				fileName = fileName[#fileName]
+				fileName = playdate.getSecondsSinceEpoch() .. '.pdv'
+				local file = playdate.file.open(fileName, playdate.file.kFileWrite)
+				file:write(urlContent)
+				file:close()
+				-- Add local file to library
+				print(fileName)
+				self.library:add(fileName)
+			end
+		end),
 	}
 	local list <const> = List(homeList)
 	self.menu = Menu(list)
