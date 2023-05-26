@@ -1,9 +1,6 @@
-import "Scripts/Common/Icon"
-
 class('ListView').extends(playdate.graphics.sprite)
 
-local arrow <const> = Icon(0, 0, IconChevronRight)
-local arrowImage <const> = arrow:getImage()
+local arrowImage <const> = playdate.graphics.image.new("Assets/arrow")
 
 -- ListView
 --
