@@ -30,19 +30,43 @@ function Menu:setInputHandlers()
 			self:pop()
 		end,
 		upButtonUp = function()
-			self.listview:up()
-			if app.header.reel then
-				app.header.reel:next()
-			end
+			self:previous()
 		end,
 		downButtonUp = function()
-			self.listview:down()
-			if app.header.reel then
-				app.header.reel:previous()
+			self:next()
+		end,
+		cranked = function(change, acceleratedChange)
+			local ticks = playdate.getCrankTicks(2)
+			if ticks == 1 then
+				self:next()
+			elseif ticks == -1 then
+				self:previous()
 			end
 		end,
 	}
 	playdate.inputHandlers.push(myInputHandlers)
+
+end
+
+-- previous()
+--
+function Menu:previous()
+
+	self.listview:up()
+	if app.header.reel then
+		app.header.reel:next()
+	end
+
+end
+
+-- next()
+--
+function Menu:next()
+
+	self.listview:down()
+	if app.header.reel then
+		app.header.reel:previous()
+	end
 
 end
 
