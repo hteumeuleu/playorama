@@ -81,8 +81,9 @@ function Playorama:initMenu()
 			self.menu:push(ListView(List(settingsListArray)))
 		end),
 		ListItem("Sync", function()
-			self.menu:goTo(5)
-			if playdate.simulator then
+			-- self.menu:goTo(5)
+			-- Online sync
+			if false then --playdate.simulator then
 				-- Make request
 				local url = "https://www.hteumeuleu.fr/wp-content/uploads/2023/05/kids.pdv"
 				local urlContent = playdate.simulator.getURL(url)
@@ -94,8 +95,34 @@ function Playorama:initMenu()
 				file:write(urlContent)
 				file:close()
 				-- Add local file to library
-				print(fileName)
 				self.library:add(fileName)
+			-- Local sync
+			else
+				local timeBefore = playdate.getSecondsSinceEpoch()
+
+				-- Read original file and set up copy
+				local fileName = "Assets/sample.pdv"
+				local file = playdate.file.open(fileName, playdate.file.kFileRead)
+				local copyName = playdate.getSecondsSinceEpoch() .. '.pdv'
+				local copy = playdate.file.open(copyName, playdate.file.kFileWrite)
+
+				-- Read and write data
+				local size = playdate.file.getSize(fileName)
+				local data = file:read(size)
+				copy:write(data)
+
+				-- Success!
+				if file:tell() == copy:tell() then
+					local timeAfter = playdate.getSecondsSinceEpoch()
+					print("- ", fileName .. " successfully copied into " .. copyName .. " in ", timeAfter - timeBefore,  "ms.")
+				end
+
+				-- Close both files
+				file:close()
+				copy:close()
+
+				-- Add local file to library
+				self.library:add(copyName)
 			end
 		end),
 	}
