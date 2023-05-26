@@ -43,7 +43,7 @@ function Library:build()
 			-- Contrary to what the docs say, the Playdate can not
 			-- read a '.wav' file from the file system.
 			-- Trust me, I spent hours figuring this out.
-			local audioExtensions = {'.pda', '.mp3', '.m4a'}
+			local audioExtensions = {'.pda', '.mp3'}
 			-- Loop through supported audio extensions.
 			for _, ext in ipairs(audioExtensions) do
 				-- Define what the audio file name might be.
