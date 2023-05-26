@@ -62,6 +62,18 @@ function Library:build()
 			end
 		end
 	end
+	self:sort()
+
+end
+
+-- sort()
+--
+-- Sort library by last modified date.
+function Library:sort()
+
+	table.sort(self.items, function (left, right)
+		return left.objectorama.lastModified > right.objectorama.lastModified
+	end)
 
 end
 
@@ -118,11 +130,21 @@ function Library:add(path)
 	item.uuid = playdate.string.UUID(16)
 	item.type = "video"
 	item.videoPath = path
+	-- Isolate the video file base name.
+	local i = string.find(path .. '', '.pdv')
+	if i ~= nil and i > 1 then
+		local baseName = string.sub(path .. '', 1, i - 1)
+		item.name = removeFormatting(baseName)
+	else
+		item.name = "Unknown title"
+	end
 	-- Create a Videorama and add it to the available files array.
 	local videorama, verror = createVideorama(item.videoPath, item.audioPath)
 	if videorama ~= nil and verror == nil then
 		item.objectorama = videorama
 		table.insert(self.items, item)
 	end
+	-- Sort library
+	self:sort()
 
 end
