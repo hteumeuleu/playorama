@@ -113,7 +113,7 @@ function Library:toList(type)
 			local listItem = ListItem(item.name, function()
 				local vp = VideoPlayer(item)
 				app.menu:remove()
-			end)
+			end, "player")
 			table.insert(libraryList, listItem)
 		end
 	end

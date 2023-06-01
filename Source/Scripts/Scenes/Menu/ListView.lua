@@ -281,3 +281,13 @@ function ListView:updateAnimator()
 	end
 
 end
+
+-- isSelectionAPlayer()
+--
+-- Returns a Boolean if the current selection is a playable item. (And not another ListView item.)
+function ListView:isSelectionAPlayer()
+
+	local section, row, column = self.gridview:getSelection()
+	return self.items[row].type == "player"
+
+end

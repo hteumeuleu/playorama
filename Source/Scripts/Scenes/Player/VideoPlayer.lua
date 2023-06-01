@@ -17,6 +17,8 @@ function VideoPlayer:init(libraryItem)
 	self.videorama = self.libraryItem.objectorama
 	self:attachSprite(self.videorama)
 	self.videorama:setZIndex(202)
+	-- Intro animation
+	self:intro()
 	return self
 
 end
@@ -31,6 +33,14 @@ function VideoPlayer:update()
 		-- self:setMutedIcon()
 		-- self:setTotalTimeText()
 		-- self:setRateText()
+	end
+	-- Intro animation
+	if self._introAnimator ~= nil and not self._introAnimator:ended() then
+		self._introSprite:setScale(self._introAnimator:currentValue())
+	elseif self._introAnimator ~= nil and self._introAnimator:ended() then
+		self:detachSprite(self._introSprite)
+		self._introAnimator = nil
+		self._introSprite = nil
 	end
 
 end
@@ -136,5 +146,24 @@ function VideoPlayer:close()
 	self:remove()
 	playdate.inputHandlers.pop()
 	app.menu:add()
+
+end
+
+-- intro()
+--
+-- Adds an iris like intro animation when opening the video player.
+function VideoPlayer:intro()
+
+	local mask = playdate.graphics.image.new(500, 500)
+	playdate.graphics.pushContext(mask)
+		playdate.graphics.setColor(playdate.graphics.kColorBlack)
+		playdate.graphics.fillCircleAtPoint(250, 250, 250)
+	playdate.graphics.popContext()
+	self._introSprite = playdate.graphics.sprite.new(mask)
+	self._introSprite:moveTo(200, 120)
+	self:attachSprite(self._introSprite)
+	self._introSprite:setZIndex(300)
+	-- Create animator
+	self._introAnimator = playdate.graphics.animator.new(300, 1, 0)
 
 end
