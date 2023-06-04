@@ -210,6 +210,12 @@ function Videorama:update()
 		self:load()
 	end
 	self:customUpdate()
+	if self.animatorCallback ~= nil and self.animator ~= nil and self.animator:ended() then
+		self:animatorCallback()
+		self.animatorCallback = nil
+		self.animator = nil
+	end
+
 
 end
 

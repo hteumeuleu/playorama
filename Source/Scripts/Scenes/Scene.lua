@@ -76,3 +76,14 @@ function Scene:detachSprite(sprite)
 	end
 
 end
+
+-- setVisible()
+--
+function Scene:setVisible(bool)
+
+	Scene.super.setVisible(self, bool)
+	for _, sprite in ipairs(self.attachedSprites) do
+		sprite:setVisible(bool)
+	end
+
+end

@@ -1,17 +1,3 @@
--- -- library (TODO: move to app class)
--- local lib <const> = Library()
-
--- function getListFromLibrary(type)
--- 	return lib:toList(type)
--- end
-
--- -- menu (TODO: move to app class)
--- local menu = Menu()
-
--- function getMenu()
--- 	return menu
--- end
-
 -- fonts
 --
 kFontCuberickBold = playdate.graphics.font.new("Fonts/Cuberick-Bold", playdate.graphics.font.kVariantBold)
