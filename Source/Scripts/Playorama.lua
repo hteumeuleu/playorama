@@ -9,13 +9,15 @@ function Playorama:init()
 	self:initBackgroundDrawingCallback()
 	playdate.setCrankSoundsDisabled(true)
 	-- Init mask
-	self:initMask()
+	-- self:initMask()
 	-- Init widgets
 	self:initWidgets()
 	-- Init library
 	self:initLibrary()
+	-- Init Carousel
+	self:initCarousel()
 	-- Init menu
-	self:initMenu()
+	-- self:initMenu()
 	return self
 
 end
@@ -128,6 +130,14 @@ function Playorama:initMenu()
 	}
 	local list <const> = List(homeList)
 	self.menu = Menu(list)
+
+end
+
+-- initCarousel()
+--
+function Playorama:initCarousel()
+
+	self.carousel = Carousel(self.library:toList("video"))
 
 end
 

@@ -13,6 +13,7 @@ import "Scripts/Libs/Signal"
 import "Scripts/Scenes/Player/VideoPlayer"
 import "Scripts/Common/Library"
 import "Scripts/Scenes/Menu/Menu"
+import "Scripts/Scenes/Carousel/Carousel"
 import "Scripts/Widgets/Header/Header"
 import "Scripts/Playorama"
 
