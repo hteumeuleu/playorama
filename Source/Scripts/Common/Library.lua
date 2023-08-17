@@ -26,18 +26,18 @@ function Library:build()
 	-- List all available files on the Playdate.
 	local kFiles <const> = self:getFiles()
 	-- Loop through all files.
-	for _, fileName in ipairs(kFiles) do
+	for i, fileName in ipairs(kFiles) do
 		-- Check if the file name contains '.pdv'.
-		local i = string.find(fileName .. '', '.pdv')
+		local n = string.find(fileName .. '', '.pdv')
 		-- If it does, then it's a catch. We've got a video!
 		-- Now we'll see if there's a sound file as well.
-		if i ~= nil and i > 1 then
+		if n ~= nil and n > 1 then
 			local item = {}
 			item.uuid = playdate.string.UUID(16)
 			item.type = "video"
 			item.videoPath = fileName
 			-- Isolate the video file base name.
-			local baseName = string.sub(fileName .. '', 1, i - 1)
+			local baseName = string.sub(fileName .. '', 1, n - 1)
 			item.name = removeFormatting(baseName)
 			-- Define different supported audio extensions.
 			-- Contrary to what the docs say, the Playdate can not
@@ -59,6 +59,12 @@ function Library:build()
 			if videorama ~= nil and verror == nil then
 				item.objectorama = videorama
 				table.insert(self.items, item)
+			end
+			-- Playdate limits to 64 simultaneous open files.
+			-- To prevent a crash due to too much opened files, we do manual garbage collection.
+			-- @see https://devforum.play.date/t/too-many-open-files-after-opening-videos/10780/3
+			if (i%64 == 0) or (i==#kFiles) then
+				collectgarbage("collect")
 			end
 		end
 	end
