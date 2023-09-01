@@ -4,13 +4,12 @@ class('Carousel').extends('Scene')
 
 -- Carousel
 --
-function Carousel:init(list)
+function Carousel:init(library)
 
 	Carousel.super.init(self)
 	-- Get all playable files from the System.
-	if list ~= nil and list.items ~= nil then
-		self.items = list.items
-		printTable(#self.items)
+	if library ~= nil and library.items ~= nil then
+		self.items = library.items
 	end
 	-- Get all the thumbnail images from the above items.
 	-- This is not optimal, as it can get big the more files there are.
@@ -116,7 +115,7 @@ function Carousel:initGridView()
 		-- Text badge with the video title.
 		local font = playdate.graphics.getFont()
 		local textY = math.floor(height - font:getHeight() - 9 - kButtonBottomOffset)
-		local cellText = that.items[column]:getDisplayName()
+		local cellText = "" --that.items[column]:getDisplayName()
 		-- Black rectangle background.
 		playdate.graphics.setColor(playdate.graphics.kColorBlack)
 		playdate.graphics.fillRoundRect(x+9, y + textY - 1, math.min(font:getTextWidth(cellText) + 5, width - 18), font:getHeight() + 2, 3)
@@ -147,11 +146,12 @@ function Carousel:getThumbnails()
 
 	local thumbs = {}
 	for i, item in ipairs(self.items) do
-		-- local videorama = Videorama(item.name .. ".pdv")
-		-- local thumbnail = videorama:getThumbnail()
-		table.insert(thumbs, thumbnail)
+		local videorama = createVideorama(item.name .. ".pdv")
+		if videorama ~= nil then
+			local thumbnail = videorama:getThumbnail()
+			table.insert(thumbs, thumbnail)
+		end
 		if (i%64 == 0) or (i==#self.items) then
-			print("-------- collectgarbage")
 			collectgarbage("collect")
 		end
 	end

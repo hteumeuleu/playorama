@@ -137,7 +137,7 @@ end
 --
 function Playorama:initCarousel()
 
-	self.carousel = Carousel(self.library:toList("video"))
+	self.carousel = Carousel(self.library)
 
 end
 
