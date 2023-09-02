@@ -22,6 +22,10 @@ function Carousel:init(library)
 	self.cellWidth = 360
 	self.cellHeight = self.gridHeight
 	self.cellPadding = 5
+	-- The actual sprite where we'll draw everything
+	local img <const> = playdate.graphics.image.new(self.gridWidth, self.gridHeight, playdate.graphics.kColorClear)
+	self:setImage(img)
+	self:moveTo(0, 40)
 	-- Creates the grid view.
 	self:initGridView()
 	-- Add the carousel to the screen
@@ -38,12 +42,13 @@ function Carousel:update()
 
 	-- Update the grid view if needed.
 	if self:needsDisplay() then
-		playdate.graphics.setClipRect(0, 60, self.gridWidth, self.gridHeight)
+		local img <const> = self:getImage()
+		playdate.graphics.pushContext(img)
 			-- Clear the screen. (Otherwise we'd see traces of previous items.)
 			playdate.graphics.clear(playdate.graphics.kColorBlack)
 			-- Draw the grid view.
-			self.gridview:drawInRect(0, 60, self.gridWidth, self.gridHeight)
-		playdate.graphics.clearClipRect()
+			self.gridview:drawInRect(0, 0, self.gridWidth, self.gridHeight)
+		playdate.graphics.popContext()
 		-- Saves the x scroll position of the grid. This is useful when using the crank.
 		self.gridX = self.gridview:getScrollPosition()
 	end
@@ -89,11 +94,11 @@ function Carousel:initGridView()
 			-- Creates a context and draw the thumbnail image inside.
 			local thumbnailContext = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
 			playdate.graphics.pushContext(thumbnailContext)
-				-- local thumbnail = that.thumbnails[column]
-				-- local thumbnailWidth, thumbnailHeight = thumbnail:getSize()
-				-- if thumbnail ~= nil then
-				-- 	thumbnail:draw((width - thumbnailWidth) / 2 + 10, (height - thumbnailHeight) / 2 - 10)
-				-- end
+				local thumbnail = that.thumbnails[column]
+				local thumbnailWidth, thumbnailHeight = thumbnail:getSize()
+				if thumbnail ~= nil then
+					thumbnail:draw((width - thumbnailWidth) / 2 + 10, (height - thumbnailHeight) / 2 - 10)
+				end
 			playdate.graphics.popContext()
 			-- Creates a rounded rectangle mask and add it to the previous context.
 			local maskImage = playdate.graphics.image.new(width, height, playdate.graphics.kColorBlack)
@@ -115,7 +120,7 @@ function Carousel:initGridView()
 		-- Text badge with the video title.
 		local font = playdate.graphics.getFont()
 		local textY = math.floor(height - font:getHeight() - 9 - kButtonBottomOffset)
-		local cellText = "" --that.items[column]:getDisplayName()
+		local cellText = that.items[column].objectorama:getDisplayName()
 		-- Black rectangle background.
 		playdate.graphics.setColor(playdate.graphics.kColorBlack)
 		playdate.graphics.fillRoundRect(x+9, y + textY - 1, math.min(font:getTextWidth(cellText) + 5, width - 18), font:getHeight() + 2, 3)
@@ -133,7 +138,7 @@ end
 -- Returns a Boolean if the grid needs to be displayed.
 function Carousel:needsDisplay()
 
-	return self.gridview.needsDisplay -- or self.isPressed or self.isBackgroundDrawing
+	return self.gridview.needsDisplay or self.isPressed
 
 end
 
@@ -146,7 +151,7 @@ function Carousel:getThumbnails()
 
 	local thumbs = {}
 	for i, item in ipairs(self.items) do
-		local videorama = createVideorama(item.name .. ".pdv")
+		local videorama = item.objectorama
 		if videorama ~= nil then
 			local thumbnail = videorama:getThumbnail()
 			table.insert(thumbs, thumbnail)

@@ -38,7 +38,7 @@ function Library:build()
 			item.videoPath = fileName
 			-- Isolate the video file base name.
 			local baseName = string.sub(fileName .. '', 1, n - 1)
-			item.name = removeFormatting(baseName)
+			item.name = baseName
 			-- Define different supported audio extensions.
 			-- Contrary to what the docs say, the Playdate can not
 			-- read a '.wav' file from the file system.
