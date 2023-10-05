@@ -43,3 +43,5 @@ luac.out
 *.pdx
 *.sublime-*
 Support/
+Source/Bundle/**/*.*
+!Source/Bundle/.gitkeep
