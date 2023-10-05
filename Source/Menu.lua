@@ -316,11 +316,6 @@ function Menu:getFiles()
 		end
 	end
 
-	-- We order items by last modified date.
-	table.sort(availableFiles, function (left, right)
-		return left.lastModified > right.lastModified
-	end)
-
 	return availableFiles
 
 end
