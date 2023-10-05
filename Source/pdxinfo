@@ -1,7 +1,7 @@
-name=Playorama
+name=Playorama Community Direct Bundle #1
 author=HTeuMeuLeu
 description=A cranky video player for the Playdate.
-bundleID=com.hteumeuleu.playorama
+bundleID=com.hteumeuleu.playorama-cdb1
 version=1.0.3
 imagePath=SystemAssets
 buildNumber=4
