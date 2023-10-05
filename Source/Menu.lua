@@ -268,7 +268,7 @@ end
 function Menu:getFiles()
 
 	-- List all available files on the Playdate.
-	local kFiles <const> = getFilesRecursive("Bundle/")
+	local kFiles <const> = getFilesRecursive()
 	printTable(kFiles)
 	-- Init the array we’ll return.
 	local availableFiles = {}
