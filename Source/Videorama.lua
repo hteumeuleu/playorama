@@ -30,6 +30,14 @@ function Videorama:init(videoPath, audioPath)
 		return self
 	end
 
+	-- For some reason, the player might be null even without an error. So we check that as well.
+	if self.video == nil then
+		self.error = "An unknown error occurred while opening video at `".. videoPath .. "`."
+		print(self.error)
+		gLog:add(self.error)
+		return self
+	end
+
 	-- Check the video size. We expect 400x240 resolution.
 	local w, h = self.video:getSize()
 	if w ~= 400 or h ~= 240 then
