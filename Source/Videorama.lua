@@ -13,7 +13,7 @@ function Videorama:init(videoPath, audioPath)
 	self.videoPath = videoPath
 	self.audioPath = audioPath
 
-	-- Return nil if there's no audio
+	-- Return nil if there's no video
 	if videoPath == nil then
 		self.error = "Missing video path."
 		return nil, self.error
