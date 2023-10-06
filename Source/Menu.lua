@@ -250,7 +250,6 @@ local function getFilesRecursive(path)
 	for _, currentPath in ipairs(currentFiles) do
 		if playdate.file.isdir(path .. currentPath) then
 			local subfolderFiles = getFilesRecursive(path .. currentPath)
-			printTable(subfolderFiles)
 			for _, subPath in ipairs(subfolderFiles) do
 				table.insert(files, subPath)
 			end
@@ -269,7 +268,6 @@ function Menu:getFiles()
 
 	-- List all available files on the Playdate.
 	local kFiles <const> = getFilesRecursive()
-	printTable(kFiles)
 	-- Init the array we’ll return.
 	local availableFiles = {}
 	-- Loop through all files.
