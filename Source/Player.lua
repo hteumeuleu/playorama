@@ -100,7 +100,17 @@ function Player:setInputHandlers()
 				self:setRateText()
 			else
 				local n = self.videorama.lastFrame + tick
+				local offset = n / 30
 				self.videorama:setFrame(n)
+				-- self.videorama:unmute()
+				if self.videorama:hasAudio() then
+					self.videorama.audio:setOffset(offset)
+					self.videorama.audio:setRate(1)
+					self.videorama.audio:setVolume(1)
+					self.videorama.audio:play(0)
+					printTable(self.videorama.audio)
+					print("play audio on crank", offset, self.videorama.audio:getOffset())
+				end
 			end
 		end,
 	}

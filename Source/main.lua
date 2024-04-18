@@ -8,6 +8,18 @@ import "Player"
 import "Menu"
 import "Log"
 
+playdate.sound.sampleplayer.__tostring = function(this)
+	local output = "{\n"
+	output = output .. "\t[__name] = " .. this.__name .. ",\n"
+	output = output .. "\t[length] = " .. this:getLength() .. ",\n"
+	output = output .. "\t[offset] = " .. this:getOffset() .. ",\n"
+	output = output .. "\t[volume] = " .. this:getVolume() .. ",\n"
+	output = output .. "\t[rate] = " .. this:getRate() .. ",\n"
+	output = output .. "\t[isPlaying] = " .. tostring(this:isPlaying()) .. ",\n"
+	output = output .. "}"
+	return output
+end
+
 -- Global variables
 gOptionVcrEffect = false
 gLog = Log()
