@@ -13,7 +13,7 @@ gOptionVcrEffect = false
 gLog = Log()
 
 -- Define global font
-local kFontCuberickBold <const> = playdate.graphics.font.new("fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
+local kFontCuberickBold <const> = playdate.graphics.font.new("Fonts/font-Cuberick-Bold", playdate.graphics.font.kVariantBold)
 playdate.graphics.setFont(kFontCuberickBold)
 
 -- App variables

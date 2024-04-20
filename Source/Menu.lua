@@ -278,7 +278,7 @@ function Menu:getFiles()
 		-- Now we'll see if there's a sound file as well.
 		-- But we’re also excluding the sample video from here for now.
 		-- (We only want it to appear if there’s no user video.)
-		if i ~= nil and i > 1 and fileName ~= "assets/sample.pdv" then
+		if i ~= nil and i > 1 and fileName ~= "Assets/sample.pdv" then
 			local item = {}
 			item.videoPath = fileName
 			-- Isolate the video file base name.
@@ -308,8 +308,8 @@ function Menu:getFiles()
 
 	-- If no videos were found, we add a secret sample video.
 	if #(availableFiles) == 0 then
-		local defaultVideo = "assets/sample.pdv"
-		local defaultAudio = "assets/sample.pda"
+		local defaultVideo = "Assets/sample.pdv"
+		local defaultAudio = "Assets/sample.pda"
 		local defaultVideorama, verror = createVideorama(defaultVideo, defaultAudio)
 		if defaultVideorama ~= nil and verror == nil then
 			table.insert(availableFiles, defaultVideorama)
