@@ -2,26 +2,26 @@ NOTES
 ---
 
 playorama.ui
-playorama.ui.player
+playorama.player
 playorama.library
 
-playorama.video.new(videoPath, [audioPath])
-playorama.video:flush()
-playorama.video:update()
-playorama.video:isPlaying()
+playorama.video.new(videoPath, [audioPath]) ✅
+playorama.video:update() 
 playorama.video:play()
 playorama.video:pause()
 playorama.video:stop()
-playorama.video:setVolume()
-playorama.video:setRate()
-playorama.video:getRate()
-playorama.video:hasAudio()
-playorama.video:checkAudioExtension(ext)
-playorama.video:canPlayBackwards()
-playorama.video:getLength()
-playorama.video:getOffset()
-playorama.video:setOffset()
-playorama.video:getMetaData()
+playorama.video:flush() ✅
+playorama.video:isPlaying() ✅
+playorama.video:setVolume() ✅
+playorama.video:setRate() ✅
+playorama.video:getRate() ✅
+playorama.video:hasAudio() ✅
+playorama.video:checkAudioExtension(ext) ✅
+playorama.video:canPlayBackwards() ✅
+playorama.video:getLength() ✅
+playorama.video:getOffset() ✅
+playorama.video:setOffset() ✅
+playorama.video:getMetaData() ✅
 
 # Old functions
 
