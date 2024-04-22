@@ -3,11 +3,6 @@ local gfx <const> = pd.graphics
 
 playorama = playorama or {}
 playorama.library = {}
-playorama.library.init = function()
-
-	return Library()
-
-end
 
 -- Library class
 --
@@ -67,6 +62,9 @@ function Library:build()
 			local video, verror = playorama.video.new(item.videoPath, item.audioPath)
 			if video ~= nil and verror == nil then
 				item.lastModified = video.meta.lastModified
+				item.callback = function()
+					print(item.videoPath)
+				end
 				table.insert(self.items, item)
 			end
 			-- Playdate limits to 64 simultaneous open files.

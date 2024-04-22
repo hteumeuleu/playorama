@@ -17,3 +17,10 @@ playdate.graphics.sprite.setBackgroundDrawingCallback(
 )
 
 playorama = playorama or {}
+playorama.init = function()
+	playorama.library = Library()
+	playorama.ui.header = Header()
+	playorama.ui.menu = Menu()
+end
+
+playorama.init()

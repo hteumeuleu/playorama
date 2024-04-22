@@ -16,7 +16,6 @@ local gfx <const> = pd.graphics
 -- print(video)
 -- local player = playorama.player.new(playorama.video.new("Assets/sample.pdv", "Assets/sample.pda"))
 
--- local lib <const> = playorama.library.init()
 -- local item <const> = lib:pop()
 -- playorama.player.new(playorama.video.new(item.videoPath, item.audioPath))
 
