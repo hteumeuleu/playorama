@@ -145,7 +145,7 @@ end
 
 function Video:setMetaData()
 
-	if self.error ~= nil then
+	if self.error == nil then
 		self.meta = {}
 		-- “Last Modified” Timestamp
 		local time <const> = pd.file.modtime(self.videoPath)
