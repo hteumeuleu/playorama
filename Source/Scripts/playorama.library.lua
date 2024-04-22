@@ -63,10 +63,10 @@ function Library:build()
 					break
 				end
 			end
-			-- Create a Videorama and add it to the available files array.
+			-- Create a Video and add it to the available files array.
 			local video, verror = playorama.video.new(item.videoPath, item.audioPath)
 			if video ~= nil and verror == nil then
-				item.video = video
+				item.lastModified = video.meta.lastModified
 				table.insert(self.items, item)
 			end
 			-- Playdate limits to 64 simultaneous open files.
@@ -87,7 +87,7 @@ end
 function Library:sort()
 
 	table.sort(self.items, function (left, right)
-		return left.video.meta.lastModified > right.video.meta.lastModified
+		return left.lastModified > right.lastModified
 	end)
 
 end
