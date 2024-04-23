@@ -22,6 +22,7 @@ class("Player").extends(gfx.sprite)
 function Player:init(video)
 
 	Player.super.init(self)
+	playorama.ui.menu:remove()
 	self:setImage(gfx.image.new(400, 240, gfx.kColorBlack))
 	self:setCenter(0, 0)
 	self:moveTo(0, 0)
@@ -29,6 +30,7 @@ function Player:init(video)
 	self.video:setContext(self:getImage())
 	self.video:play()
 	self:setInputHandlers()
+	self:setZIndex(100)
 	self:add()
 
 end
@@ -43,8 +45,9 @@ end
 function Player:remove()
 
 	Player.super.remove(self)
-	self.video:stop()
+	self.video:flush()
 	pd.inputHandlers.pop()
+	playorama.ui.menu:add()
 
 end
 
@@ -57,6 +60,9 @@ function Player:setInputHandlers()
 			else
 				self.video:play()
 			end
+		end,
+		BButtonUp = function()
+			self:remove()
 		end,
 		cranked = function(change, acceleratedChange)
 			local framerate = self.video.video:getFrameRate()
@@ -83,6 +89,6 @@ function Player:setInputHandlers()
 			end
 		end,
 	}
-	pd.inputHandlers.push(playerInputHandlers)
+	pd.inputHandlers.push(playerInputHandlers, true)
 
 end

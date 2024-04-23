@@ -1,3 +1,4 @@
+import "Scripts/ui/menu/ListItem"
 import "Scripts/ui/menu/ListView"
 
 local pd <const> = playdate
@@ -7,6 +8,7 @@ class('Menu').extends(gfx.sprite)
 
 -- Menu
 --
+-- `list` is a table, each item with { name, type, callback }
 function Menu:init(list)
 
 	Menu.super.init(self)
@@ -33,6 +35,13 @@ function Menu:update()
 	-- 	self._outroSprite = nil
 	-- 	self._outroCallback()
 	-- end
+
+end
+
+function Menu:add()
+
+	Menu.super.add(self)
+	self.listview:add()
 
 end
 
@@ -104,9 +113,9 @@ end
 function Menu:push(newListView)
 
 	table.insert(self.history, self.listview)
-	self:detachSprite(self.listview)
+	self.listview:remove()
 	self.listview = newListView
-	self:attachSprite(self.listview)
+	self.listview:add()
 
 end
 
@@ -116,10 +125,18 @@ function Menu:pop()
 
 	if #self.history > 0 then
 		local newListView = table.remove(self.history)
-		self:detachSprite(self.listview)
+		self.listview:remove()
 		self.listview = newListView
-		self:attachSprite(self.listview)
+		self.listview:add()
 	end
+
+end
+
+-- goTo(i)
+--
+function Menu:goTo(i)
+
+	print("Menu:goTo", i)
 
 end
 

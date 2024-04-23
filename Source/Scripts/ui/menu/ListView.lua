@@ -6,10 +6,10 @@ class('ListView').extends(gfx.sprite)
 
 -- ListView
 --
-function ListView:init()
+function ListView:init(list)
 
 	ListView.super.init(self)
-	self.items = playorama.library.items
+	self.items = list
 	self:setCenter(0, 0)
 	self:setZIndex(100)
 	self:setSize(400, 200)
@@ -172,8 +172,7 @@ function ListView:initGridView()
 						local easingFunction =  pd.easingFunctions.outElastic
 						local startTimeOffset = 0
 						local animator = gfx.animator.new(300, startValue, endValue, easingFunction, startTimeOffset)
-						animator.easingAmplitude = 0.5
-						animator.easingPeriod = 0.2
+						animator.easingPeriod = 1
 						that.selected:setAnimator(animator)
 					end
 				end
@@ -188,7 +187,9 @@ function ListView:initGridView()
 				end
 
 				-- Draw arrow
-				arrowImage:draw(width - 11, y + 5)
+				if that.items[row].type ~= "video" then
+					arrowImage:draw(width - 11, y + 5)
+				end
 			end
 
 		end
@@ -291,6 +292,6 @@ end
 function ListView:isSelectionAPlayer()
 
 	local section, row, column = self.gridview:getSelection()
-	return self.items[row].type == "player"
+	return self.items[row].type == "video"
 
 end

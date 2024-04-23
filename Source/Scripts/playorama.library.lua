@@ -13,7 +13,6 @@ function Library:init()
 	Library.super.init(self)
 	self.items = {}
 	self:build()
-	printTable(self.items)
 	return self
 
 end
@@ -63,6 +62,7 @@ function Library:build()
 			if video ~= nil and verror == nil then
 				item.lastModified = video.meta.lastModified
 				item.callback = function()
+					playorama.player.new(playorama.video.new(item.videoPath, item.audioPath))
 					print(item.videoPath)
 				end
 				table.insert(self.items, item)
@@ -100,10 +100,10 @@ function Library:getFiles(path)
 	if not path then
 		path = "/"
 	end
-	local currentFiles = playdate.file.listFiles(path)
+	local currentFiles = pd.file.listFiles(path)
 	for _, currentPath in ipairs(currentFiles) do
-		if playdate.file.isdir(currentPath) then
-			local subfolderFiles = self:getFiles(currentPath)
+		if pd.file.isdir(currentPath) then
+			local subfolderFiles = self:getFiles(path .. currentPath)
 			for _, subPath in ipairs(subfolderFiles) do
 				table.insert(files, currentPath .. subPath)
 			end
@@ -112,5 +112,14 @@ function Library:getFiles(path)
 		end
 	end
 	return files
+
+end
+
+-- get()
+--
+-- Returns the library as a table.
+function Library:getList()
+
+	return self.items
 
 end

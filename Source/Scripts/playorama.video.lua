@@ -77,7 +77,7 @@ function Video:update()
 
 	local frame = self.lastFrame
 
-	if self:getRate() ~= 0 then
+	if self:isPlaying() then
 		-- If it has audio, we define the frame to show based on the
 		-- current audio offset and frame rate.
 		if self:hasAudio() then
