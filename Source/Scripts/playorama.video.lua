@@ -303,9 +303,10 @@ end
 
 -- getLength()
 --
+-- Returns the total duration, in seconds.
 function Video:getLength()
 
-	return self.video:getLength() or 0
+	return (self.video:getFrameCount() / self.video:getFrameRate())
 
 end
 
@@ -314,7 +315,7 @@ end
 -- Returns the current offset of the audio player, in seconds.
 function Video:getOffset()
 
-	return self.audio:getOffset() or 0
+	return (self.lastFrame / self.video:getFrameRate())
 
 end
 
