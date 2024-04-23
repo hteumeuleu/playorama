@@ -9,6 +9,15 @@ function clamp(val, a, b)
 	return math.max(a, math.min(b, val))
 end
 
+function removeFormatting(text)
+
+	if type(text) == "string" then
+		text = string.gsub(text, "*", "**")
+		text = string.gsub(text, "_", "__")
+	end
+	return text
+
+end
 
 -- Converts a time value (in seconds)
 -- to a string in the 'HH:MM' format. Maxes out at '99:99'.

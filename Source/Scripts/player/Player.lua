@@ -6,6 +6,7 @@ class("Player").extends(gfx.sprite)
 function Player:init(video)
 
 	Player.super.init(self)
+	pd.display.setRefreshRate(30)
 	playorama.ui.menu:remove()
 	self:setImage(gfx.image.new(400, 240, gfx.kColorBlack))
 	self:setCenter(0, 0)
@@ -34,6 +35,8 @@ function Player:remove()
 	self.controls:remove()
 	pd.inputHandlers.pop()
 	playorama.ui.menu:add()
+	gfx.setDrawOffset(0, 0)
+	pd.display.setRefreshRate(50)
 
 end
 
