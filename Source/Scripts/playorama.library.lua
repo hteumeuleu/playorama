@@ -62,6 +62,7 @@ function Library:build()
 			if video ~= nil and verror == nil then
 				item.lastModified = video.meta.lastModified
 				item.callback = function()
+					pd.display.setRefreshRate(30)
 					playorama.player.new(playorama.video.new(item.videoPath, item.audioPath))
 					print(item.videoPath)
 				end
