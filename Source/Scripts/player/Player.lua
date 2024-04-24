@@ -14,6 +14,11 @@ function Player:init(video)
 	self.video:setContext(self:getImage())
 	self.video:play()
 	self.controls = Controls(self.video)
+	self.header = playorama.ui.header
+	self.header:moveBy(0, -40)
+	self.header:setVisible(false)
+	self.effects = Effects(self.video)
+	self.speed = Speed(self.video)
 	self:setInputHandlers()
 	self:setZIndex(100)
 	self:add()
@@ -32,10 +37,13 @@ function Player:remove()
 	Player.super.remove(self)
 	self.video:flush()
 	self.controls:remove()
+	self.effects:remove()
 	pd.inputHandlers.pop()
 	playorama.ui.menu:add()
 	gfx.setDrawOffset(0, 0)
 	pd.display.setRefreshRate(50)
+	self.header:moveBy(0, 40)
+	self.header:setVisible(true)
 	collectgarbage("collect")
 
 end
@@ -72,7 +80,16 @@ function Player:setInputHandlers()
 			self:remove()
 		end,
 		upButtonDown = function()
+			self.header:toggle()
+		end,
+		downButtonDown = function()
 			self.controls:toggle()
+		end,
+		leftButtonDown = function()
+			self.effects:toggle()
+		end,
+		rightButtonDown = function()
+			self.speed:toggle()
 		end,
 		cranked = function(change, acceleratedChange)
 			local framerate = self.video.video:getFrameRate()

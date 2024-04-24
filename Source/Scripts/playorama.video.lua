@@ -32,30 +32,30 @@ function Video:init(videoPath, audioPath)
 	self.audioPath = audioPath
 
 	-- Return if there's no video.
-	if videoPath == nil then
+	if self.videoPath == nil then
 		self.error = "Missing video path."
 		return self
 	end
 
 	-- Open video.
-	local video, videoerr = gfx.video.new(videoPath)
+	local video, videoerr = gfx.video.new(self.videoPath)
 
 	-- Return if there's a problem when opening the video.
 	if videoerr ~= nil then
-		self.error = "Cannot open video at `".. videoPath .. "`: [" .. videoerr .. "]"
+		self.error = "Cannot open video at `".. self.videoPath .. "`: [" .. videoerr .. "]"
 		return self
 	end
 
 	-- The video might be nil even without an error. So we check that as well.
 	if video == nil then
-		self.error = "An unknown error occurred while opening video at `".. videoPath .. "`."
+		self.error = "An unknown error occurred while opening video at `".. self.videoPath .. "`."
 		return self
 	end
 
 	-- Check the video size. We expect 400x240 resolution.
 	local w, h = video:getSize()
 	if w ~= 400 or h ~= 240 then
-		self.error = "Video at `".. videoPath .. "` must be 400x240. Currently is " .. w .. "x" .. h .. "."
+		self.error = "Video at `".. self.videoPath .. "` must be 400x240. Currently is " .. w .. "x" .. h .. "."
 		return self
 	end
 
@@ -75,18 +75,22 @@ end
 
 function Video:update()
 
+	local frame = self.lastFrame
+
+	-- print("-- update", self.videoPath, self.audioPath, self:isPlaying(), self:getRate())
 	if self:isPlaying() then
-		local frame = self.lastFrame
 
 		-- If it has audio, we define the frame to show based on the
 		-- current audio offset and frame rate.
 		if self:hasAudio() then
 			if not self.audio:isPlaying() then
 				local _, err = self.audio:play(0)
+				print("**", err)
 				if err ~= nil then
 					self.error = err
 					self.audioPath = nil
 					self.audio = nil
+					self._isPlaying = false
 					return self.error
 				else
 					self._isPlaying = true
@@ -103,10 +107,10 @@ function Video:update()
 			local target <const> = 1 / (self.video:getFrameRate() * self.playbackRate)
 			frame = self.lastFrame + math.floor(elapsed / target + 0.5)
 		end
-		self:renderFrame(frame)
 
 	end
 
+	self:renderFrame(frame)
 end
 
 -- renderFrame(frame)
@@ -169,10 +173,11 @@ end
 function Video:play()
 
 	self._isPlaying = true
+	print("play()", self.videoPath, self.audioPath)
 
 	-- Open video
 	if self.video == nil then
-		self.video, videoerr = playdate.graphics.video.new(self.videoPath)
+		self.video, videoerr = gfx.video.new(self.videoPath)
 		self.video:setContext(self.video:getContext())
 
 		-- Return false if there's a problem when opening the video
@@ -184,12 +189,13 @@ function Video:play()
 
 	-- Open audio
 	if self.audio == nil then
+		print("play() --", self.audioPath)
 		self.isADPCM = false
 		self.isFilePlayer = false
 		if self.audioPath ~= nil then
 			-- Try with a sample player first.
 			-- Sample player is better because it can play sound backwards. But it's also way heavier in memory.
-			self.audio, audioerr = playdate.sound.sampleplayer.new(self.audioPath)
+			self.audio, audioerr = pd.sound.sampleplayer.new(self.audioPath)
 			if audioerr == nil then
 				-- No error, so we got ourselves a sample player! Yay!
 				-- But we need to make sure the sample format is ok to play backwards.
@@ -197,13 +203,14 @@ function Video:play()
 				-- (4 = ADPCMMono and 5 = ADPCMStereo)
 				local sample = self.audio:getSample()
 				local format = sample:getFormat()
+				print("--", "format:", format)
 				if format == 4 or format == 5 then
 					self.isADPCM = true
 				end
 			else
 				local errormsg = "Cannot open audio at `".. self.audioPath .. "` as a sampleplayer: [" .. audioerr .. "]"
 				audioerr = nil
-				self.audio, audioerr = playdate.sound.fileplayer.new(self.audioPath)
+				self.audio, audioerr = pd.sound.fileplayer.new(self.audioPath)
 				self.isFilePlayer = true
 			end
 

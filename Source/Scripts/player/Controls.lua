@@ -15,6 +15,7 @@ function Controls:init(video)
 	self:moveTo(0, 240)
 	self:setZIndex(1000)
 	self:draw()
+	self:setVisible(false)
 	self:add()
 
 end
@@ -30,13 +31,19 @@ end
 
 function Controls:toggle()
 
-	local _, y = gfx.getDrawOffset()
-	if y == 0 then
-		y = -40
+	local _, startY = gfx.getDrawOffset()
+	local endY = startY
+	local callback
+	if startY ~= 0 then
+		endY = 0
+		callback = function()
+			self:setVisible(false)
+		end
 	else
-		y = 0
+		endY = -40
+		self:setVisible(true)
 	end
-	gfx.setDrawOffset(0, y)
+	playorama.ui.setAnimator(pd.geometry.point.new(0, startY), pd.geometry.point.new(0, endY), callback)
 
 end
 

@@ -31,3 +31,37 @@ playorama.ui.homeList = {
 	ListItem("Sync", function() print("Sync") end),
 	ListItem("Camera", function() print("Camera") end),
 }
+
+playorama.ui.setAnimator = function(startValue, endValue, callback)
+
+	if playorama.ui._animator == nil then
+		local duration <const> = 500
+		local startValue <const> = startValue or pd.geometry.point.new(0, 0)
+		local endValue <const> = endValue or pd.geometry.point.new(0, -40)
+		local easingFunction <const> = pd.easingFunctions.outElastic
+		playorama.ui._animator = gfx.animator.new(duration, startValue, endValue, easingFunction)
+		if callback then 
+			playorama.ui._animatorCallback = callback
+		end
+	end
+
+end
+
+playorama.ui.update = function()
+
+	if playorama.ui._animator ~= nil then
+		local value <const> = playorama.ui._animator:currentValue()
+		print(value)
+		if value.x and value.y then
+			gfx.setDrawOffset(value.x, value.y)
+		end
+		if playorama.ui._animator:ended() then
+			if playorama.ui._animatorCallback ~= nil then
+				playorama.ui._animatorCallback()
+			end
+			playorama.ui._animator = nil
+			playorama.ui._animatorCallback = nil
+		end
+	end
+
+end

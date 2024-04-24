@@ -1,5 +1,7 @@
 import "Scripts/player/Player"
 import "Scripts/player/Controls"
+import "Scripts/player/Effects"
+import "Scripts/player/Speed"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics

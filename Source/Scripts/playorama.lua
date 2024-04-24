@@ -22,5 +22,8 @@ playorama.init = function()
 	playorama.ui.header = Header()
 	playorama.ui.menu = Menu(playorama.ui.homeList)
 end
+playorama.update = function()
+	playorama.ui.update()
+end
 
 playorama.init()

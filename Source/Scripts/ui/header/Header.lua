@@ -21,6 +21,15 @@ function Header:init()
 
 end
 
+function Header:moveBy(x, y)
+
+	Header.super.moveBy(self, x, y)
+	self.battery:moveBy(x, y)
+	self.time:moveBy(x, y)
+	self.reel:moveBy(x, y)
+
+end
+
 function Header:update()
 
 	Header.super.update(self)
@@ -44,11 +53,39 @@ function Header:remove()
 
 end
 
+function Header:setVisible(flag)
+
+	Header.super.setVisible(self, flag)
+	self.battery:setVisible(flag)
+	self.time:setVisible(flag)
+	self.reel:setVisible(flag)
+	print("Header:setVisible", flag)
+
+end
+
 function Header:draw()
 
 	gfx.pushContext(self:getImage())
 		local logo <const> = playdate.graphics.image.new("Assets/logo")
 		logo:draw((400 - logo.width) / 2, 0)
 	gfx.popContext()
+
+end
+
+function Header:toggle()
+
+	local _, startY = gfx.getDrawOffset()
+	local endY = startY
+	local callback
+	self:setVisible(true)
+	if startY ~= 0 then
+		endY = 0
+		callback = function()
+			self:setVisible(false)
+		end
+	else
+		endY = 40
+	end
+	playorama.ui.setAnimator(pd.geometry.point.new(0, startY), pd.geometry.point.new(0, endY), callback)
 
 end
