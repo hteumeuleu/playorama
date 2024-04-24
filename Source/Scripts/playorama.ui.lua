@@ -51,7 +51,6 @@ playorama.ui.update = function()
 
 	if playorama.ui._animator ~= nil then
 		local value <const> = playorama.ui._animator:currentValue()
-		print(value)
 		if value.x and value.y then
 			gfx.setDrawOffset(value.x, value.y)
 		end

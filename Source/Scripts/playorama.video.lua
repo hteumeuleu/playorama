@@ -77,7 +77,6 @@ function Video:update()
 
 	local frame = self.lastFrame
 
-	-- print("-- update", self.videoPath, self.audioPath, self:isPlaying(), self:getRate())
 	if self:isPlaying() then
 
 		-- If it has audio, we define the frame to show based on the
@@ -85,7 +84,6 @@ function Video:update()
 		if self:hasAudio() then
 			if not self.audio:isPlaying() then
 				local _, err = self.audio:play(0)
-				print("**", err)
 				if err ~= nil then
 					self.error = err
 					self.audioPath = nil
@@ -110,14 +108,6 @@ function Video:update()
 
 	end
 
-	self:renderFrame(frame)
-end
-
--- renderFrame(frame)
---
--- Sets the video at the specified frame index and displays it.
-function Video:renderFrame(frame)
-
 	if frame < 0 then
 		frame = self.video:getFrameCount()
 	end
@@ -126,13 +116,28 @@ function Video:renderFrame(frame)
 		frame = 0
 	end
 
+	self:renderFrame(frame)
+
+end
+
+-- renderFrame(frame)
+--
+-- Sets the video at the specified frame index and displays it.
+function Video:renderFrame(frame)
+
 	if frame ~= self.lastFrame then
 		self.video:renderFrame(frame)
 		self.lastFrame = frame
 		playdate.resetElapsedTime()
 	end
 
-	self.video:getContext():draw(0,0)
+	self:draw()
+
+end
+
+function Video:draw()
+
+	self:getContext():draw(0, 0)
 
 end
 
@@ -173,12 +178,11 @@ end
 function Video:play()
 
 	self._isPlaying = true
-	print("play()", self.videoPath, self.audioPath)
 
 	-- Open video
 	if self.video == nil then
 		self.video, videoerr = gfx.video.new(self.videoPath)
-		self.video:setContext(self.video:getContext())
+		self:setContext(self:getContext())
 
 		-- Return false if there's a problem when opening the video
 		if videoerr ~= nil then
@@ -189,7 +193,6 @@ function Video:play()
 
 	-- Open audio
 	if self.audio == nil then
-		print("play() --", self.audioPath)
 		self.isADPCM = false
 		self.isFilePlayer = false
 		if self.audioPath ~= nil then
@@ -203,7 +206,6 @@ function Video:play()
 				-- (4 = ADPCMMono and 5 = ADPCMStereo)
 				local sample = self.audio:getSample()
 				local format = sample:getFormat()
-				print("--", "format:", format)
 				if format == 4 or format == 5 then
 					self.isADPCM = true
 				end
@@ -265,9 +267,7 @@ end
 
 function Video:getContext()
 
-	if self.video ~= nil then
-		return self.video:getContext()
-	end
+	return self.video:getContext() or gfx.image.new(400, 240, gfx.kColorBlack)
 
 end
 

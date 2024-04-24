@@ -11,7 +11,6 @@ function Player:init(video)
 	self:setCenter(0, 0)
 	self:moveTo(0, 0)
 	self.video = video
-	self.video:setContext(self:getImage())
 	self.video:play()
 	self.controls = Controls(self.video)
 	self.header = playorama.ui.header
@@ -29,6 +28,11 @@ function Player:update()
 
 	Player.super.update(self)
 	self.video:update()
+	local img <const> = self:getImage()
+	gfx.pushContext(img)
+		self.video:draw()
+	gfx.popContext()
+	self:setImage(img)
 
 end
 

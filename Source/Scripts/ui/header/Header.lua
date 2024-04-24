@@ -59,7 +59,6 @@ function Header:setVisible(flag)
 	self.battery:setVisible(flag)
 	self.time:setVisible(flag)
 	self.reel:setVisible(flag)
-	print("Header:setVisible", flag)
 
 end
 
