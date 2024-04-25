@@ -63,7 +63,7 @@ function Library:build()
 				item.lastModified = video.meta.lastModified
 				item.callback = function()
 					pd.display.setRefreshRate(30)
-					playorama.player.new(playorama.video.new(item.videoPath, item.audioPath))
+					playorama.player.video.new(playorama.video.new(item.videoPath, item.audioPath))
 					print(item.videoPath)
 				end
 				table.insert(self.items, item)

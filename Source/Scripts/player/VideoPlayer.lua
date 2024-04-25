@@ -1,11 +1,11 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-class("Player").extends(gfx.sprite)
+class("VideoPlayer").extends(gfx.sprite)
 
-function Player:init(video)
+function VideoPlayer:init(video)
 
-	Player.super.init(self)
+	VideoPlayer.super.init(self)
 	playorama.ui.menu:remove()
 	self:setImage(gfx.image.new(400, 240, gfx.kColorBlack))
 	self:setCenter(0, 0)
@@ -24,9 +24,9 @@ function Player:init(video)
 
 end
 
-function Player:update()
+function VideoPlayer:update()
 
-	Player.super.update(self)
+	VideoPlayer.super.update(self)
 	self.video:update()
 	local img <const> = self:getImage()
 	gfx.pushContext(img)
@@ -36,9 +36,9 @@ function Player:update()
 
 end
 
-function Player:remove()
+function VideoPlayer:remove()
 
-	Player.super.remove(self)
+	VideoPlayer.super.remove(self)
 	self.video:flush()
 	self.controls:remove()
 	self.effects:remove()
@@ -52,25 +52,25 @@ function Player:remove()
 
 end
 
-function Player:pause()
+function VideoPlayer:pause()
 
 	self.video:pause()
 
 end
 
-function Player:play()
+function VideoPlayer:play()
 
 	self.video:play()
 
 end
 
-function Player:setRate(rate)
+function VideoPlayer:setRate(rate)
 
 	self.video:setRate(rate)
 
 end
 
-function Player:setInputHandlers()
+function VideoPlayer:setInputHandlers()
 
 	local playerInputHandlers = {
 		AButtonDown = function()
