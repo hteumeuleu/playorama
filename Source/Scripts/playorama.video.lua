@@ -125,7 +125,7 @@ end
 -- Sets the video at the specified frame index and displays it.
 function Video:renderFrame(frame)
 
-	if frame ~= self.lastFrame then
+	if frame ~= self.lastFrame or self.lastFrame == 0 then
 		self.video:renderFrame(frame)
 		self.lastFrame = frame
 		playdate.resetElapsedTime()
@@ -178,6 +178,10 @@ end
 
 function Video:play()
 
+	if not self._isPlaying then
+		self:setRate(self.playbackRateBeforePause)
+		playdate.resetElapsedTime()
+	end
 	self._isPlaying = true
 
 	-- Open video
