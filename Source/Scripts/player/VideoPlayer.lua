@@ -6,21 +6,44 @@ class("VideoPlayer").extends(gfx.sprite)
 function VideoPlayer:init(video)
 
 	VideoPlayer.super.init(self)
+	-- Hides the app menu and the header
 	playorama.ui.menu:remove()
-	self:setImage(gfx.image.new(400, 240, gfx.kColorBlack))
+	playorama.ui.header:moveBy(0, -40)
+	playorama.ui.header:setVisible(false)
+	-- Init drawing context with a mask
+	self.context = gfx.image.new(400, 240, gfx.kColorBlack)
+	local mask <const> = gfx.image.new(400, 240, gfx.kColorBlack)
+	gfx.pushContext(mask)
+		gfx.setColor(gfx.kColorWhite)
+		gfx.fillRoundRect(0, 0, 400, 240, 8)
+	gfx.popContext()
+	self.context:setMaskImage(mask)
+	-- Init sprite
+	self:setImage(self.context)
 	self:setCenter(0, 0)
 	self:moveTo(0, 0)
+	self:setZIndex(100)
+	-- Start video
 	self.video = video
+	self.video:setContext(self.context)
 	self.video:play()
+	-- Add widgets
 	self.controls = Controls(self.video)
 	self.header = playorama.ui.header
-	self.header:moveBy(0, -40)
-	self.header:setVisible(false)
 	self.effects = Effects(self.video)
 	self.speed = Speed(self.video)
+	-- Add input handlers
 	self:setInputHandlers()
-	self:setZIndex(100)
+	-- Add the sprite
 	self:add()
+	-- Appearance animation
+	local animator <const> = gfx.animator.new(
+		300,
+		pd.geometry.point.new(200, 0),
+		pd.geometry.point.new(0, 0),
+		pd.easingFunctions.linear
+	)
+	self:setAnimator(animator)
 
 end
 
@@ -28,11 +51,9 @@ function VideoPlayer:update()
 
 	VideoPlayer.super.update(self)
 	self.video:update()
-	local img <const> = self:getImage()
-	gfx.pushContext(img)
+	gfx.pushContext(self.context)
 		self.video:draw()
 	gfx.popContext()
-	self:setImage(img)
 
 end
 
