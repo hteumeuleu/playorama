@@ -148,6 +148,7 @@ function Video:flush()
 	end
 	self.audio = nil
 	self.video = nil
+	self = nil
 	collectgarbage("collect")
 
 end
@@ -277,17 +278,29 @@ end
 -- 1.0 is normal speed, 0.5 is half speed, 0 is paused.
 function Video:setRate(rate)
 
-	if self.audio ~= nil and rate ~= nil then
-		self.playbackRate = clamp(rate, playorama.player.kMinPlaybackRate, playorama.player.kMaxPlaybackRate)
+	if self.playbackRate == nil or rate == nil then
+		return false
+	end
 
-		if not self:canPlayBackwards() and self.playbackRate < 0 then
-			self.playbackRate = 0
-		end
+	self.playbackRate = rate
+	
+	-- Watch for upper limit
+	if self.playbackRate > playorama.player.kMaxPlaybackRate then
+		self.playbackRate = playorama.player.kMaxPlaybackRate
+	end
 
-		-- Update actual audio player rate
-		if self:hasAudio() then
-			self.audio:setRate(self.playbackRate)
-		end
+	-- Watch for lower limit
+	if self.playbackRate < playorama.player.kMinPlaybackRate then
+		self.playbackRate = playorama.player.kMinPlaybackRate
+	end
+
+	if not self:canPlayBackwards() and self.playbackRate < 0 then
+		self.playbackRate = 0
+	end
+
+	-- Update actual audio player rate
+	if self:hasAudio() then
+		self.audio:setRate(self.playbackRate)
 	end
 
 end
