@@ -9,21 +9,6 @@ function clamp(val, a, b)
 	return math.max(a, math.min(b, val))
 end
 
--- removeFormatting(text)
---
--- Removes bold and italic Markdown formatting from `text`.
--- Ideally, we should use `gfx.font:drawText()` to prevent any formatting.
--- But `gfx.drawText()` provides more useful features (like truncation).
-function removeFormatting(text)
-
-	if type(text) == "string" then
-		text = string.gsub(text, "*", "**")
-		text = string.gsub(text, "_", "__")
-	end
-	return text
-
-end
-
 -- map(value, min1, max1, min2, max2)
 --
 function map(value, min1, max1, min2, max2)

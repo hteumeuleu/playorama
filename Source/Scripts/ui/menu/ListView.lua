@@ -109,7 +109,7 @@ function ListView:drawEmptyImage()
 	local currentFont = gfx.getFont()
 	gfx.setFont(playorama.ui.fonts.large)
 	local fontHeight = playorama.ui.fonts.large:getHeight()
-	gfx.drawTextInRect("Your library is empty :(", 10, (self.height - fontHeight - 20) / 2, self.width - 20, fontHeight, nil, nil, kTextAlignment.center)
+	gfx.drawTextInRect("Your library is empty :(", 10, (self.height - fontHeight - 20) / 2, self.width - 20, fontHeight, nil, nil, kTextAlignment.center, playorama.ui.fonts.large)
 	gfx.setFont(currentFont)
 
 end
@@ -182,7 +182,7 @@ function ListView:initGridView()
 					local currentFont = gfx.getFont()
 					gfx.setFont(playorama.ui.fonts.large)
 					local fontHeight = playorama.ui.fonts.large:getHeight()
-					gfx.drawTextInRect(that.items[row].name, x + 10, y + ((height - fontHeight) / 2), width - 20, fontHeight, nil, "…")
+					gfx.drawTextInRect(that.items[row].name, x + 10, y + ((height - fontHeight) / 2), width - 20, fontHeight, nil, "…", nil, playorama.ui.fonts.large)
 					gfx.setFont(currentFont)
 				end
 
