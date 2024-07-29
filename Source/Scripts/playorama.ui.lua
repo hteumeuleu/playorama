@@ -47,6 +47,21 @@ playorama.ui.setAnimator = function(startValue, endValue, callback)
 
 end
 
+playorama.ui.isAnimating = function()
+
+	return playorama.ui._animator ~= nil and not playorama.ui._animator:ended()
+
+end
+
+playorama.ui.removeAnimator = function()
+
+	if playorama.ui._animator ~= nil then
+		playorama.ui._animator = nil
+		playorama.ui._animatorCallback = nil
+	end
+
+end
+
 playorama.ui.update = function()
 
 	if playorama.ui._animator ~= nil then
@@ -58,8 +73,7 @@ playorama.ui.update = function()
 			if playorama.ui._animatorCallback ~= nil then
 				playorama.ui._animatorCallback()
 			end
-			playorama.ui._animator = nil
-			playorama.ui._animatorCallback = nil
+			playorama.ui.removeAnimator()
 		end
 	end
 

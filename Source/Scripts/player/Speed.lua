@@ -29,26 +29,31 @@ end
 
 function Speed:toggle()
 
-	local startX, _ = gfx.getDrawOffset()
-	local endX = startX
-	local callback
-	if startX ~= 0 then
-		endX = 0
-		callback = function()
-			self:setVisible(false)
+	if not playorama.ui.isAnimating() then
+		local startX, _ = gfx.getDrawOffset()
+		local endX = startX
+		local callback
+		if endX ~= 0 then
+			endX = 0
+			callback = function()
+				self:setVisible(false)
+			end
+			self:removeInputHandlers()
+		else
+			endX = -40
+			self:setVisible(true)
+			callback = function()
+				self:setInputHandlers()
+			end
 		end
-		pd.inputHandlers.pop()
-	else
-		endX = -40
-		self:setVisible(true)
-		self:setInputHandlers()
+		playorama.ui.setAnimator(pd.geometry.point.new(startX, 0), pd.geometry.point.new(endX, 0), callback)
 	end
-	playorama.ui.setAnimator(pd.geometry.point.new(startX, 0), pd.geometry.point.new(endX, 0), callback)
 
 end
 
 function Speed:setInputHandlers()
 
+	print("Speed:setInputHandlers()")
 	local playerInputHandlers = {
 		BButtonUp = function()
 			self:toggle()
@@ -91,6 +96,13 @@ function Speed:setInputHandlers()
 		end,
 	}
 	pd.inputHandlers.push(playerInputHandlers, true)
+
+end
+
+function Speed:removeInputHandlers()
+
+	print("Speed:removeInputHandlers()")
+	pd.inputHandlers.pop()
 
 end
 
