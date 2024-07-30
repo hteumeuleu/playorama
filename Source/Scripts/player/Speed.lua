@@ -1,53 +1,18 @@
+import "Scripts/ui/Widget"
+
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 local imagetable <const> = gfx.imagetable.new("Assets/tortoise-hare")
 local tortoise <const> = imagetable:getImage(1)
 local hare <const> = imagetable:getImage(2)
 
-class("Speed").extends(gfx.sprite)
+class("Speed").extends(Widget)
 
 function Speed:init(video)
 
-	Speed.super.init(self)
 	self.video = video
-	self:setImage(gfx.image.new(40, 240, gfx.kColorClear))
-	self:setCenter(0, 0)
-	self:moveTo(400, 0)
-	self:setZIndex(1000)
-	self:draw()
-	self:setVisible(false)
-	self:add()
-
-end
-
-function Speed:update()
-
-	Speed.super.update(self)
-	self:draw()
-
-end
-
-function Speed:toggle()
-
-	if not playorama.ui.isAnimating() then
-		local startX, _ = gfx.getDrawOffset()
-		local endX = startX
-		local callback
-		if endX ~= 0 then
-			endX = 0
-			callback = function()
-				self:setVisible(false)
-			end
-			self:removeInputHandlers()
-		else
-			endX = -40
-			self:setVisible(true)
-			callback = function()
-				self:setInputHandlers()
-			end
-		end
-		playorama.ui.setAnimator(pd.geometry.point.new(startX, 0), pd.geometry.point.new(endX, 0), callback)
-	end
+	Speed.super.init(self, 400, 0, 40, 240)
+	print(self.video)
 
 end
 
@@ -99,14 +64,6 @@ function Speed:setInputHandlers()
 
 end
 
-function Speed:removeInputHandlers()
-
-	print("Speed:removeInputHandlers()")
-	pd.inputHandlers.pop()
-
-end
-
-
 -- draw()
 --
 function Speed:draw()
@@ -114,7 +71,7 @@ function Speed:draw()
 	local img <const> = self:getImage()
 	gfx.pushContext(img)
 		gfx.setColor(gfx.kColorBlack)
-		gfx.fillRect(0, 0, 40, 240)
+		gfx.fillRect(0, 0, self.width, self.height)
 		hare:draw(9, 9)
 		tortoise:draw(9, 240 - 22 - 9 - 28)
 		self:_drawScrobbleBar()
