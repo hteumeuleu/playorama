@@ -1,49 +1,26 @@
+import "Scripts/ui/Widget"
+
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 local kPadding <const> = 8
 
-class("Controls").extends(gfx.sprite)
+class("Controls").extends(Widget)
 
 function Controls:init(video)
 
-	Controls.super.init(self)
 	self.video = video
 	self._leftOffset = kPadding
 	self._rightOffset = kPadding
-	self:setImage(gfx.image.new(400, 40, gfx.kColorClear))
-	self:setCenter(0, 0)
-	self:moveTo(0, 240)
-	self:setZIndex(1000)
-	self:draw()
-	self:setVisible(false)
-	self:add()
+	self.drawOffset = pd.geometry.point.new(0, -40)
+	Controls.super.init(self, 0, 240, 400, 40)
 
 end
 
 function Controls:update()
 
-	Controls.super.update(self)
 	self._leftOffset = kPadding
 	self._rightOffset = kPadding
-	self:draw()
-
-end
-
-function Controls:toggle()
-
-	local _, startY = gfx.getDrawOffset()
-	local endY = startY
-	local callback
-	if startY ~= 0 then
-		endY = 0
-		callback = function()
-			self:setVisible(false)
-		end
-	else
-		endY = -40
-		self:setVisible(true)
-	end
-	playorama.ui.setAnimator(pd.geometry.point.new(0, startY), pd.geometry.point.new(0, endY), callback)
+	Controls.super.update(self)
 
 end
 
@@ -71,6 +48,31 @@ function Controls:_drawBackgroundImage()
 
 	gfx.setColor(gfx.kColorBlack)
 	gfx.fillRect(0, 0, self.width, self.height)
+
+end
+
+function Controls:setInputHandlers()
+
+	local playerInputHandlers = {
+		BButtonUp = function()
+			self:toggle()
+		end,
+		upButtonDown = function()
+			self:toggle()
+		end,
+		downButtonDown = function()
+			self:toggle()
+		end,
+		leftButtonDown = function()
+			print("leftButtonDown")
+		end,
+		rightButtonDown = function()
+			print("rightButtonDown")
+		end,
+		cranked = function(change, acceleratedChange)
+		end,
+	}
+	pd.inputHandlers.push(playerInputHandlers, true)
 
 end
 

@@ -11,8 +11,8 @@ class("Speed").extends(Widget)
 function Speed:init(video)
 
 	self.video = video
+	self.drawOffset = pd.geometry.point.new(-40, 0)
 	Speed.super.init(self, 400, 0, 40, 240)
-	print(self.video)
 
 end
 

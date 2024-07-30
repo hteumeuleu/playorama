@@ -8,10 +8,10 @@ class("Widget").extends(gfx.sprite)
 function Widget:init(x, y, width, height)
 
 	Widget.super.init(self)
-	self.initialPosition = pd.geometry.point.new(x, y)
+	self.drawOffset = self.drawOffset or pd.geometry.point.new(x, y)
 	self:setImage(gfx.image.new(width, height, gfx.kColorClear))
 	self:setCenter(0, 0)
-	self:moveTo(self.initialPosition)
+	self:moveTo(x, y)
 	self:setZIndex(1000)
 	self:draw()
 	self:setVisible(false)
@@ -29,7 +29,18 @@ end
 
 function Widget:setInputHandlers()
 
-	pd.inputHandlers.push({}, true)
+	local widgetInputHandlers = {
+		BButtonUp = function()
+			self:toggle()
+		end,
+		leftButtonDown = function()
+			self:toggle()
+		end,
+		rightButtonDown = function()
+			self:toggle()
+		end,
+	}
+	pd.inputHandlers.push(widgetInputHandlers, true)
 
 end
 
@@ -53,8 +64,8 @@ function Widget:toggle()
 			end
 			self:removeInputHandlers()
 		else
-			endX = pd.display.getWidth() - self.x - self.width
-			endY = pd.display.getHeight() - self.y - self.height
+			endX = self.drawOffset.x
+			endY = self.drawOffset.y
 			self:setVisible(true)
 			callback = function()
 				self:setInputHandlers()
