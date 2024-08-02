@@ -23,7 +23,9 @@ end
 function Widget:update()
 
 	Widget.super.update(self)
-	self:draw()
+	if self:isVisible() then
+		self:draw()
+	end
 
 end
 

@@ -309,6 +309,18 @@ function Video:setRate(rate)
 
 end
 
+function Video:increaseRate()
+
+	self:setRate(self.playbackRate + playorama.player.kPlaybackRateStep)
+
+end
+
+function Video:decreaseRate()
+
+	self:setRate(self.playbackRate - playorama.player.kPlaybackRateStep)
+
+end
+
 -- getRate()
 --
 function Video:getRate()

@@ -18,16 +18,15 @@ end
 
 function Speed:setInputHandlers()
 
-	print("Speed:setInputHandlers()")
 	local playerInputHandlers = {
 		BButtonUp = function()
 			self:toggle()
 		end,
 		upButtonDown = function()
-			print("upButtonDown")
+			self.video:increaseRate()
 		end,
 		downButtonDown = function()
-			print("downButtonDown")
+			self.video:decreaseRate()
 		end,
 		leftButtonDown = function()
 			self:toggle()
@@ -36,27 +35,10 @@ function Speed:setInputHandlers()
 			self:toggle()
 		end,
 		cranked = function(change, acceleratedChange)
-			local framerate = self.video.video:getFrameRate()
-			local tick = pd.getCrankTicks(framerate)
-			if self.video:isPlaying() then
-				if tick == 1 then
-					self:setRate(self.video:getRate() + playorama.player.kPlaybackRateStep)
-				elseif tick == -1 then
-					self:setRate(self.video:getRate() - playorama.player.kPlaybackRateStep)
-				end
-			else
-				-- previousTimeElapsed = rateTimeElapsed or 0
-				-- rateTimeElapsed = playdate.getCurrentTimeMilliseconds()
-				-- if previousTimeElapsed == 0 then
-				-- 	previousTimeElapsed = rateTimeElapsed
-				-- end
-				-- local elapsed = rateTimeElapsed - previousTimeElapsed
-				-- print("elapsed", elapsed)
-				-- rateValueTimer = playdate.timer.new(1/framerate, video:getRate())
-				-- -- video:setRate(video:getRate() + playorama.player.kPlaybackRateStep)
-				-- print(tick)
-				local n = self.video.lastFrame + tick
-				self.video:renderFrame(n)
+			if change > 0 then
+				self.video:increaseRate()
+			elseif change < 0 then
+				self.video:decreaseRate()
 			end
 		end,
 	}
@@ -68,16 +50,19 @@ end
 --
 function Speed:draw()
 
-	local img <const> = self:getImage()
-	gfx.pushContext(img)
-		gfx.setColor(gfx.kColorBlack)
-		gfx.fillRect(0, 0, self.width, self.height)
-		hare:draw(9, 9)
-		tortoise:draw(9, 240 - 22 - 9 - 28)
-		self:_drawScrobbleBar()
-		self:_drawRateBox()
-	gfx.popContext()
-	img:draw(self.x, self.y)
+	if self._previousRate ~= self.video:getRate() then
+		local img <const> = self:getImage()
+		gfx.pushContext(img)
+			gfx.setColor(gfx.kColorBlack)
+			gfx.fillRect(0, 0, self.width, self.height)
+			hare:draw(9, 9)
+			tortoise:draw(9, 240 - 22 - 9 - 28)
+			self:_drawScrobbleBar()
+			self:_drawRateBox()
+		gfx.popContext()
+		img:draw(self.x, self.y)
+		self._previousRate = self.video:getRate()
+	end
 
 end
 
@@ -88,18 +73,20 @@ end
 function Speed:_drawScrobbleBar()
 
 	local w <const> = 4
-	local h <const> = self.height - 80 - 28
+	local h <const> = self.height - 80 - 32
 	local x <const> = (40 - 4) / 2
-	local y <const> = 40
+	local y <const> = 44
 	local r <const> = 4
 	gfx.setLineWidth(0)
 	-- Background shape
 	gfx.setPattern({ 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 })
 	gfx.fillRoundRect(x, y, w, h, r)
-	-- Current shape
+	-- Scrobble shape
 	gfx.setColor(gfx.kColorWhite)
-	local scrobbleY <const> = self:_getScrobbleY(playdate.geometry.rect.new(x, y, w, h))
-	gfx.fillCircleInRect(x-6, scrobbleY, w+12, w+12)
+	local scrobbleRadius <const> = 16
+	local scrobbleX <const> = x + (w/2) - (scrobbleRadius/2)
+	local scrobbleY <const> = self:_getScrobbleY(playdate.geometry.rect.new(x, y, w, h)) - (scrobbleRadius/2)
+	gfx.fillCircleInRect(scrobbleX, scrobbleY, scrobbleRadius, scrobbleRadius)
 
 end
 
@@ -109,7 +96,7 @@ end
 function Speed:_getScrobbleY(rect)
 
 	local yMin = rect.y
-	local yMax = rect.y + rect.height - 12
+	local yMax = rect.y + rect.height
 	local y = math.floor(map(self.video:getRate(), playorama.player.kMinPlaybackRate, playorama.player.kMaxPlaybackRate, yMax, yMin))
 	if y > yMax then
 		y = yMax

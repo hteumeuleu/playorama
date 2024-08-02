@@ -10,8 +10,8 @@ playorama = playorama or {}
 playorama.player = {}
 playorama.player.video = {}
 
-playorama.player.kMinPlaybackRate = -4
-playorama.player.kMaxPlaybackRate = 4
+playorama.player.kMinPlaybackRate = 0
+playorama.player.kMaxPlaybackRate = 2
 playorama.player.kPlaybackRateStep = 0.1
 
 -- playorama.player.video.new(video)
