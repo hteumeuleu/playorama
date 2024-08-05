@@ -5,6 +5,9 @@ local gfx <const> = pd.graphics
 local imagetable <const> = gfx.imagetable.new("Assets/tortoise-hare")
 local tortoise <const> = imagetable:getImage(1)
 local hare <const> = imagetable:getImage(2)
+local heldButtonInitialDelay <const> = 300 -- milliseconds
+local heldButtonSecondaryDelay <const> = 50 -- milliseconds
+local heldButtonCurrentDelay = heldButtonInitialDelay
 
 class("Speed").extends(Widget)
 
@@ -23,10 +26,18 @@ function Speed:setInputHandlers()
 			self:toggle()
 		end,
 		upButtonDown = function()
-			self.video:increaseRate()
+			self:increase()
+		end,
+		upButtonUp = function()
+			self:clearTimer()
+			heldButtonCurrentDelay = heldButtonInitialDelay
 		end,
 		downButtonDown = function()
-			self.video:decreaseRate()
+			self:decrease()
+		end,
+		downButtonUp = function()
+			self:clearTimer()
+			heldButtonCurrentDelay = heldButtonInitialDelay
 		end,
 		leftButtonDown = function()
 			self:toggle()
@@ -43,6 +54,43 @@ function Speed:setInputHandlers()
 		end,
 	}
 	pd.inputHandlers.push(playerInputHandlers, true)
+
+end
+
+function Speed:clearTimer()
+
+	if self.heldButtonTimer ~= nil then
+		self.heldButtonTimer:remove()
+		self.heldButtonTimer = nil
+	end
+
+end
+
+function Speed:setTimer(callback)
+
+	self:clearTimer()
+	self.heldButtonTimer = pd.timer.performAfterDelay(heldButtonCurrentDelay, function()
+		heldButtonCurrentDelay = heldButtonSecondaryDelay
+		callback()
+	end)
+
+end
+
+function Speed:increase()
+
+	self.video:increaseRate()
+	self:setTimer(function()
+		self:increase()
+	end)
+
+end
+
+function Speed:decrease()
+
+	self.video:decreaseRate()
+	self:setTimer(function()
+		self:decrease()
+	end)
 
 end
 
