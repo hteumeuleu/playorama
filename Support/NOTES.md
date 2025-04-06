@@ -1,6 +1,42 @@
 NOTES
 ---
 
+This document is like a Game Design Document and serves to note down everything I’d like to do with Playorama.
+
+## TODO
+
+[] Add an icon for “on cartridge” videos.
+
+## Playorama 2.0
+
+* **Play**:
+* **Settings**:
+	- About: Videos, Capacity, Available, Version
+	- Audio: Menu Music and SFX (On/Off) 
+	- Language
+* **Sync**:
+	- Allow saving videos from “the cartridge” to disk.
+	- Add an icon to differentiate videos “on disk” versus “on cartridge”.
+	- Update the default “Capacity” settings.
+* **Camera**:
+	- Add sync streaming with Playorama.app.
+	- Record streaming.
+
+## Playorama.app
+
+* **Play**:
+	- Add a proper list of pre-encoded 1bit videos available for download and online viewing.
+* **Encode**:
+	- Add Bayer dithering.
+	- Add a threshold slider.
+	- Rewrite code for dither effects, exports, etc. to mutualize it better with the stream page.
+* **Stream**:
+	- Add sync streaming with Playorama.
+
+--- 
+
+# Archive
+
 playorama.ui
 playorama.player
 playorama.library
