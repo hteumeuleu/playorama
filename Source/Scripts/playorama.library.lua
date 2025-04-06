@@ -61,6 +61,7 @@ function Library:build()
 			local video, verror = playorama.video.new(item.videoPath, item.audioPath)
 			if video ~= nil and verror == nil then
 				item.lastModified = video.meta.lastModified
+				item.onBundle = video.meta.onCartridge
 				item.callback = function()
 					pd.display.setRefreshRate(30)
 					playorama.player.video.new(playorama.video.new(item.videoPath, item.audioPath))

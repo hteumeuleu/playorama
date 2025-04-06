@@ -182,7 +182,15 @@ function ListView:initGridView()
 					local currentFont = gfx.getFont()
 					gfx.setFont(playorama.ui.fonts.large)
 					local fontHeight = playorama.ui.fonts.large:getHeight()
-					gfx.drawTextInRect(that.items[row].name, x + 10, y + ((height - fontHeight) / 2), width - 20, fontHeight, nil, "…", nil, playorama.ui.fonts.large)
+					local displayName = that.items[row].name
+					local leftOffset = x + 10
+					if that.items[row].onBundle then
+						local bundleIcon = Icon(0, 0, IconTooltipStartAlert, false)
+						local bundleIconImage = bundleIcon:getImage()
+						bundleIconImage:draw(x + 10, y + 4)
+						leftOffset += bundleIconImage.width + 4
+					end
+					gfx.drawTextInRect(displayName, leftOffset, y + ((height - fontHeight) / 2), width - 20, fontHeight, nil, "…", nil, playorama.ui.fonts.large)
 					gfx.setFont(currentFont)
 				end
 

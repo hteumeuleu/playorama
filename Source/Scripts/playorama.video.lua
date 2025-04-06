@@ -160,6 +160,19 @@ function Video:setMetaData()
 		-- “Last Modified” Timestamp
 		local time <const> = pd.file.modtime(self.videoPath)
 		self.meta.lastModified = pd.epochFromTime(time)
+		-- “On drive” versus “On cartridge”
+		-- To know this, we try to open the file with a different writing mode.
+		-- A local (“on cartridge”) file cannot be rewritten so it should throw an error.
+		local file, fileError = pd.file.open(self.videoPath, pd.file.kSeekFromCurrent)
+		if not fileError then
+			self.meta.onCartridge = true
+			self.meta.onDrive = false
+			file:close()
+			file = nil
+		else
+			self.meta.onCartridge = false
+			self.meta.onDrive = true
+		end
 	end
 
 end
