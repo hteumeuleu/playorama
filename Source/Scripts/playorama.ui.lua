@@ -35,10 +35,10 @@ playorama.ui.homeList = {
 playorama.ui.setAnimator = function(startValue, endValue, callback)
 
 	if playorama.ui._animator == nil then
-		local duration <const> = 500
+		local duration <const> = 300
 		local startValue <const> = startValue or pd.geometry.point.new(0, 0)
 		local endValue <const> = endValue or pd.geometry.point.new(0, -40)
-		local easingFunction <const> = pd.easingFunctions.outElastic
+		local easingFunction <const> = pd.easingFunctions.outBack
 		playorama.ui._animator = gfx.animator.new(duration, startValue, endValue, easingFunction)
 		if callback then 
 			playorama.ui._animatorCallback = callback
