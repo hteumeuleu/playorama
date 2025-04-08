@@ -162,13 +162,13 @@ function Speed:_drawRateBox()
 	local h <const> = 24
 	local x <const> = 4
 	local y <const> = self.height - h - 4
-	local textY = y + math.floor((h - playorama.ui.fonts.medium:getHeight()) / 2)
+	local textY = y + math.floor((h - playorama.ui.fonts.numbers:getHeight()) / 2)
 	local roundedRateValue = math.floor(self.video:getRate() * 10 + 0.5) / 10
 	local text = roundedRateValue .. "x"
 	gfx.setColor(gfx.kColorWhite)
 	gfx.fillRoundRect(x, y, w, h, 4)
 	gfx.setImageDrawMode(playdate.graphics.kDrawModeFillBlack)
-		gfx.drawTextInRect(text, x, textY, w, h, nil, nil, kTextAlignment.center)
+		gfx.drawTextInRect(text, x, textY, w, h, nil, nil, kTextAlignment.center, playorama.ui.fonts.numbers)
 	gfx.setImageDrawMode(playdate.graphics.kDrawModeCopy)
 
 
