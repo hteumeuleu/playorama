@@ -12,7 +12,7 @@ function Time:init()
 	local height = playorama.ui.fonts.medium:getHeight()
 	self:setSize(width, height)
 	self:moveTo(10 + (width / 2), 20)
-	self:setZIndex(2)
+	self:setZIndex(1002)
 	self:draw()
 	self:add()
 	return self

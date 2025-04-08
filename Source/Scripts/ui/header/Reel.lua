@@ -12,7 +12,7 @@ function Reel:init()
 	self.n = 1
 	self:setImage(imagetable:getImage(self.n))
 	self:moveTo(196, 22)
-	self:setZIndex(2)
+	self:setZIndex(1002)
 	self:add()
 	return self
 

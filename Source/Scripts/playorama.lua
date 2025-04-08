@@ -20,6 +20,7 @@ playorama = playorama or {}
 playorama.init = function()
 	playorama.library = Library()
 	playorama.ui.header = Header()
+	playorama.ui.header:setVisible(true)
 	playorama.ui.menu = Menu(playorama.ui.homeList)
 end
 playorama.update = function()

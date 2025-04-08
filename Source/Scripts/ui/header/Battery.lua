@@ -10,7 +10,7 @@ function Battery:init()
 	Battery.super.init(self, 380, 20, IconBattery100, true)
 	self:setUpdatesEnabled(false)
 	self:update()
-	self:setZIndex(2)
+	self:setZIndex(1002)
 	self:add()
 	return self
 

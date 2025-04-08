@@ -9,6 +9,7 @@ playorama.ui = {}
 playorama.ui.fonts = {}
 playorama.ui.fonts.medium = gfx.font.new("Fonts/Cuberick-Bold", playdate.graphics.font.kVariantBold)
 playorama.ui.fonts.large = gfx.font.new("Fonts/Cuberick-Bold-24", playdate.graphics.font.kVariantBold)
+playorama.ui.fonts.numbers = gfx.font.new("Fonts/Cuberick-Numbers", playdate.graphics.font.kVariantBold)
 playorama.ui.homeList = {
 	ListItem("Videos", function()
 		playorama.ui.menu:push(ListView(playorama.library:getList()))

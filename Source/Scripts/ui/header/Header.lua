@@ -1,3 +1,4 @@
+import "Scripts/ui/Widget"
 import "Scripts/ui/header/Battery"
 import "Scripts/ui/header/Time"
 import "Scripts/ui/header/Reel"
@@ -5,19 +6,15 @@ import "Scripts/ui/header/Reel"
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-class("Header").extends(gfx.sprite)
+class("Header").extends(Widget)
 
 function Header:init()
 
-	Header.super.init(self)
-	self:setImage(gfx.image.new(400, 40, gfx.kColorClear))
-	self:setCenter(0, 0)
-	self:moveTo(0, 0)
-	self:draw()
+	self.drawOffset = pd.geometry.point.new(0, 40)
 	self.battery = Battery()
 	self.time = Time()
 	self.reel = Reel()
-	self:add()
+	Header.super.init(self, 0, 0, 400, 40)
 
 end
 
@@ -32,9 +29,8 @@ end
 
 function Header:update()
 
-	Header.super.update(self)
 	if self.reel ~= nil then
-		local change <const> = playdate.getCrankChange()
+		local change <const> = pd.getCrankChange()
 		if change < 0 then
 			self.reel:next()
 		elseif change > 0 then
@@ -71,20 +67,43 @@ function Header:draw()
 
 end
 
-function Header:toggle()
+function Header:setInputHandlers()
 
-	local _, startY = gfx.getDrawOffset()
-	local endY = startY
-	local callback
-	if startY ~= 0 then
-		endY = 0
-		callback = function()
-			self:setVisible(false)
-		end
-	else
-		endY = 40
-		self:setVisible(true)
-	end
-	playorama.ui.setAnimator(pd.geometry.point.new(0, startY), pd.geometry.point.new(0, endY), callback)
+	local playerInputHandlers = {
+		BButtonUp = function()
+			self:toggle()
+		end,
+		upButtonDown = function()
+			self:toggle()
+		end,
+		downButtonDown = function()
+			self:toggle()
+		end,
+		leftButtonDown = function()
+			print("leftButtonDown")
+		end,
+		rightButtonDown = function()
+			print("rightButtonDown")
+		end,
+	}
+	pd.inputHandlers.push(playerInputHandlers, true)
 
 end
+
+-- function Header:toggle()
+
+-- 	local _, startY = gfx.getDrawOffset()
+-- 	local endY = startY
+-- 	local callback
+-- 	if startY ~= 0 then
+-- 		endY = 0
+-- 		callback = function()
+-- 			self:setVisible(false)
+-- 		end
+-- 	else
+-- 		endY = 40
+-- 		self:setVisible(true)
+-- 	end
+-- 	playorama.ui.setAnimator(pd.geometry.point.new(0, startY), pd.geometry.point.new(0, endY), callback)
+
+-- end
