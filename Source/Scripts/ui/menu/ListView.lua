@@ -185,7 +185,7 @@ function ListView:initGridView()
 					local displayName = that.items[row].name
 					local leftOffset = x + 10
 					if that.items[row].onBundle then
-						local bundleIcon = Icon(0, 0, IconTooltipStartAlert, false)
+						local bundleIcon = Icon(0, 0, IconCartridge, false)
 						local bundleIconImage = bundleIcon:getImage()
 						bundleIconImage:draw(x + 10, y + 4)
 						leftOffset += bundleIconImage.width + 4

@@ -224,3 +224,4 @@ IconVolumeLow = 198
 IconVolumeMedium = 199
 IconVolumeMute = 200
 IconWall = 201
+IconCartridge = 202
