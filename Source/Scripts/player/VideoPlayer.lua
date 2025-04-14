@@ -36,14 +36,6 @@ function VideoPlayer:init(video)
 	self:setInputHandlers()
 	-- Add the sprite
 	self:add()
-	-- Appearance animation
-	local animator <const> = gfx.animator.new(
-		300,
-		pd.geometry.point.new(200, 0),
-		pd.geometry.point.new(0, 0),
-		pd.easingFunctions.linear
-	)
-	self:setAnimator(animator)
 
 end
 
