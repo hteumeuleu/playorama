@@ -62,6 +62,7 @@ function Video:init(videoPath, audioPath)
 	-- No nil up til here? Alright, let's do this!
 	self.video = video
 	self:setMetaData()
+	self:setMinMaxRate()
 
 	-- Internal Variables to keep track of the last frame played and the current playback rate.
 	self.lastFrame = 0
@@ -302,17 +303,13 @@ function Video:setRate(rate)
 	self.playbackRate = rate
 	
 	-- Watch for upper limit
-	if self.playbackRate > playorama.player.kMaxPlaybackRate then
-		self.playbackRate = playorama.player.kMaxPlaybackRate
+	if self.playbackRate > self.maxPlaybackRate then
+		self.playbackRate = self.maxPlaybackRate
 	end
 
 	-- Watch for lower limit
-	if self.playbackRate < playorama.player.kMinPlaybackRate then
-		self.playbackRate = playorama.player.kMinPlaybackRate
-	end
-
-	if not self:canPlayBackwards() and self.playbackRate < 0 then
-		self.playbackRate = 0
+	if self.playbackRate < self.minPlaybackRate then
+		self.playbackRate = self.minPlaybackRate
 	end
 
 	-- Update actual audio player rate
@@ -334,11 +331,38 @@ function Video:decreaseRate()
 
 end
 
+function Video:setMinMaxRate()
+
+	self.minPlaybackRate = playorama.player.kMinPlaybackRate
+	self.maxPlaybackRate = playorama.player.kMaxPlaybackRate
+
+	if self:canPlayBackwards() then
+		self.minPlaybackRate = self.maxPlaybackRate * -1
+	end
+
+end
+
 -- getRate()
 --
 function Video:getRate()
 
 	return self.playbackRate
+
+end
+
+-- getMinRate()
+--
+function Video:getMinRate()
+
+	return self.minPlaybackRate
+
+end
+
+-- getMinRate()
+--
+function Video:getMaxRate()
+
+	return self.maxPlaybackRate
 
 end
 

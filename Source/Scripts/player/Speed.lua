@@ -145,7 +145,7 @@ function Speed:_getScrobbleY(rect)
 
 	local yMin = rect.y
 	local yMax = rect.y + rect.height
-	local y = math.floor(map(self.video:getRate(), playorama.player.kMinPlaybackRate, playorama.player.kMaxPlaybackRate, yMax, yMin))
+	local y = math.floor(map(self.video:getRate(), self.video:getMinRate(), self.video:getMaxRate(), yMax, yMin))
 	if y > yMax then
 		y = yMax
 	end
