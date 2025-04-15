@@ -89,21 +89,3 @@ function Header:setInputHandlers()
 	pd.inputHandlers.push(playerInputHandlers, true)
 
 end
-
--- function Header:toggle()
-
--- 	local _, startY = gfx.getDrawOffset()
--- 	local endY = startY
--- 	local callback
--- 	if startY ~= 0 then
--- 		endY = 0
--- 		callback = function()
--- 			self:setVisible(false)
--- 		end
--- 	else
--- 		endY = 40
--- 		self:setVisible(true)
--- 	end
--- 	playorama.ui.setAnimator(pd.geometry.point.new(0, startY), pd.geometry.point.new(0, endY), callback)
-
--- end
