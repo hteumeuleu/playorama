@@ -14,23 +14,24 @@ playorama.ui.homeList = {
 	ListItem("Videos", function()
 		playorama.ui.menu:push(ListView(playorama.library:getList()))
 	end),
-	-- ListItem("Extras", function() print("Extras") end),
+	ListItem("Camera", function() print("Camera") end),
 	ListItem("Settings", function()
 		local settingsListArray = {
-			ListItem("Foo", function()
+			ListItem("About", function()
 				playorama.ui.menu:goTo(1)
 			end),
-			ListItem("Bar", function()
+			ListItem("Audio", function()
 				playorama.ui.menu:goTo(2)
 			end),
-			ListItem("Baz", function()
+			ListItem("Language", function()
 				playorama.ui.menu:goTo(3)
+			end),
+			ListItem("Home Screen", function()
+				playorama.ui.menu:goTo(4)
 			end)
 		}
 		playorama.ui.menu:push(ListView(settingsListArray))
 	end),
-	ListItem("Sync", function() print("Sync") end),
-	ListItem("Camera", function() print("Camera") end),
 }
 
 playorama.ui.setAnimator = function(startValue, endValue, callback)
