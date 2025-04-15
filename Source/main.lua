@@ -4,8 +4,8 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
-import "Scripts/libraries/globals"
-import "Scripts/libraries/Icon"
+import "Scripts/common/globals"
+import "Scripts/common/Icon"
 import "Scripts/playorama"
 
 local pd <const> = playdate
