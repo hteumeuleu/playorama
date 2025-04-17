@@ -1,5 +1,6 @@
 import "Scripts/ui/menu/MenuItem"
 import "Scripts/ui/menu/ListView"
+import "Scripts/ui/menu/Marquee"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
