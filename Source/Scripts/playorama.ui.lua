@@ -11,22 +11,25 @@ playorama.ui.fonts.medium = gfx.font.new("Fonts/Cuberick-Bold", playdate.graphic
 playorama.ui.fonts.large = gfx.font.new("Fonts/Cuberick-Bold-24", playdate.graphics.font.kVariantBold)
 playorama.ui.fonts.numbers = gfx.font.new("Fonts/Cuberick-Numbers", playdate.graphics.font.kVariantBold)
 playorama.ui.homeList = {
-	ListItem("Videos", function()
+	MenuItem("This is a very long list item label that should be truncated", function()
+		playorama.ui.menu:goTo(1)
+	end),
+	MenuItem("Videos", function()
 		playorama.ui.menu:push(ListView(playorama.library:getList()))
 	end),
-	ListItem("Camera", function() print("Camera") end),
-	ListItem("Settings", function()
+	MenuItem("Camera", function() print("Camera") end),
+	MenuItem("Settings", function()
 		local settingsListArray = {
-			ListItem("About", function()
+			MenuItem("About", function()
 				playorama.ui.menu:goTo(1)
 			end),
-			ListItem("Audio", function()
+			MenuItem("Audio", function()
 				playorama.ui.menu:goTo(2)
 			end),
-			ListItem("Language", function()
+			MenuItem("Language", function()
 				playorama.ui.menu:goTo(3)
 			end),
-			ListItem("Home Screen", function()
+			MenuItem("Home Screen", function()
 				playorama.ui.menu:goTo(4)
 			end)
 		}

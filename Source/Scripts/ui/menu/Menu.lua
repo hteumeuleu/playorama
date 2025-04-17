@@ -1,4 +1,4 @@
-import "Scripts/ui/menu/ListItem"
+import "Scripts/ui/menu/MenuItem"
 import "Scripts/ui/menu/ListView"
 
 local pd <const> = playdate
