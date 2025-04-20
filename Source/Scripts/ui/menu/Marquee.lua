@@ -14,6 +14,8 @@ function Marquee:init(text, x, y, z, width, height)
 	width = width or 400
 	height = height or 240
 	self.text = text or "[Hello World!]"
+	self._pauseDuration = 50
+	self._pause = self._pauseDuration
 	self._padding = 10
 	self._xDirection = -1
 	self._xScrollStart = self._padding
@@ -35,13 +37,19 @@ end
 function Marquee:update()
 
 	Marquee.super.update(self)
-	self._xScrollOffset += 1 * self._xDirection
-	if self._xScrollOffset < self._xScrollStop then
-		self._xDirection = 1
-	elseif self._xScrollOffset > self._xScrollStart then
-		self._xDirection = -1
+	if self._pause == 0 then
+		self._xScrollOffset += 1 * self._xDirection
+		if self._xScrollOffset < self._xScrollStop then
+			self._xDirection = 1
+			self._pause = self._pauseDuration
+		elseif self._xScrollOffset > self._xScrollStart then
+			self._xDirection = -1
+			self._pause = self._pauseDuration
+		end
+		self:draw()
+	else
+		self._pause -= 1
 	end
-	self:draw()
 
 end
 

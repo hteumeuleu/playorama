@@ -32,7 +32,7 @@ function ListView:update()
 	if self.gridview ~= nil and self:needsDisplay() then
 		self:forceUpdate()
 	end
-	if not self.items[self:getSelection()].isTextLarger then
+	if not self.items[self:getSelection()].textWasTruncated then
 		self:removeMarquee()
 	end
 
@@ -186,7 +186,10 @@ function ListView:initGridView()
 					local displayName = that.items[row].name
 					local leftOffset = x + 10
 					local topOffset = y + ((height - fontHeight) / 2)
-					local textWidth = width - 20
+					local widthAvailableForText = width - 40
+					if that.items[row].type then
+						widthAvailableForText = width - 20
+					end
 					-- Add bundle icon
 					if that.items[row].onBundle then
 						local bundleIcon = Icon(0, 0, IconCartridge, false)
@@ -194,26 +197,19 @@ function ListView:initGridView()
 						bundleIconImage:draw(x + 10, y + 4)
 						leftOffset += bundleIconImage.width + 4
 					end
-					-- Get width required to draw text
-					local fontFamily = {
-						[gfx.font.kVariantNormal] = playorama.ui.fonts.large,
-						[gfx.font.kVariantBold] = playorama.ui.fonts.large,
-						[gfx.font.kVariantItalic] = playorama.ui.fonts.large
-					}
-					local requiredTextWidth = gfx.getTextSize(displayName, fontFamily)
-					local isTextLarger = requiredTextWidth > textWidth
-					if isTextLarger then
-						that.items[row].isTextLarger = true
+					-- Detect if text needs to be truncated
+					local textImage, textWasTruncated = gfx.imageWithText(displayName, widthAvailableForText, fontHeight, gfx.kColorClear, nil, "…", nil, playorama.ui.fonts.large)
+					if textWasTruncated then
+						that.items[row].textWasTruncated = true
 					else
-						that.items[row].isTextLarger = false
+						that.items[row].textWasTruncated = false
 					end
-					print("isTextLarger", displayName, isTextLarger, requiredTextWidth, textWidth)
 					-- Draw Text
-					if isTextLarger and selected then
+					if textWasTruncated and selected then
 						that:removeMarquee()
-						that._marquee = Marquee(displayName, x + that.x, y + that.y, that:getZIndex(), width - 20, height)
+						that._marquee = Marquee(displayName, x + that.x, y + that.y, that:getZIndex(), width, height)
 					else
-						gfx.drawTextInRect(displayName, leftOffset, topOffset, textWidth, fontHeight, nil, "…", nil, playorama.ui.fonts.large)
+						gfx.drawTextInRect(displayName, leftOffset, topOffset, widthAvailableForText, fontHeight, nil, "…", nil, playorama.ui.fonts.large)
 					end
 				end
 
