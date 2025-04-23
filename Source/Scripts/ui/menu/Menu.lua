@@ -27,16 +27,6 @@ function Menu:update()
 
 	Menu.super.update(self)
 
-	-- Outro animation
-	-- if self._outroAnimator ~= nil and not self._outroAnimator:ended() then
-	-- 	self._outroSprite:setImage(self:_getOutroMaskImage(self._outroAnimator:currentValue()))
-	-- elseif self._outroAnimator ~= nil and self._outroAnimator:ended() then
-	-- 	self:detachSprite(self._outroSprite)
-	-- 	self._outroAnimator = nil
-	-- 	self._outroSprite = nil
-	-- 	self._outroCallback()
-	-- end
-
 end
 
 function Menu:add()
@@ -59,15 +49,16 @@ function Menu:setInputHandlers()
 
 	local myInputHandlers = {
 		AButtonUp = function()
-			-- if self.listview:isSelectionAPlayer() then
-			-- 	self:outro(function() self.listview:doSelectionCallback() end)
-			-- else
-				playorama.ui.setMenuAnimator(function() self.listview:doSelectionCallback() end)
-				-- self.listview:doSelectionCallback()
-			-- end
+			if not self.listview:isSelectionAPlayer() then
+				self:outroToMenu(function() self.listview:doSelectionCallback() end)
+			else
+				self:outroToPlayer(function() self.listview:doSelectionCallback() end)
+			end
 		end,
 		BButtonUp = function()
-			self:pop()
+			if #self.history > 0 then
+				self:outroToMenu(function() self:pop() end)
+			end
 		end,
 		upButtonUp = function()
 			self:previous()
@@ -142,34 +133,20 @@ function Menu:goTo(i)
 
 end
 
--- outro()
+-- outroToMenu()
+--
+-- Outro animation from Menu to another Menu
+function Menu:outroToMenu(callback)
+
+	playorama.ui.setMenuAnimator(callback)
+
+end
+
+-- outroToPlayer()
 --
 -- Outro animation from Menu to Player
--- function Menu:outro(callback)
+function Menu:outroToPlayer(callback)
 
--- 	local radius <const> = 250
--- 	local mask = self:_getOutroMaskImage(radius)
--- 	self._outroSprite = gfx.sprite.new(mask)
--- 	self._outroSprite:moveTo(200, 120)
--- 	self:attachSprite(self._outroSprite)
--- 	self._outroSprite:setZIndex(300)
--- 	-- Create animator
--- 	self._outroAnimator = gfx.animator.new(300, radius, 0)
--- 	-- Prepare callback
--- 	self._outroCallback = callback
--- 	-- self._outroCallback()
+	playorama.ui.setOutroAnimator(callback)
 
--- end
-
--- function Menu:_getOutroMaskImage(radius)
-
--- 	local mask = gfx.image.new(400, 240)
--- 	gfx.pushContext(mask)
--- 		gfx.setColor(gfx.kColorBlack)
--- 		gfx.fillRect(0, 0, 400, 240)
--- 		gfx.setColor(gfx.kColorClear)
--- 		gfx.fillCircleAtPoint(200, 120, radius)
--- 	gfx.popContext()
--- 	return mask
-
--- end
+end

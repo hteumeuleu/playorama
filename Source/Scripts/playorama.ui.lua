@@ -53,26 +53,10 @@ playorama.ui.setScreenAnimator = function(startValue, endValue, callback)
 
 end
 
-playorama.ui.isAnimating = function()
-
-	return playorama.ui._animator ~= nil and not playorama.ui._animator:ended()
-
-end
-
-playorama.ui.removeAnimator = function()
-
-	if playorama.ui._animator ~= nil then
-		playorama.ui._animator = nil
-		playorama.ui._animatorType = nil
-		playorama.ui._animatorCallback = nil
-	end
-
-end
-
 playorama.ui.setMenuAnimator = function(callback)
 
 	if playorama.ui._animator == nil then
-		local duration <const> = 300
+		local duration <const> = 100
 		local startValue <const> = 0
 		local endValue <const> = 1
 		local easingFunction <const> = pd.easingFunctions.linear
@@ -94,13 +78,106 @@ playorama.ui.setMenuAnimator = function(callback)
 		flash:add()
 		flash.update = function(that)
 			if playorama.ui._animator ~= nil and not playorama.ui._animator:ended() then
-				that:setImage(bg:fadedImage(playorama.ui._animator:currentValue(), gfx.image.kDitherTypeAtkinson))
+				that:setImage(bg:fadedImage(playorama.ui._animator:currentValue(), gfx.image.kDitherTypeBayer8x8))
 			else
-				print("remove flash")
 				that:remove()
 			end
 		end
 
+	end
+
+end
+
+
+playorama.ui.setOutroAnimator = function(callback)
+
+	if playorama.ui._animator == nil then
+		local duration <const> = 300
+		local startValue <const> = 0
+		local endValue <const> = 1
+		local easingFunction <const> = pd.easingFunctions.outBack
+		playorama.ui._animator = gfx.animator.new(duration, startValue, endValue,  easingFunction)
+		playorama.ui._animatorType = "outro"
+		playorama.ui._animatorCallback = callback
+
+		local screenshot = gfx.getDisplayImage()
+		local black = gfx.image.new(400, 240, gfx.kColorBlack)
+		local header = gfx.image.new(400, 40, gfx.kColorClear)
+		gfx.pushContext(header)
+			screenshot:draw(0, 0)
+		gfx.popContext()
+		local body = gfx.image.new(400, 200, gfx.kColorClear)
+		gfx.pushContext(body)
+			screenshot:draw(0, -40)
+		gfx.popContext()
+
+		local blackSprite = gfx.sprite.new(black)
+		local headerSprite = gfx.sprite.new(header)
+		local bodySprite = gfx.sprite.new(body)
+
+		blackSprite:setCenter(0, 0)
+		blackSprite:moveTo(0, 0)
+		blackSprite:setZIndex(9998)
+		blackSprite:add()
+
+		bodySprite:setCenter(0, 0)
+		bodySprite:moveTo(0, 40)
+		bodySprite:setZIndex(9999)
+		bodySprite:add()
+		bodySprite.update = function(that)
+			if playorama.ui._animator ~= nil and not playorama.ui._animator:ended() then
+				that:moveTo(0, math.floor(playorama.ui._animator:progress() * 0.5 * 200 + 40))
+			else
+				bodySprite:remove()
+				blackSprite:remove()
+				headerSprite:remove()
+			end
+		end
+
+		headerSprite:setCenter(0, 0)
+		headerSprite:moveTo(0, 0)
+		headerSprite:setZIndex(9999)
+		headerSprite:add()
+		headerSprite.update = function(that)
+			if playorama.ui._animator ~= nil and not playorama.ui._animator:ended() then
+				that:moveTo(0, math.floor(playorama.ui._animator:progress() * -40))
+			else
+				bodySprite:remove()
+				blackSprite:remove()
+				headerSprite:remove()
+			end
+		end
+
+		-- Black flash effect
+		local flash = gfx.sprite.new(black)
+		flash:setCenter(0, 0)
+		flash:moveTo(0, 0)
+		flash:setZIndex(10000)
+		flash:add()
+		flash.update = function(that)
+			if playorama.ui._animator ~= nil and not playorama.ui._animator:ended() then
+				that:setImage(black:fadedImage(playorama.ui._animator:currentValue(), gfx.image.kDitherTypeBayer8x8))
+			else
+				that:remove()
+			end
+		end
+
+	end
+
+end
+
+playorama.ui.isAnimating = function()
+
+	return playorama.ui._animator ~= nil and not playorama.ui._animator:ended()
+
+end
+
+playorama.ui.removeAnimator = function()
+
+	if playorama.ui._animator ~= nil then
+		playorama.ui._animator = nil
+		playorama.ui._animatorType = nil
+		playorama.ui._animatorCallback = nil
 	end
 
 end
