@@ -62,7 +62,8 @@ function Menu:setInputHandlers()
 			-- if self.listview:isSelectionAPlayer() then
 			-- 	self:outro(function() self.listview:doSelectionCallback() end)
 			-- else
-				self.listview:doSelectionCallback()
+				playorama.ui.setMenuAnimator(function() self.listview:doSelectionCallback() end)
+				-- self.listview:doSelectionCallback()
 			-- end
 		end,
 		BButtonUp = function()
