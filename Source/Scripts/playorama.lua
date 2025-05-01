@@ -26,5 +26,13 @@ end
 playorama.update = function()
 	playorama.ui.update()
 end
+playorama.sprite = {}
+playorama.sprite.new = function(image)
+	local sprite = gfx.sprite.new(image)
+	sprite:setCenter(0, 0)
+	sprite:moveTo(0, 0)
+	sprite:add()
+	return sprite
+end
 
 playorama.init()

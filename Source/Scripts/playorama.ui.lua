@@ -37,7 +37,18 @@ playorama.ui.homeList = {
 	end),
 }
 
-playorama.ui.setScreenAnimator = function(startValue, endValue, callback)
+playorama.ui.animator = {}
+playorama.ui.animator.new = function(type, callback, startValue, endValue)
+	if type == "screen" then
+		playorama.ui.setScreenAnimator(callback, startValue, endValue)
+	elseif type == "menu" then
+		playorama.ui.setMenuAnimator(callback)
+	elseif type == "outro" then
+		playorama.ui.setOutroAnimator(callback)
+	end
+end
+
+playorama.ui.setScreenAnimator = function(callback, startValue, endValue)
 
 	if playorama.ui._animator == nil then
 		local duration <const> = 300
@@ -64,6 +75,7 @@ playorama.ui.setMenuAnimator = function(callback)
 		playorama.ui._animator.reverses = true
 		playorama.ui._animatorType = "menu"
 		playorama.ui._animatorCallback = callback
+		playorama.ui._animatorSprites = {}
 
 		-- White flash effect
 		local bg = gfx.image.new(400, 200, gfx.kColorClear)
@@ -88,7 +100,6 @@ playorama.ui.setMenuAnimator = function(callback)
 
 end
 
-
 playorama.ui.setOutroAnimator = function(callback)
 
 	if playorama.ui._animator == nil then
@@ -99,9 +110,11 @@ playorama.ui.setOutroAnimator = function(callback)
 		playorama.ui._animator = gfx.animator.new(duration, startValue, endValue,  easingFunction)
 		playorama.ui._animatorType = "outro"
 		playorama.ui._animatorCallback = callback
+		playorama.ui._animatorSprites = {}
 
+		-- Take a screenshot
 		local screenshot = gfx.getDisplayImage()
-		local black = gfx.image.new(400, 240, gfx.kColorBlack)
+		-- And split it into header and body
 		local header = gfx.image.new(400, 40, gfx.kColorClear)
 		gfx.pushContext(header)
 			screenshot:draw(0, 0)
@@ -110,55 +123,38 @@ playorama.ui.setOutroAnimator = function(callback)
 		gfx.pushContext(body)
 			screenshot:draw(0, -40)
 		gfx.popContext()
-
-		local blackSprite = gfx.sprite.new(black)
-		local headerSprite = gfx.sprite.new(header)
-		local bodySprite = gfx.sprite.new(body)
-
-		blackSprite:setCenter(0, 0)
-		blackSprite:moveTo(0, 0)
-		blackSprite:setZIndex(9998)
-		blackSprite:add()
-
-		bodySprite:setCenter(0, 0)
-		bodySprite:moveTo(0, 40)
+		-- We’ll use a black screen as a background and a foreground fade effect
+		local blackRectangle = gfx.image.new(400, 240, gfx.kColorBlack)
+		-- We create sprites from these images
+		local blackBackgroundSprite = playorama.sprite.new(blackRectangle)
+		local blackForegroundSprite = playorama.sprite.new(blackRectangle)
+		local headerSprite = playorama.sprite.new(header)
+		local bodySprite = playorama.sprite.new(body)
+		table.insert(playorama.ui._animatorSprites, blackBackgroundSprite)
+		table.insert(playorama.ui._animatorSprites, blackForegroundSprite)
+		table.insert(playorama.ui._animatorSprites, headerSprite)
+		table.insert(playorama.ui._animatorSprites, bodySprite)
+		-- We order these sprites ZIndex
+		blackBackgroundSprite:setZIndex(9998)
+		blackForegroundSprite:setZIndex(10000)
 		bodySprite:setZIndex(9999)
-		bodySprite:add()
+		headerSprite:setZIndex(9999)
+
 		bodySprite.update = function(that)
 			if playorama.ui._animator ~= nil and not playorama.ui._animator:ended() then
 				that:moveTo(0, math.floor(playorama.ui._animator:progress() * 0.5 * 200 + 40))
-			else
-				bodySprite:remove()
-				blackSprite:remove()
-				headerSprite:remove()
 			end
 		end
 
-		headerSprite:setCenter(0, 0)
-		headerSprite:moveTo(0, 0)
-		headerSprite:setZIndex(9999)
-		headerSprite:add()
 		headerSprite.update = function(that)
 			if playorama.ui._animator ~= nil and not playorama.ui._animator:ended() then
 				that:moveTo(0, math.floor(playorama.ui._animator:progress() * -40))
-			else
-				bodySprite:remove()
-				blackSprite:remove()
-				headerSprite:remove()
 			end
 		end
 
-		-- Black flash effect
-		local flash = gfx.sprite.new(black)
-		flash:setCenter(0, 0)
-		flash:moveTo(0, 0)
-		flash:setZIndex(10000)
-		flash:add()
-		flash.update = function(that)
+		blackForegroundSprite.update = function(that)
 			if playorama.ui._animator ~= nil and not playorama.ui._animator:ended() then
-				that:setImage(black:fadedImage(playorama.ui._animator:currentValue(), gfx.image.kDitherTypeBayer8x8))
-			else
-				that:remove()
+				that:setImage(blackRectangle:fadedImage(playorama.ui._animator:currentValue(), gfx.image.kDitherTypeBayer8x8))
 			end
 		end
 
@@ -178,6 +174,8 @@ playorama.ui.removeAnimator = function()
 		playorama.ui._animator = nil
 		playorama.ui._animatorType = nil
 		playorama.ui._animatorCallback = nil
+		gfx.sprite.removeSprites(playorama.ui._animatorSprites)
+		playorama.ui._animatorSprites = nil
 	end
 
 end

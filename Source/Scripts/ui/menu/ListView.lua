@@ -45,6 +45,7 @@ function ListView:add()
 	ListView.super.add(self)
 	if self.selected ~= nil then
 		self.selected:add()
+		self:forceUpdate()
 	end
 	return self
 
@@ -205,6 +206,7 @@ function ListView:initGridView()
 						that.items[row].textWasTruncated = false
 					end
 					-- Draw Text
+					print("Draw Text", textWasTruncated, selected)
 					if textWasTruncated and selected then
 						that:removeMarquee()
 						that._marquee = Marquee(displayName, x + that.x, y + that.y, that:getZIndex(), width, height)

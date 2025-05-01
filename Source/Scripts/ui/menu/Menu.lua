@@ -138,7 +138,7 @@ end
 -- Outro animation from Menu to another Menu
 function Menu:outroToMenu(callback)
 
-	playorama.ui.setMenuAnimator(callback)
+	playorama.ui.animator.new("menu", callback)
 
 end
 
@@ -147,6 +147,6 @@ end
 -- Outro animation from Menu to Player
 function Menu:outroToPlayer(callback)
 
-	playorama.ui.setOutroAnimator(callback)
+	playorama.ui.animator.new("outro", callback)
 
 end
