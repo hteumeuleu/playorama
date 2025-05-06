@@ -23,7 +23,7 @@ function VideoPlayer:init(video)
 	self:setCenter(0, 0)
 	self:moveTo(0, 0)
 	self:setZIndex(100)
-	-- Start video
+	-- Setup video
 	self.video = video
 	self.video:setContext(self.context)
 	self.video:play()
@@ -36,6 +36,8 @@ function VideoPlayer:init(video)
 	self:setInputHandlers()
 	-- Add the sprite
 	self:add()
+	-- Start video after transition
+	playorama.ui.transition.new("fadein")
 
 end
 

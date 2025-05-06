@@ -73,7 +73,7 @@ function Widget:toggle()
 				self:setInputHandlers()
 			end
 		end
-		playorama.ui.animator.new("screen", callback, pd.geometry.point.new(startX, startY), pd.geometry.point.new(endX, endY))
+		playorama.ui.transition.new("screen", callback, pd.geometry.point.new(startX, startY), pd.geometry.point.new(endX, endY))
 	end
 
 end
