@@ -45,6 +45,7 @@ function ListView:add()
 	ListView.super.add(self)
 	if self.selected ~= nil then
 		self.selected:add()
+		self.gridview._firstDraw = true
 		self:forceUpdate()
 	end
 	return self
@@ -83,6 +84,7 @@ end
 function ListView:drawGrid()
 
 	self.gridview:drawInRect(0, 0, self.width, self.height)
+	self.gridview._firstDraw = false
 
 end
 
@@ -175,7 +177,11 @@ function ListView:initGridView()
 					if that._animator == nil then
 						local easingFunction =  pd.easingFunctions.outElastic
 						local startTimeOffset = 0
-						local animator = gfx.animator.new(300, startValue, endValue, easingFunction, startTimeOffset)
+						local duration = 300
+						if that.gridview._firstDraw then
+							duration = 0
+						end
+						local animator = gfx.animator.new(duration, startValue, endValue, easingFunction, startTimeOffset)
 						animator.easingPeriod = 1
 						that.selected:setAnimator(animator)
 					end
