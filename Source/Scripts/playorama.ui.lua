@@ -74,7 +74,6 @@ playorama.ui.transition._fadein = function()
 		blackForegroundSprite:setZIndex(10000)
 		blackForegroundSprite.update = function(that)
 			if playorama.ui.transition._animator ~= nil and not playorama.ui.transition._animator:ended() then
-				print("fadein", playorama.ui.transition._animator:currentValue(), playorama.ui.transition._animatorCallback)
 				that:setImage(blackRectangle:fadedImage(playorama.ui.transition._animator:currentValue(), gfx.image.kDitherTypeBayer8x8))
 			end
 		end
@@ -227,7 +226,6 @@ playorama.ui.update = function()
 		end
 		if playorama.ui.transition._animator:ended() then
 			playorama.ui.removeAnimator()
-			print("ended", playorama.ui.transition._animatorCallback)
 			if playorama.ui.transition._animatorCallback ~= nil then
 				playorama.ui.transition._animatorCallback()
 				playorama.ui.transition._animatorCallback = nil
