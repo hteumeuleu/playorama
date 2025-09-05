@@ -198,7 +198,7 @@ function ListView:initGridView()
 						widthAvailableForText = width - 20
 					end
 					-- Add bundle icon
-					if that.items[row].onBundle then
+					if that.items[row].onCartridge then
 						local bundleIcon = Icon(0, 0, IconCartridge, false)
 						local bundleIconImage = bundleIcon:getImage()
 						bundleIconImage:draw(x + 10, y + 4)
