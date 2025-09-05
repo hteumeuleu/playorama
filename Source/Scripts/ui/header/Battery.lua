@@ -33,7 +33,7 @@ function Battery:update()
 	end
 	self:setIcon(iconIndex)
 	self.timer = playdate.timer.performAfterDelay(600000, function(this)
-		self:update()
+		this:update()
 	end, self)
 
 end
