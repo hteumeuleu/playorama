@@ -17,6 +17,9 @@ playorama.ui.homeList = {
 	MenuItem("Videos", function()
 		playorama.ui.menu:push(ListView(playorama.library:getList()))
 	end),
+	MenuItem("Music", function()
+		playorama.ui.menu:push(ListView(playorama.library:getList("audio")))
+	end),
 	MenuItem("Camera", function() print("Camera") end),
 	MenuItem("Settings", function()
 		local settingsListArray = {

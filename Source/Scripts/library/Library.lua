@@ -72,6 +72,40 @@ function Library:build()
 			if (i%64 == 0) or (i==#kFiles) then
 				collectgarbage("collect")
 			end
+		else
+			-- If it's not a video, let's see if it's an audio.
+			-- Let's check if the filename contains '.mp3'.
+			n = string.find(fileName .. '', '.mp3')
+			-- If it does, then it's a catch. We've got sound!
+			-- Let's just make sure it not's a sound that goes with a video.
+			if n ~= nil and n > 1 then
+				local item = {}
+				item.uuid = playdate.string.UUID(16)
+				item.type = "audio"
+				item.audioPath = fileName
+				-- Isolate the audio file base name.
+				local baseName = string.sub(fileName .. '', 1, n - 1)
+				item.name = baseName
+				-- Let's check if there's a `.pdv` file with the same name.
+				local videoFileName = baseName .. '.pdv'
+				-- If this file exists, then oh oh, we've got video!
+				-- This file should not be part of the audio library.
+				-- We should only continue if there's no video then.
+				if not playdate.file.exists(videoFileName) then
+					-- Create an Audio object and add it to the available files array.
+					local audio, aerror = playorama.audio.new(item.audioPath)
+					if audio ~= nil and aerror == nil then
+						item.lastModified = audio.meta.lastModified
+						item.onCartridge = audio.meta.onCartridge
+						item.callback = function()
+							-- pd.display.setRefreshRate(30)
+							-- playorama.player.video.new(playorama.video.new(item.videoPath, item.audioPath))
+							print(item.audioPath)
+						end
+						table.insert(self.items, item)
+					end
+				end
+			end
 		end
 	end
 	self:sort()
@@ -117,8 +151,15 @@ end
 -- get()
 --
 -- Returns the library as a table.
-function Library:getList()
+function Library:getList(type)
 
-	return self.items
+	type = type or "video"
+	local list = {}
+	for _, item in ipairs(self.items) do
+		if item.type ~= nil and item.type == type then
+			table.insert(list, item)
+		end
+	end
+	return list
 
 end
