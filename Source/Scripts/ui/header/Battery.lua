@@ -19,8 +19,7 @@ end
 -- update()
 function Battery:update()
 
-	Battery.super.update(self)
-	local level = playdate.getBatteryPercentage()
+	local level = pd.getBatteryPercentage()
 	local iconIndex = IconBattery100
 	if level <= 90 and level >= 65 then
 		iconIndex = IconBattery75
@@ -32,7 +31,7 @@ function Battery:update()
 		iconIndex = IconBattery0
 	end
 	self:setIcon(iconIndex)
-	self.timer = playdate.timer.performAfterDelay(600000, function(this)
+	self.timer = pd.timer.performAfterDelay(600000, function(this)
 		this:update()
 	end, self)
 

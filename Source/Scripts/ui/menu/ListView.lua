@@ -32,7 +32,7 @@ function ListView:update()
 	if self.gridview ~= nil and self:needsDisplay() then
 		self:forceUpdate()
 	end
-	if not self.items[self:getSelection()].textWasTruncated then
+	if self.items ~= nil and not self.items[self:getSelection()].textWasTruncated then
 		self:removeMarquee()
 	end
 
