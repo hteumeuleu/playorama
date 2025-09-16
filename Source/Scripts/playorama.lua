@@ -1,3 +1,4 @@
+import "playorama.settings.lua"
 import "playorama.ui.lua"
 import "playorama.library.lua"
 import "playorama.player.lua"

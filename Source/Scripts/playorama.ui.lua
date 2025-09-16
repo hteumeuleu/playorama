@@ -14,6 +14,11 @@ playorama.ui.homeList = {
 	MenuItem("This is a very long list item label that should be truncated", function()
 		playorama.ui.menu:goTo(1)
 	end),
+	MenuItem("Audio With A Very Long Title To Try Out Boolean Items", function()
+		playorama.ui.menu:goTo(2)
+		playorama.settings.audio = not playorama.settings.audio
+		print(playorama.settings.audio)
+	end, "boolean", playorama.settings.audio),
 	MenuItem("Videos", function()
 		playorama.ui.menu:push(ListView(playorama.library:getList()))
 	end),
@@ -28,7 +33,7 @@ playorama.ui.homeList = {
 			end),
 			MenuItem("Audio", function()
 				playorama.ui.menu:goTo(2)
-			end),
+			end, "boolean"),
 			MenuItem("Language", function()
 				playorama.ui.menu:goTo(3)
 			end),

@@ -193,9 +193,12 @@ function ListView:initGridView()
 					local displayName = that.items[row].name
 					local leftOffset = x + 10
 					local topOffset = y + ((height - fontHeight) / 2)
+					local defaultWidthAvailableForText = width - 20
 					local widthAvailableForText = width - 40
-					if that.items[row].type then
-						widthAvailableForText = width - 20
+					if that.items[row].type == "boolean" then
+						widthAvailableForText = width - 60
+					elseif that.items[row].type ~= nil then
+						widthAvailableForText = defaultWidthAvailableForText
 					end
 					-- Add bundle icon
 					if that.items[row].onCartridge then
@@ -218,10 +221,23 @@ function ListView:initGridView()
 					else
 						gfx.drawTextInRect(displayName, leftOffset, topOffset, widthAvailableForText, fontHeight, nil, "…", nil, playorama.ui.fonts.large)
 					end
+
+					-- Draw Boolean Value
+					if that.items[row].type == "boolean" then
+						local value = that.items[row].value
+						print("boolean", value)
+						if value ~= nil then
+							local displayValue = "Yes"
+							if value == false then
+								displayValue = "No"
+							end
+							gfx.drawTextInRect(displayValue, leftOffset, topOffset, defaultWidthAvailableForText, fontHeight, nil, "…", kTextAlignment.right, playorama.ui.fonts.large)
+						end
+					end
 				end
 
 				-- Draw arrow
-				if that.items[row].type ~= "video" then
+				if that.items[row].type == nil then
 					arrowImage:draw(width - 11, y + 5)
 				end
 			end
